@@ -1,0 +1,19 @@
+{
+  "NTProvider": {
+    "types": {
+      "/AdvantageKit/RealOutputs/Alerts": "Alerts",
+      "/AdvantageKit/RealOutputs/PathPlanner": "Alerts",
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Increment Climb": "Command",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/Pre Auto Choices": "String Chooser",
+      "/SmartDashboard/Pre Auto Chooser": "String Chooser",
+      "/SmartDashboard/Stow Hang": "Command"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
