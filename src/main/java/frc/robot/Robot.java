@@ -30,7 +30,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDs.LED;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.NetworkCommunicator;
+import frc.robot.subsystems.intake.CoralIntake;
+import frc.robot.subsystems.wrist.Climb;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
@@ -135,7 +139,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    // NetworkCommunicator.getInstance().setIsAuto(true);
+    NetworkCommunicator.getInstance().setIsAuto(true);
   }
 
   /** This function is called periodically during all modes. */
@@ -164,6 +168,18 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
+    LED.getInstance()
+        .setAnimation(
+            new LarsonAnimation(
+                DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 255 : 0,
+                0,
+                DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue ? 255 : 0,
+                255,
+                0.2,
+                LED.getInstance()._numLed,
+                BounceMode.Center,
+                3,
+                0));
   }
 
   @Override
@@ -180,23 +196,28 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-    // NetworkCommunicator.getInstance().setIsAuto(true);
+    NetworkCommunicator.getInstance().setIsAuto(true);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    if (CoralIntake.getInstance().hasCoral()) {
+      LED.getInstance().setColor(0, 255, 0);
+    } else {
+      LED.getInstance().setColor(255, 0, 0);
+    }
   }
 
   @Override
   public void autonomousExit() {
-    // NetworkCommunicator.getInstance().setIsAuto(false);
+    NetworkCommunicator.getInstance().setIsAuto(false);
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // NetworkCommunicator.getInstance().setIsAuto(false);
+    NetworkCommunicator.getInstance().setIsAuto(false);
     int storedVersion = Preferences.getInt(VERSION_KEY, -1); // Default -1 if not set
     int matchCount = Preferences.getInt(MATCH_COUNT_KEY, 0);
 
@@ -235,6 +256,13 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if (DriverStation.getMatchType() != MatchType.None && DriverStation.getMatchTime() > 120) {
+      LED.getInstance().Animate(new RainbowAnimation());
+    } else if (CoralIntake.getInstance().hasCoral()) {
+      LED.getInstance().setColor(0, 255, 0);
+    } else {
+      LED.getInstance().setColor(255, 0, 0);
+    }
   }
 
   /** This function is called once when test mode is enabled. */
@@ -247,6 +275,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+    Climb.getInstance().runVoltage(robotContainer.operator.getRightY() * 5);
   }
 
   /** This function is called once when the robot is first started up. */

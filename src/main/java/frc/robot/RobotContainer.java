@@ -30,8 +30,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoScoreCommand;
+import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.GroundIntakeCommand;
+import frc.robot.commands.RaiseElevatorCommand;
+import frc.robot.commands.ScoreCommand;
+import frc.robot.commands.ScoreCommand.ScoringLevel;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LEDs.LED;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -39,6 +47,12 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import frc.robot.subsystems.drive.NetworkCommunicator;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intake.AlgaeIntake;
+import frc.robot.subsystems.intake.CoralIntake;
+import frc.robot.subsystems.wrist.AlgaeWrist;
+import frc.robot.subsystems.wrist.Climb;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -58,6 +72,11 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
+  private final AlgaeIntake algaeIntake;
+  private final CoralIntake coralIntake;
+  private final Elevator elevator;
+  private final AlgaeWrist intakeWrist;
+  private final Climb hangWrist;
   public static boolean isDriftModeActive = false;
 
   // Controller
@@ -67,6 +86,11 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final LoggedDashboardChooser<Command> preAutoChooser;
+
+  public static ScoreCommand elevatorCommand = new ScoreCommand(ScoringLevel.L0);
+  public static GroundIntakeCommand algaeIntakeCommand;
+  public static CoralIntakeCommand coralIntakeCommand;
+  public static ClimbCommand hangCommand;
 
   private SwerveDriveSimulation driveSimulation = null;
 
@@ -91,6 +115,14 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight),
                 pose -> {});
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.elevator = Elevator.getInstance();
+        this.intakeWrist = AlgaeWrist.getInstance();
+        this.hangWrist = Climb.getInstance();
+        algaeIntakeCommand = new GroundIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new ClimbCommand();
         break;
 
       case SIM:
@@ -107,6 +139,14 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.elevator = Elevator.getInstance();
+        this.intakeWrist = AlgaeWrist.getInstance();
+        this.hangWrist = Climb.getInstance();
+        algaeIntakeCommand = new GroundIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new ClimbCommand();
         break;
 
       default:
@@ -119,8 +159,27 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft) {},
                 new ModuleIOTalonFX(TunerConstants.BackRight) {},
                 pose -> {});
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.elevator = Elevator.getInstance();
+        this.intakeWrist = AlgaeWrist.getInstance();
+        this.hangWrist = Climb.getInstance();
+        algaeIntakeCommand = new GroundIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new ClimbCommand();
         break;
     }
+
+    NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(30).withTimeout(4));
+    NamedCommands.registerCommand("ScoreL4", new RaiseElevatorCommand(ScoringLevel.L4));
+    NamedCommands.registerCommand("ScoreL3", new RaiseElevatorCommand(ScoringLevel.L3));
+    NamedCommands.registerCommand("ScoreL2", new RaiseElevatorCommand(ScoringLevel.L2));
+    NamedCommands.registerCommand("ScoreL1", new RaiseElevatorCommand(ScoringLevel.L1));
+    NamedCommands.registerCommand("ElevatorDown", new ScoreCommand(ScoringLevel.L0));
+    NamedCommands.registerCommand("AutoScore L4", new AutoScoreCommand(ScoringLevel.L4));
+    NamedCommands.registerCommand("AutoScore L3", new AutoScoreCommand(ScoringLevel.L3));
+    NamedCommands.registerCommand("AutoScore L2", new AutoScoreCommand(ScoringLevel.L2));
+    NamedCommands.registerCommand("AutoScore L1", new AutoScoreCommand(ScoringLevel.L1));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -141,8 +200,20 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysID (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    autoChooser.addOption(
+        "Elevator SysId (Quasistatic Forward)",
+        elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysId (Quasistatic Reverse)",
+        elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysID (Dynamic Reverse)", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
     // Configure the button bindings
     configureButtonBindings();
+    LED.getInstance().Color(0, 255, 0);
     try {
       pathfindL = PathPlannerPath.fromPathFile("Push");
     } catch (Exception e) {
@@ -151,6 +222,15 @@ public class RobotContainer {
     preAutoChooser.addDefaultOption("None", Commands.none());
     preAutoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
     SmartDashboard.putData("Pre Auto Chooser", preAutoChooser.getSendableChooser());
+    Command stowCommand =
+        new Command() {
+          @Override
+          public void initialize() {
+            hangCommand.stow();
+          }
+        };
+    stowCommand.runsWhenDisabled();
+    SmartDashboard.putData("Stow Hang", stowCommand.withTimeout(0.1));
   }
 
   /**
@@ -164,6 +244,14 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+    elevatorCommand = new ScoreCommand(ScoringLevel.L0);
+    elevator.setDefaultCommand(elevatorCommand);
+    coralIntakeCommand = new CoralIntakeCommand(6);
+    coralIntake.setDefaultCommand(coralIntakeCommand);
+    algaeIntakeCommand = new GroundIntakeCommand(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    algaeIntake.setDefaultCommand(algaeIntakeCommand);
+    hangCommand = new ClimbCommand();
+    hangWrist.setDefaultCommand(hangCommand);
 
     // Reset gyro / odometry
     final Runnable resetGyro =
@@ -190,12 +278,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
-    // return preAutoChooser
-    //     .get()
-    //     .andThen(
-    //         new Command() {}.withTimeout(0.3)
-    //             .andThen(NetworkCommunicator.getInstance().getCustomAuto()));
+    // return autoChooser.get();
+    return preAutoChooser
+        .get()
+        .andThen(
+            new Command() {}.withTimeout(0.3)
+                .andThen(NetworkCommunicator.getInstance().getCustomAuto()));
   }
 
   public void resetSimulationField() {
