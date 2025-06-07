@@ -59,7 +59,6 @@ import frc.robot.Camera.LimeLightCam;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotContainer;
-import frc.robot.commands.AutoScoreCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -466,7 +465,6 @@ public class Drive extends SubsystemBase {
     updatePIDValues();
     updateVisionParameters();
     // updatePathPlannerIfNeeded();
-    updateScoringParameters();
   }
 
   /** Updates PID values from the dashboard. */
@@ -502,32 +500,6 @@ public class Drive extends SubsystemBase {
 
     rStdDevCoeff = SmartDashboard.getNumber("rStdDevCoeff", rStdDevCoeff);
     SmartDashboard.putNumber("rStdDevCoeff", rStdDevCoeff);
-  }
-
-  private void updateScoringParameters() {
-    AutoScoreCommand.X_PID_P = SmartDashboard.getNumber("X_PID_P", AutoScoreCommand.X_PID_P);
-    SmartDashboard.putNumber("X_PID_P", AutoScoreCommand.X_PID_P);
-    AutoScoreCommand.X_PID_D = SmartDashboard.getNumber("X_PID_D", AutoScoreCommand.X_PID_D);
-    SmartDashboard.putNumber("X_PID_D", AutoScoreCommand.X_PID_D);
-
-    AutoScoreCommand.Y_PID_P = SmartDashboard.getNumber("Y_PID_P", AutoScoreCommand.Y_PID_P);
-    SmartDashboard.putNumber("Y_PID_P", AutoScoreCommand.Y_PID_P);
-    AutoScoreCommand.Y_PID_D = SmartDashboard.getNumber("Y_PID_D", AutoScoreCommand.Y_PID_D);
-    SmartDashboard.putNumber("Y_PID_D", AutoScoreCommand.Y_PID_D);
-
-    AutoScoreCommand.THETA_PID_P =
-        SmartDashboard.getNumber("THETA_PID_P", AutoScoreCommand.THETA_PID_P);
-    SmartDashboard.putNumber("THETA_PID_P", AutoScoreCommand.THETA_PID_P);
-    AutoScoreCommand.THETA_PID_D =
-        SmartDashboard.getNumber("THETA_PID_D", AutoScoreCommand.THETA_PID_D);
-    SmartDashboard.putNumber("THETA_PID_D", AutoScoreCommand.THETA_PID_D);
-
-    AutoScoreCommand.POSITION_TOLERANCE =
-        SmartDashboard.getNumber("POSITION_TOLERANCE", AutoScoreCommand.POSITION_TOLERANCE);
-    SmartDashboard.putNumber("POSITION_TOLERANCE", AutoScoreCommand.POSITION_TOLERANCE);
-    AutoScoreCommand.ROTATION_TOLERANCE =
-        SmartDashboard.getNumber("ROTATION_TOLERANCE", AutoScoreCommand.ROTATION_TOLERANCE);
-    SmartDashboard.putNumber("ROTATION_TOLERANCE", AutoScoreCommand.ROTATION_TOLERANCE);
   }
 
   /** Updates PathPlanner if PID constants have changed. */
