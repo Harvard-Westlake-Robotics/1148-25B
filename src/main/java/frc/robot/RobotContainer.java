@@ -35,6 +35,9 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.wrist.ArmWrist;
+import frc.robot.subsystems.wrist.IntakeWrist;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -54,6 +57,9 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
+  private final ArmWrist armWrist;
+  private final IntakeWrist intakeWrist;
+  private final Elevator elevator;
   public static boolean isDriftModeActive = false;
 
   // Controller
@@ -87,6 +93,9 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(TunerConstants.BackLeft),
                 new ModuleIOTalonFXReal(TunerConstants.BackRight),
                 pose -> {});
+        this.armWrist = ArmWrist.getInstance();
+        this.intakeWrist = IntakeWrist.getInstance();
+        this.elevator = Elevator.getInstance();
         break;
 
       case SIM:
@@ -103,6 +112,9 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
+        this.armWrist = ArmWrist.getInstance();
+        this.intakeWrist = IntakeWrist.getInstance();
+        this.elevator = Elevator.getInstance();
         break;
 
       default:
@@ -115,6 +127,9 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft) {},
                 new ModuleIOTalonFX(TunerConstants.BackRight) {},
                 pose -> {});
+        this.armWrist = ArmWrist.getInstance();
+        this.intakeWrist = IntakeWrist.getInstance();
+        this.elevator = Elevator.getInstance();
         break;
     }
 

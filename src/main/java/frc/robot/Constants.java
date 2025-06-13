@@ -13,6 +13,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -33,5 +37,222 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static class IntakeConstants {
+    public final int motorId;
+    public final InvertedValue motorInverted;
+    public final double intakeVelocity;
+    public final double outtakeVelocity;
+    public double kP;
+    public double kI;
+    public double kD;
+    public double kS;
+    public double kV;
+    public double kA;
+    public double positionkP;
+    public double positionkD;
+    public int sensor1ID;
+    public int sensor2ID;
+    public int sensor3ID;
+    public int sensor4ID;
+
+    public final double ANGLE_MAX_ACCELERATION;
+    public final double ANGLE_MAX_VELOCITY;
+    public final double ANGLe_MAX_JERK;
+    public final double rotationsToMetersRatio;
+
+    public IntakeConstants(
+        int motorId,
+        InvertedValue motorInverted,
+        double intakeVelocity,
+        double outtakeVelocity,
+        double kP,
+        double kI,
+        double kD,
+        double kS,
+        double kV,
+        double kA,
+        int sensor1ID,
+        int sensor2ID,
+        int sensor3ID,
+        int sensor4ID,
+        double positionkP,
+        double positionkD,
+        double ANGLE_MAX_ACCELERATION,
+        double ANGLE_MAX_VELOCITY,
+        double ANGLe_MAX_JERK,
+        double rotationsToMetersRatio) {
+      this.motorId = motorId;
+      this.motorInverted = motorInverted;
+      this.intakeVelocity = intakeVelocity;
+      this.outtakeVelocity = outtakeVelocity;
+      this.kP = kP;
+      this.kI = kI;
+      this.kD = kD;
+      this.kS = kS;
+      this.kV = kV;
+      this.kA = kA;
+      this.sensor1ID = sensor1ID;
+      this.sensor2ID = sensor2ID;
+      this.sensor3ID = sensor3ID;
+      this.positionkP = positionkP;
+      this.positionkD = positionkD;
+      this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
+      this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
+      this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
+      this.rotationsToMetersRatio = rotationsToMetersRatio;
+    }
+  }
+
+  public static final IntakeConstants CoralIntake =
+      new IntakeConstants(
+          17,
+          InvertedValue.Clockwise_Positive,
+          100,
+          -100,
+          8.569162,
+          0.0,
+          0.0,
+          0.3,
+          0.0,
+          0.0,
+          -1,
+          -1,
+          -1,
+          -1,
+          0.55,
+          0.005,
+          99999.0,
+          99999.0,
+          99999.0,
+          1.0);
+
+  public static class WristConstants {
+    public final int motorId;
+    public final int motorId2;
+    public final int motorId3;
+    public final InvertedValue motorInverted;
+    public final double wristVelocity;
+    public double kP;
+    public double kI;
+    public double kD;
+    public double kS;
+    public double kV;
+    public double kG;
+    public double kA;
+
+    public double ANGLE_MAX_ACCELERATION;
+    public double ANGLE_MAX_VELOCITY;
+    public double ANGLe_MAX_JERK;
+    public double motorToWristRotations;
+    public Angle angleOffset;
+    public int statorLimit;
+    public int supplyLimit;
+
+    public WristConstants(
+        int motorId,
+        int motorId2,
+        int motorId3,
+        InvertedValue motorInverted,
+        double wristVelocity,
+        double kP,
+        double kI,
+        double kD,
+        double kS,
+        double kV,
+        double kG,
+        double kA,
+        double ANGLE_MAX_ACCELERATION,
+        double ANGLE_MAX_VELOCITY,
+        double ANGLe_MAX_JERK,
+        double motorToWristRotations,
+        Angle angleOffset,
+        int supplyLimit,
+        int statorLimit) {
+      this.motorId = motorId;
+      this.motorId2 = motorId2;
+      this.motorId3 = motorId3;
+      this.motorInverted = motorInverted;
+      this.wristVelocity = wristVelocity;
+      this.kP = kP;
+      this.kI = kI;
+      this.kD = kD;
+      this.kS = kS;
+      this.kV = kV;
+      this.kG = kG;
+      this.kA = kA;
+      this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
+      this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
+      this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
+      this.motorToWristRotations = motorToWristRotations;
+      this.angleOffset = angleOffset;
+      this.supplyLimit = supplyLimit;
+      this.statorLimit = statorLimit;
+    }
+  }
+
+  // TODO: Fix later with real values
+  public static final WristConstants ArmWrist =
+      new WristConstants(
+          18,
+          19,
+          20,
+          InvertedValue.CounterClockwise_Positive,
+          100000,
+          3.669162,
+          0.0,
+          0.2,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          1.0, // 4.846
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          40,
+          80);
+
+  // TODO: Fix later with real values
+  public static final WristConstants IntakeWrist =
+      new WristConstants(
+          0,
+          0,
+          0,
+          InvertedValue.CounterClockwise_Positive,
+          10,
+          3.669162,
+          0.0,
+          0.2,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          1.0,
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          40,
+          80);
+
+  public final class Elevator {
+    public static final int elevator1ID = 13;
+    public static final int elevator2ID = 14;
+    public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
+    public static double kP = 2.0;
+    public static double kI = 0.01;
+    public static double kD = 0.00;
+    public static double kS = 0.1;
+    public static double kV = 0.0;
+    public static double kG = 0.0;
+    public static double kA = 0.0;
+    public static final double elevatorForwardSoftLimitRotations = 55;
+    public static final double elevatorReverseSoftLimitRotations = 0.0;
+    public static final double rotationsToMetersRatio = (1);
+    public static final double elevatorGroundOffsetMeters = 0.2125;
   }
 }
