@@ -31,7 +31,7 @@ public class AlgaeIntake extends SubsystemBase {
 
   public AlgaeIntake() {
     this.constants = Constants.AlgaeIntake;
-    this.key = "Algae Intake";
+    this.key = "RealOutputs/Algae Intake";
     io = new IntakeIOTalonFX(constants);
   }
 
@@ -47,10 +47,6 @@ public class AlgaeIntake extends SubsystemBase {
 
   public void setVelocity(LinearVelocity velocity) {
     io.runVelocity(velocity);
-  }
-
-  public void push(double rotations) {
-    io.push(rotations);
   }
 
   public void runVoltage(double volts) {

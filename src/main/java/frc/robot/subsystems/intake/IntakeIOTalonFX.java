@@ -82,13 +82,13 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorCurrent = intakeMotor.getStatorCurrent();
 
     this.input1 =
-        intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "rio") : null;
+        intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "drive") : null;
     this.input2 =
-        intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "rio") : null;
+        intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "drive") : null;
     this.input3 =
-        intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "rio") : null;
+        intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "drive") : null;
     this.input4 =
-        intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "rio") : null;
+        intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "drive") : null;
 
     intakeFeedforward =
         new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kA, intakeConstants.kV);
@@ -113,32 +113,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     intakeMotor.setControl(new VoltageOut(voltage));
   }
 
-  private boolean override = false;
-
-  public boolean isOverride() {
-    return override;
-  }
-
-  public void setOverride(boolean override) {
-    this.override = override;
-  }
-
   @Override
   public void runVelocity(LinearVelocity velocity) {
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     intakeConfig.MotionMagic.MotionMagicAcceleration = 9999;
     intakeMotor.getConfigurator().apply(intakeConfig);
-    if (!override) {
-      intakeController.FeedForward =
-          intakeFeedforward.calculate(
-              velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio);
-      intakeController.Velocity =
-          velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio;
-      intakeMotor.setControl(intakeController);
-    }
-  }
-
-  public void runVelocityOverride(LinearVelocity velocity) {
     intakeController.FeedForward =
         intakeFeedforward.calculate(
             velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio);
@@ -152,31 +131,6 @@ public class IntakeIOTalonFX implements IntakeIO {
     intakeController.FeedForward = intakeFeedforward.calculate(velocity.in(RotationsPerSecond));
     intakeController.Velocity = velocity.in(RotationsPerSecond);
     intakeMotor.setControl(intakeController);
-  }
-
-  @Override
-  public void runOpenLoop(LinearVelocity velocity) {
-    voltageRequest =
-        new VoltageOut(
-            intakeFeedforward.calculate(
-                velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio));
-    intakeMotor.setControl(voltageRequest);
-  }
-
-  @Override
-  public void runOpenLoop(AngularVelocity velocity) {
-    voltageRequest = new VoltageOut(intakeFeedforward.calculate(velocity.in(RotationsPerSecond)));
-    intakeMotor.setControl(voltageRequest);
-  }
-
-  public void push(double rotations) {
-    intakeConfig.MotionMagic.MotionMagicCruiseVelocity = 70;
-    intakeConfig.MotionMagic.MotionMagicAcceleration = 400;
-    intakeMotor.getConfigurator().apply(intakeConfig);
-    intakeMotor.setPosition(0);
-    intakePositionController.Position = rotations;
-    intakePositionController.Slot = 1;
-    intakeMotor.setControl(intakePositionController);
   }
 
   public Boolean getSensor1() {

@@ -278,4 +278,16 @@ public final class Constants {
     public static final double rotationsToMetersRatio = (1);
     public static final double elevatorGroundOffsetMeters = 0.2125;
   }
+
+  public final class Hang {
+    public static final int motorId = 15;
+    public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
+    public static final double kP = 0.5;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kS = 0.1;
+    public static final double kV = 0.0;
+    public static final double kA = 0.0;
+    public static final double rotationsToMetersRatio = (1);
+  }
 }

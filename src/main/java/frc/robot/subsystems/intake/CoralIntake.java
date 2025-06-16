@@ -30,7 +30,7 @@ public class CoralIntake extends SubsystemBase {
 
   public CoralIntake() {
     this.constants = Constants.CoralIntake;
-    this.key = "Coral Intake";
+    this.key = "RealOutputs/Coral Intake";
     io = new IntakeIOTalonFX(constants);
     sysId =
         new SysIdRoutine(
@@ -38,7 +38,7 @@ public class CoralIntake extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("CoralIntake/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
             new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
@@ -64,10 +64,6 @@ public class CoralIntake extends SubsystemBase {
     io.runVelocity(velocity);
   }
 
-  public void push(double rotations) {
-    io.push(rotations);
-  }
-
   public void runVoltage(double volts) {
     io.runCharacterization(volts);
   }
@@ -90,18 +86,6 @@ public class CoralIntake extends SubsystemBase {
 
   public Boolean hasCoral() {
     return hasCoral;
-  }
-
-  public void runOver(LinearVelocity v) {
-    io.runVelocityOverride(v);
-  }
-
-  public void setOverride(boolean over) {
-    io.setOverride(over);
-  }
-
-  public boolean isOverride() {
-    return io.isOverride();
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

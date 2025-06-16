@@ -28,14 +28,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.intake.AlgaeIntake;
+import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.wrist.ArmWrist;
 import frc.robot.subsystems.wrist.IntakeWrist;
 import org.ironmaple.simulation.SimulatedArena;
@@ -60,6 +63,9 @@ public class RobotContainer {
   private final ArmWrist armWrist;
   private final IntakeWrist intakeWrist;
   private final Elevator elevator;
+  private final CoralIntake coralIntake;
+  private final AlgaeIntake algaeIntake;
+  private final Hang hang;
   public static boolean isDriftModeActive = false;
 
   // Controller
@@ -96,13 +102,17 @@ public class RobotContainer {
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.hang = Hang.getInstance();
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
 
         driveSimulation =
-            new SwerveDriveSimulation(DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+            new SwerveDriveSimulation(
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
@@ -115,6 +125,9 @@ public class RobotContainer {
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.hang = Hang.getInstance();
         break;
 
       default:
@@ -130,6 +143,9 @@ public class RobotContainer {
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
+        this.coralIntake = CoralIntake.getInstance();
+        this.algaeIntake = AlgaeIntake.getInstance();
+        this.hang = Hang.getInstance();
         break;
     }
 

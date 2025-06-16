@@ -15,7 +15,6 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -37,7 +36,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -55,9 +53,6 @@ import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -75,7 +70,6 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-
   private final LimeLightCam limelight_a = new LimeLightCam("limelight-a", false);
   private final LimeLightCam limelight_b = new LimeLightCam("limelight-b", false);
   private final LimeLightCam limelight_c = new LimeLightCam("limelight-c", false);
@@ -83,29 +77,30 @@ public class Drive extends SubsystemBase {
   private final LimeLightCam[] limelights =
       new LimeLightCam[] {limelight_a, limelight_b, limelight_c};
 
-      private boolean limeLightsActive = true;
+  private boolean limeLightsActive = true;
 
-      public boolean isLimeLightsActive() {
-        return limeLightsActive;
-      }
-    
-      public void setLimeLightsActive(boolean limeLightsActive) {
-        this.limeLightsActive = limeLightsActive;
-      }
+  public boolean isLimeLightsActive() {
+    return limeLightsActive;
+  }
 
-      static final Lock odometryLock = new ReentrantLock();
+  public void setLimeLightsActive(boolean limeLightsActive) {
+    this.limeLightsActive = limeLightsActive;
+  }
 
-      private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Drive.getModuleTranslations());
-      private Rotation2d rawGyroRotation = new Rotation2d();
-      private SwerveModulePosition[] lastModulePositions = // For delta tracking
-          new SwerveModulePosition[] {
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition()
-          };
-      private SwerveDrivePoseEstimator poseEstimator =
-          new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+  static final Lock odometryLock = new ReentrantLock();
+
+  private SwerveDriveKinematics kinematics =
+      new SwerveDriveKinematics(Drive.getModuleTranslations());
+  private Rotation2d rawGyroRotation = new Rotation2d();
+  private SwerveModulePosition[] lastModulePositions = // For delta tracking
+      new SwerveModulePosition[] {
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition(),
+        new SwerveModulePosition()
+      };
+  private SwerveDrivePoseEstimator poseEstimator =
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   // Discretization time constant
   private static final double DISCRETIZATION_TIME_SECONDS = 0.02;
@@ -114,13 +109,14 @@ public class Drive extends SubsystemBase {
   private static final double FIELD_WIDTH_METERS = 16.54;
   private static final double FIELD_HEIGHT_METERS = 8.02;
   private static final double FIELD_BORDER_MARGIN_METERS = 0.05;
-  private static final double MAX_VISION_CORRECTION_METERS = 5.0;
-  private static final double MAX_TAG_DISTANCE_METERS = 2.5;
-  private static final double MIN_TAG_DISTANCE_METERS = 0.08;
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
+  // private static final double MAX_VISION_CORRECTION_METERS = 5.0;
+  // private static final double MAX_TAG_DISTANCE_METERS = 2.5;
+  // private static final double MIN_TAG_DISTANCE_METERS = 0.08;
+
   // private static final double MAX_SPEED_FOR_VISION_METERS_PER_SEC = 3.0;
-  private static final double AMBIGUITY_THRESHOLD = 0.75;
-  private static final double AMBIGUITY_SECONDARY_THRESHOLD = 0.2;
+  // private static final double AMBIGUITY_THRESHOLD = 0.75;
+  // private static final double AMBIGUITY_SECONDARY_THRESHOLD = 0.2;
 
   // Reef positioning constants
   private static final double ROBOT_REEF_OFFSET_METERS = -0.3556;
@@ -159,8 +155,14 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(DriveConstants.PP_TRANSLATION_P, DriveConstants.PP_TRANSLATION_I, DriveConstants.PP_TRANSLATION_D),
-            new PIDConstants(DriveConstants.PP_ROTATION_P, DriveConstants.PP_ROTATION_I, DriveConstants.PP_ROTATION_D)),
+            new PIDConstants(
+                DriveConstants.PP_TRANSLATION_P,
+                DriveConstants.PP_TRANSLATION_I,
+                DriveConstants.PP_TRANSLATION_D),
+            new PIDConstants(
+                DriveConstants.PP_ROTATION_P,
+                DriveConstants.PP_ROTATION_I,
+                DriveConstants.PP_ROTATION_D)),
         DriveConstants.PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -294,16 +296,31 @@ public class Drive extends SubsystemBase {
 
       if (result_a != null && !shouldRejectPose(result_a) && limeLightsActive) {
         addVisionMeasurement(
-            result_a.pose, result_a.time, VecBuilder.fill(DriveConstants.xyStdDev(result_a), DriveConstants.xyStdDev(result_a), DriveConstants.rStdDev(result_a)));
+            result_a.pose,
+            result_a.time,
+            VecBuilder.fill(
+                DriveConstants.xyStdDev(result_a),
+                DriveConstants.xyStdDev(result_a),
+                DriveConstants.rStdDev(result_a)));
 
         if (result_b != null && !shouldRejectPose(result_b) && limeLightsActive) {
           addVisionMeasurement(
-              result_b.pose, result_b.time, VecBuilder.fill(DriveConstants.xyStdDev(result_b), DriveConstants.xyStdDev(result_b), DriveConstants.rStdDev(result_b)));
+              result_b.pose,
+              result_b.time,
+              VecBuilder.fill(
+                  DriveConstants.xyStdDev(result_b),
+                  DriveConstants.xyStdDev(result_b),
+                  DriveConstants.rStdDev(result_b)));
         }
 
         if (result_c != null && !shouldRejectPose(result_c) && limeLightsActive) {
           addVisionMeasurement(
-              result_c.pose, result_c.time, VecBuilder.fill(DriveConstants.xyStdDev(result_c), DriveConstants.xyStdDev(result_c), DriveConstants.rStdDev(result_c)));
+              result_c.pose,
+              result_c.time,
+              VecBuilder.fill(
+                  DriveConstants.xyStdDev(result_c),
+                  DriveConstants.xyStdDev(result_c),
+                  DriveConstants.rStdDev(result_c)));
         }
       }
 
@@ -767,9 +784,13 @@ public class Drive extends SubsystemBase {
     double rearSpeedBase = DriveConstants.DRIFT_REAR_SPEED_MULTIPLIER;
     // Apply more pronounced differential in hard turns
     double innerMultiplier =
-        hardTurn ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8 : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+        hardTurn
+            ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8
+            : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
     double outerMultiplier =
-        hardTurn ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2 : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+        hardTurn
+            ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2
+            : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
 
     // if (turningLeft) {
     // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *

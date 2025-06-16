@@ -21,12 +21,6 @@ public interface IntakeIO {
 
   public default void runVelocity(LinearVelocity velocity) {}
 
-  public default void runOpenLoop(AngularVelocity velocity) {}
-
-  public default void runOpenLoop(LinearVelocity velocity) {}
-
-  public default void push(double rotations) {}
-
   public default void runCharacterization(double volts) {}
 
   public Boolean getSensor1();
