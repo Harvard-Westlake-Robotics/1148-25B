@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -35,6 +34,7 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.wrist.ArmWrist;
 import frc.robot.subsystems.wrist.IntakeWrist;
@@ -88,10 +88,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
-                new ModuleIOTalonFXReal(TunerConstants.FrontRight),
-                new ModuleIOTalonFXReal(TunerConstants.BackLeft),
-                new ModuleIOTalonFXReal(TunerConstants.BackRight),
+                new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
+                new ModuleIOTalonFXReal(DriveConstants.FrontRight),
+                new ModuleIOTalonFXReal(DriveConstants.BackLeft),
+                new ModuleIOTalonFXReal(DriveConstants.BackRight),
                 pose -> {});
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
@@ -102,15 +102,15 @@ public class RobotContainer {
         // Sim robot, instantiate physics sim IO implementations
 
         driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+            new SwerveDriveSimulation(DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
                 new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                new ModuleIOTalonFXSim(DriveConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOTalonFXSim(DriveConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOTalonFXSim(DriveConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOTalonFXSim(DriveConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
@@ -122,10 +122,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIO() {},
-                new ModuleIOTalonFX(TunerConstants.FrontLeft) {},
-                new ModuleIOTalonFX(TunerConstants.FrontRight) {},
-                new ModuleIOTalonFX(TunerConstants.BackLeft) {},
-                new ModuleIOTalonFX(TunerConstants.BackRight) {},
+                new ModuleIOTalonFX(DriveConstants.FrontLeft) {},
+                new ModuleIOTalonFX(DriveConstants.FrontRight) {},
+                new ModuleIOTalonFX(DriveConstants.BackLeft) {},
+                new ModuleIOTalonFX(DriveConstants.BackRight) {},
                 pose -> {});
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();

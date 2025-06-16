@@ -23,9 +23,10 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.NetworkCommunicator;
+import frc.robot.subsystems.drive.DriveConstants;
+
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
@@ -110,10 +111,10 @@ public class Robot extends LoggedRobot {
     // Check for valid swerve config
     var modules =
         new SwerveModuleConstants[] {
-          TunerConstants.FrontLeft,
-          TunerConstants.FrontRight,
-          TunerConstants.BackLeft,
-          TunerConstants.BackRight
+          DriveConstants.FrontLeft,
+          DriveConstants.FrontRight,
+          DriveConstants.BackLeft,
+          DriveConstants.BackRight
         };
     for (var constants : modules) {
       if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
@@ -153,7 +154,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    Drive.getInstance().setSdMultiplier(1);
+    DriveConstants.setSdMultiplier(1);
   }
 
   /** This function is called periodically when disabled. */
@@ -162,7 +163,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledExit() {
-    Drive.getInstance().setSdMultiplier(1);
+    DriveConstants.setSdMultiplier(1);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

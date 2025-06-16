@@ -128,6 +128,29 @@ public final class Constants {
           99999.0,
           1.0);
 
+  public static final IntakeConstants AlgaeIntake =
+      new IntakeConstants(
+          16,
+          InvertedValue.CounterClockwise_Positive,
+          100,
+          -100,
+          1.669162,
+          0.0,
+          0.0,
+          0.1761,
+          0.12875,
+          0.0,
+          -1,
+          -1,
+          -1,
+          -1,
+          0.0,
+          0.0,
+          100.0,
+          100.0,
+          1000000.0,
+          1.0 / 16.709);
+
   public static class WristConstants {
     public final int motorId;
     public final int motorId2;

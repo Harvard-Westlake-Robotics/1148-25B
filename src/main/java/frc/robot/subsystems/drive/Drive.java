@@ -17,11 +17,8 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -42,15 +39,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -59,7 +51,6 @@ import frc.robot.Camera.LimeLightCam;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.RobotContainer;
-import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -77,48 +68,6 @@ public class Drive extends SubsystemBase {
     return instance;
   }
 
-  // TunerConstants doesn't include these constants, so they are declared locally
-  static final double ODOMETRY_FREQUENCY =
-      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
-  public static final double DRIVE_BASE_RADIUS =
-      Math.max(
-          Math.max(
-              Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-              Math.hypot(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY)),
-          Math.max(
-              Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-              Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
-
-  // PathPlanner config constants
-  public static final double ROBOT_MASS_KG = 54.088;
-  public static final double ROBOT_MOI = 6.883;
-  public static final double WHEEL_COF = 1.2;
-  public static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          ROBOT_MASS_KG,
-          ROBOT_MOI,
-          new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              TunerConstants.FrontLeft.SlipCurrent,
-              1),
-          getModuleTranslations());
-  public static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(
-          LinearVelocity.ofBaseUnits(7.5, MetersPerSecond),
-          LinearAcceleration.ofBaseUnits(5.5, MetersPerSecondPerSecond),
-          AngularVelocity.ofBaseUnits(1020, DegreesPerSecond),
-          AngularAcceleration.ofBaseUnits(
-              2400, DegreesPerSecondPerSecond)); // PathConstraints.unlimitedConstraints(12);
-  // new PathConstraints(
-  // TunerConstants.kSpeedAt12Volts,
-  // LinearAcceleration.ofBaseUnits(5.0, MetersPerSecondPerSecond),
-  // AngularVelocity.ofBaseUnits(755, DegreesPerSecond),
-  // AngularAcceleration.ofBaseUnits(1054, DegreesPerSecondPerSecond));
-  static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
@@ -126,17 +75,6 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
-  private Rotation2d rawGyroRotation = new Rotation2d();
-  private SwerveModulePosition[] lastModulePositions = // For delta tracking
-      new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
-      };
-  private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private final LimeLightCam limelight_a = new LimeLightCam("limelight-a", false);
   private final LimeLightCam limelight_b = new LimeLightCam("limelight-b", false);
@@ -145,49 +83,29 @@ public class Drive extends SubsystemBase {
   private final LimeLightCam[] limelights =
       new LimeLightCam[] {limelight_a, limelight_b, limelight_c};
 
-  private double PP_ROTATION_P = 5.05;
-  private double PP_ROTATION_I = 0.00;
-  private double PP_ROTATION_D = 0.00;
-  private double PP_TRANSLATION_P = 4.45;
-  private double PP_TRANSLATION_I = 0.00;
-  private double PP_TRANSLATION_D = 0.0;
+      private boolean limeLightsActive = true;
 
-  private boolean constantsChangedThisTick = false;
-  private boolean limeLightsActive = true;
+      public boolean isLimeLightsActive() {
+        return limeLightsActive;
+      }
+    
+      public void setLimeLightsActive(boolean limeLightsActive) {
+        this.limeLightsActive = limeLightsActive;
+      }
 
-  public boolean isLimeLightsActive() {
-    return limeLightsActive;
-  }
+      static final Lock odometryLock = new ReentrantLock();
 
-  public void setLimeLightsActive(boolean limeLightsActive) {
-    this.limeLightsActive = limeLightsActive;
-  }
-
-  private double sdMultiplier = 1;
-
-  public double getSdMultiplier() {
-    return sdMultiplier;
-  }
-
-  public void setSdMultiplier(double sdMultiplier) {
-    this.sdMultiplier = sdMultiplier;
-  }
-
-  private double xyStdDevCoeff = 6.85;
-  private double rStdDevCoeff = 6.85;
-  private double xyStdDev = 0.8;
-  private double rStdDev = 6.2;
-
-  // Drift mode constants
-  private static final double DRIFT_FRONT_ANGLE_DEGREES = -5.0; // 0 degrees = straight ahead
-  private static final double DRIFT_REAR_ANGLE_DEGREES = 5.0; // Slight angle for rear wheels
-  private static final double DRIFT_FRONT_SPEED_MULTIPLIER = 0.55; // Reversed at 85% power
-  private static final double DRIFT_REAR_SPEED_MULTIPLIER = 0.95; // 50% power for rear
-  private static final double DRIFT_OUTER_WHEEL_MULTIPLIER =
-      1.1; // 30% more power for outer wheels in turns
-  private static final double DRIFT_INNER_WHEEL_MULTIPLIER = 0.9; // 30% less power for inner wheels
-  private static final double DRIFT_ROTATION_THRESHOLD =
-      0.15; // Lower threshold for applying differential
+      private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Drive.getModuleTranslations());
+      private Rotation2d rawGyroRotation = new Rotation2d();
+      private SwerveModulePosition[] lastModulePositions = // For delta tracking
+          new SwerveModulePosition[] {
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition()
+          };
+      private SwerveDrivePoseEstimator poseEstimator =
+          new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   // Discretization time constant
   private static final double DISCRETIZATION_TIME_SECONDS = 0.02;
@@ -204,39 +122,13 @@ public class Drive extends SubsystemBase {
   private static final double AMBIGUITY_THRESHOLD = 0.75;
   private static final double AMBIGUITY_SECONDARY_THRESHOLD = 0.2;
 
-  // Reef positioning constantsg
+  // Reef positioning constants
   private static final double ROBOT_REEF_OFFSET_METERS = -0.3556;
   private static final double BLUE_REEF_CENTER_X = 4.5;
   private static final double RED_REEF_CENTER_X = 13.05;
   private static final double REEF_CENTER_Y = 4.025;
   private static final double REEF_CENTER_RADIUS = 1.1721;
   private static final double ELEVATOR_ANGLE_DEGREES = 40.0;
-
-  // Create and configure a drivetrain simulation configuration
-  public static final DriveTrainSimulationConfig mapleSimConfig =
-      DriveTrainSimulationConfig.Default()
-          // Specify robot mass
-          .withRobotMass(Kilograms.of(ROBOT_MASS_KG)) // Set robot mass in kg
-          // Specify gyro type (for realistic gyro drifting and error simulation)
-          .withGyro(COTS.ofPigeon2())
-          // Specify module positions
-          .withCustomModuleTranslations(getModuleTranslations())
-          // Specify swerve module (for realistic swerve dynamics)
-          .withSwerveModule(
-              new SwerveModuleSimulationConfig(
-                  DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
-                  DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
-                  TunerConstants.kDriveGearRatio, // Drive motor gear ratio.
-                  TunerConstants.kSteerGearRatio, // Steer motor gear ratio.
-                  TunerConstants.kDriveFrictionVoltage, // Drive friction voltage.
-                  TunerConstants.kSteerFrictionVoltage, // Steer friction voltage
-                  Inches.of(TunerConstants.kWheelRadius.magnitude()), // Wheel radius
-                  TunerConstants.kSteerInertia, // Steer MOI
-                  1.2)) // Wheel COF
-          // Configures the track length and track width (spacing between swerve modules)
-          .withTrackLengthTrackWidth(Inches.of(21), Inches.of(21))
-          // Configures the bumper size (dimensions of the robot bumper)
-          .withBumperSize(Inches.of(33.6), Inches.of(33.6));
 
   private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
@@ -249,10 +141,10 @@ public class Drive extends SubsystemBase {
       Consumer<Pose2d> resetSimulationPoseCallBack) {
     this.gyroIO = gyroIO;
     this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
-    modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
-    modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
-    modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
-    modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
+    modules[0] = new Module(flModuleIO, 0, DriveConstants.FrontLeft);
+    modules[1] = new Module(frModuleIO, 1, DriveConstants.FrontRight);
+    modules[2] = new Module(blModuleIO, 2, DriveConstants.BackLeft);
+    modules[3] = new Module(brModuleIO, 3, DriveConstants.BackRight);
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -267,9 +159,9 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(PP_TRANSLATION_P, PP_TRANSLATION_I, PP_TRANSLATION_D),
-            new PIDConstants(PP_ROTATION_P, PP_ROTATION_I, PP_ROTATION_D)),
-        PP_CONFIG,
+            new PIDConstants(DriveConstants.PP_TRANSLATION_P, DriveConstants.PP_TRANSLATION_I, DriveConstants.PP_TRANSLATION_D),
+            new PIDConstants(DriveConstants.PP_ROTATION_P, DriveConstants.PP_ROTATION_I, DriveConstants.PP_ROTATION_D)),
+        DriveConstants.PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
@@ -399,128 +291,25 @@ public class Drive extends SubsystemBase {
       if (result_c != null) {
         Logger.recordOutput("RealOutputs/apriltagResultC", result_c.pose);
       }
-      if (result_a != null && !shouldRejectPose(result_a) && limeLightsActive) {
-        xyStdDev =
-            xyStdDevCoeff
-                * Math.max(Math.pow(result_a.distToTag, 2.0), 0.5)
-                / result_a.tagCount
-                * Math.sqrt(result_a.ambiguity)
-                * sdMultiplier;
-        rStdDev =
-            rStdDevCoeff
-                * Math.max(Math.pow(result_a.distToTag, 2.0), 0.5)
-                / result_a.tagCount
-                * Math.sqrt(result_a.ambiguity)
-                * sdMultiplier;
 
+      if (result_a != null && !shouldRejectPose(result_a) && limeLightsActive) {
         addVisionMeasurement(
-            result_a.pose, result_a.time, VecBuilder.fill(xyStdDev, xyStdDev, rStdDev));
+            result_a.pose, result_a.time, VecBuilder.fill(DriveConstants.xyStdDev(result_a), DriveConstants.xyStdDev(result_a), DriveConstants.rStdDev(result_a)));
 
         if (result_b != null && !shouldRejectPose(result_b) && limeLightsActive) {
-          xyStdDev =
-              xyStdDevCoeff
-                  * Math.max(Math.pow(result_b.distToTag, 2.0), 0.5)
-                  / result_b.tagCount
-                  * Math.sqrt(result_b.ambiguity)
-                  * sdMultiplier;
-          rStdDev =
-              rStdDevCoeff
-                  * Math.max(Math.pow(result_b.distToTag, 2.0), 0.5)
-                  / result_b.tagCount
-                  * Math.sqrt(result_b.ambiguity)
-                  * sdMultiplier;
-
           addVisionMeasurement(
-              result_b.pose, result_b.time, VecBuilder.fill(xyStdDev, xyStdDev, rStdDev));
+              result_b.pose, result_b.time, VecBuilder.fill(DriveConstants.xyStdDev(result_b), DriveConstants.xyStdDev(result_b), DriveConstants.rStdDev(result_b)));
         }
 
         if (result_c != null && !shouldRejectPose(result_c) && limeLightsActive) {
-          xyStdDev =
-              xyStdDevCoeff
-                  * Math.max(Math.pow(result_c.distToTag, 2.0), 0.5)
-                  / result_c.tagCount
-                  * Math.sqrt(result_c.ambiguity)
-                  * sdMultiplier;
-          rStdDev =
-              rStdDevCoeff
-                  * Math.max(Math.pow(result_c.distToTag, 2.0), 0.5)
-                  / result_c.tagCount
-                  * Math.sqrt(result_c.ambiguity)
-                  * sdMultiplier;
-
           addVisionMeasurement(
-              result_c.pose, result_c.time, VecBuilder.fill(xyStdDev, xyStdDev, rStdDev));
+              result_c.pose, result_c.time, VecBuilder.fill(DriveConstants.xyStdDev(result_c), DriveConstants.xyStdDev(result_c), DriveConstants.rStdDev(result_c)));
         }
       }
 
       // Update gyro alert
       gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
-
-      updateDashboardValues();
     }
-  }
-
-  /** Updates dashboard values for tuning. */
-  private void updateDashboardValues() {
-    updatePIDValues();
-    updateVisionParameters();
-    // updatePathPlannerIfNeeded();
-  }
-
-  /** Updates PID values from the dashboard. */
-  private void updatePIDValues() {
-    // Update translation PID constants
-    PP_TRANSLATION_P = SmartDashboard.getNumber("PP_TRANSLATION_P", PP_TRANSLATION_P);
-    SmartDashboard.putNumber("PP_TRANSLATION_P", PP_TRANSLATION_P);
-
-    PP_TRANSLATION_I = SmartDashboard.getNumber("PP_TRANSLATION_I", PP_TRANSLATION_I);
-    SmartDashboard.putNumber("PP_TRANSLATION_I", PP_TRANSLATION_I);
-
-    PP_TRANSLATION_D = SmartDashboard.getNumber("PP_TRANSLATION_D", PP_TRANSLATION_D);
-    SmartDashboard.putNumber("PP_TRANSLATION_D", PP_TRANSLATION_D);
-
-    // Update rotation PID constants
-    PP_ROTATION_P = SmartDashboard.getNumber("PP_ROTATION_P", PP_ROTATION_P);
-    SmartDashboard.putNumber("PP_ROTATION_P", PP_ROTATION_P);
-
-    PP_ROTATION_I = SmartDashboard.getNumber("PP_ROTATION_I", PP_ROTATION_I);
-    SmartDashboard.putNumber("PP_ROTATION_I", PP_ROTATION_I);
-
-    PP_ROTATION_D = SmartDashboard.getNumber("PP_ROTATION_D", PP_ROTATION_D);
-    SmartDashboard.putNumber("PP_ROTATION_D", PP_ROTATION_D);
-
-    // Mark that constants have changed
-    constantsChangedThisTick = true;
-  }
-
-  /** Updates vision parameters from the dashboard. */
-  private void updateVisionParameters() {
-    xyStdDevCoeff = SmartDashboard.getNumber("xyStdDevCoeff", xyStdDevCoeff);
-    SmartDashboard.putNumber("xyStdDevCoeff", xyStdDevCoeff);
-
-    rStdDevCoeff = SmartDashboard.getNumber("rStdDevCoeff", rStdDevCoeff);
-    SmartDashboard.putNumber("rStdDevCoeff", rStdDevCoeff);
-  }
-
-  /** Updates PathPlanner if PID constants have changed. */
-  private void updatePathPlannerIfNeeded() {
-    if (!constantsChangedThisTick) {
-      return;
-    }
-
-    AutoBuilder.configure(
-        this::getPose,
-        this::setPose,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(PP_TRANSLATION_P, PP_TRANSLATION_I, PP_TRANSLATION_D),
-            new PIDConstants(PP_ROTATION_P, PP_ROTATION_I, PP_ROTATION_D)),
-        PP_CONFIG,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
-
-    constantsChangedThisTick = false;
   }
 
   /**
@@ -539,7 +328,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
 
     // Enforce velocity limits
-    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, DriveConstants.kSpeedAt12Volts);
 
     // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
@@ -608,114 +397,6 @@ public class Drive extends SubsystemBase {
     // Otherwise, use the desired state but target the exact angle
     return new SwerveModuleState(
         desiredState.speedMetersPerSecond, Rotation2d.fromDegrees(targetAngle));
-  }
-
-  /**
-   * Applies drift mode adjustments to setpoint states for realistic drifting behavior. Configures
-   * wheel angles and speeds based on physics principles of drifting vehicles.
-   *
-   * @param setpointStates The module states to modify
-   * @param rotationInput The current rotation input (-1 to 1)
-   */
-  private void applyDriftModeAdjustments(SwerveModuleState[] setpointStates, double rotationInput) {
-    if (!RobotContainer.isDriftModeActive) {
-      return;
-    }
-
-    // Adjust based on rotation input (turning left/right)
-    boolean turningLeft = rotationInput > DRIFT_ROTATION_THRESHOLD;
-    boolean turningRight = rotationInput < -DRIFT_ROTATION_THRESHOLD;
-    boolean hardTurn = Math.abs(rotationInput) > 0.7;
-
-    // Determine front/rear module indices
-    int frontLeft = 0;
-    int frontRight = 1;
-    int rearLeft = 2;
-    int rearRight = 3;
-
-    // Calculate dynamic angles based on turn intensity
-    double frontAngleOffset = hardTurn ? 0.0 : 0.0;
-    double rearAngleBase = DRIFT_REAR_ANGLE_DEGREES;
-
-    // Front wheels - Dynamic steering angle based on turn direction
-    if (turningLeft) {
-      // When turning left: point left wheel more inward, right wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    } else if (turningRight) {
-      // When turning right: point right wheel more inward, left wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    } else {
-      // Going straight: normal angles
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    }
-
-    // Rear wheels - Point slightly outward for stability, with dynamic adjustment
-    // for turning
-    if (turningLeft) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 1.2); // Exaggerate inside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 0.8); // Reduce outside rear
-    } else if (turningRight) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 0.8); // Reduce outside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 1.2); // Exaggerate inside rear
-    } else {
-      // Balanced for straight driving
-      setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase);
-      setpointStates[rearRight].angle = Rotation2d.fromDegrees(rearAngleBase);
-    }
-
-    // Apply power distribution
-    // Front wheels - always reversed for drift (pulling back)
-    double frontSpeedBase = DRIFT_FRONT_SPEED_MULTIPLIER;
-    if (turningLeft) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DRIFT_INNER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DRIFT_OUTER_WHEEL_MULTIPLIER;
-    } else if (turningRight) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DRIFT_OUTER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DRIFT_INNER_WHEEL_MULTIPLIER;
-    } else {
-      setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase;
-      setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase;
-    }
-
-    // Rear wheels - reduced power (pushing forward)
-    double rearSpeedBase = DRIFT_REAR_SPEED_MULTIPLIER;
-    // Apply more pronounced differential in hard turns
-    double innerMultiplier =
-        hardTurn ? DRIFT_INNER_WHEEL_MULTIPLIER * 0.8 : DRIFT_INNER_WHEEL_MULTIPLIER;
-    double outerMultiplier =
-        hardTurn ? DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2 : DRIFT_OUTER_WHEEL_MULTIPLIER;
-
-    // if (turningLeft) {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
-    // innerMultiplier;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
-    // outerMultiplier;
-    // } else if (turningRight) {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
-    // outerMultiplier;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
-    // innerMultiplier;
-    // } else {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase;
-    // }
   }
 
   /**
@@ -831,21 +512,21 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    return DriveConstants.kSpeedAt12Volts.in(MetersPerSecond);
   }
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+    return getMaxLinearSpeedMetersPerSec() / DriveConstants.DRIVE_BASE_RADIUS;
   }
 
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-      new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-      new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-      new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+      new Translation2d(DriveConstants.FrontLeft.LocationX, DriveConstants.FrontLeft.LocationY),
+      new Translation2d(DriveConstants.FrontRight.LocationX, DriveConstants.FrontRight.LocationY),
+      new Translation2d(DriveConstants.BackLeft.LocationX, DriveConstants.BackLeft.LocationY),
+      new Translation2d(DriveConstants.BackRight.LocationX, DriveConstants.BackRight.LocationY)
     };
   }
 
@@ -909,49 +590,49 @@ public class Drive extends SubsystemBase {
         || pose.getY() > FIELD_HEIGHT_METERS + FIELD_BORDER_MARGIN_METERS;
   }
 
-  /** Checks if the vision correction would be too large. */
-  private boolean isPoseCorrectionTooLarge(AprilTagResult result) {
-    if (result.ambiguity <= AMBIGUITY_SECONDARY_THRESHOLD) {
-      return false;
-    }
+  // /** Checks if the vision correction would be too large. */
+  // private boolean isPoseCorrectionTooLarge(AprilTagResult result) {
+  //   if (result.ambiguity <= AMBIGUITY_SECONDARY_THRESHOLD) {
+  //     return false;
+  //   }
 
-    // // compare x and y values and total offset instead of distance vector
-    // double currentDistance = Math.hypot(getPose().getTranslation().getX(),
-    // getPose().getTranslation().getY());
+  //   // // compare x and y values and total offset instead of distance vector
+  //   // double currentDistance = Math.hypot(getPose().getTranslation().getX(),
+  //   // getPose().getTranslation().getY());
 
-    // double visionDistance = Math.hypot(result.pose.getX(), result.pose.getY());
+  //   // double visionDistance = Math.hypot(result.pose.getX(), result.pose.getY());
 
-    double offsetDistance =
-        Math.hypot(
-            getPose().getTranslation().getX() - result.pose.getX(),
-            getPose().getTranslation().getY() - result.pose.getY());
+  //   double offsetDistance =
+  //       Math.hypot(
+  //           getPose().getTranslation().getX() - result.pose.getX(),
+  //           getPose().getTranslation().getY() - result.pose.getY());
 
-    return offsetDistance > MAX_VISION_CORRECTION_METERS;
-  }
+  //   return offsetDistance > MAX_VISION_CORRECTION_METERS;
+  // }
 
-  /** Checks if the tag detection is unreliable based on ambiguity and distance. */
-  private boolean isTagDetectionUnreliable(AprilTagResult result) {
-    // High ambiguity is always bad
-    if (result.ambiguity > AMBIGUITY_THRESHOLD) {
-      return true;
-    }
+  // /** Checks if the tag detection is unreliable based on ambiguity and distance. */
+  // private boolean isTagDetectionUnreliable(AprilTagResult result) {
+  //   // High ambiguity is always bad
+  //   if (result.ambiguity > AMBIGUITY_THRESHOLD) {
+  //     return true;
+  //   }
 
-    // Only enabled robots care about distance and ambiguity
-    if (DriverStation.isEnabled()) {
-      // Tag too far with some ambiguity
-      if (result.distToTag > MAX_TAG_DISTANCE_METERS
-          && result.ambiguity > AMBIGUITY_SECONDARY_THRESHOLD) {
-        return true;
-      }
+  //   // Only enabled robots care about distance and ambiguity
+  //   if (DriverStation.isEnabled()) {
+  //     // Tag too far with some ambiguity
+  //     if (result.distToTag > MAX_TAG_DISTANCE_METERS
+  //         && result.ambiguity > AMBIGUITY_SECONDARY_THRESHOLD) {
+  //       return true;
+  //     }
 
-      // Tag too close
-      if (result.distToTag < MIN_TAG_DISTANCE_METERS) {
-        return true;
-      }
-    }
+  //     // Tag too close
+  //     if (result.distToTag < MIN_TAG_DISTANCE_METERS) {
+  //       return true;
+  //     }
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   /**
    * Converts wheel rotations to meters.
@@ -960,7 +641,7 @@ public class Drive extends SubsystemBase {
    * @return The equivalent distance in meters
    */
   public static double rotationsToMeters(double wheelRotations) {
-    return wheelRotations * TunerConstants.FrontLeft.WheelRadius * 2 * Math.PI;
+    return wheelRotations * DriveConstants.FrontLeft.WheelRadius * 2 * Math.PI;
   }
 
   /**
@@ -996,6 +677,114 @@ public class Drive extends SubsystemBase {
   public double getElevatorHeight() {
     // Use trigonometry to calculate height based on distance
     return distanceFromReefEdge() * (1 / Rotation2d.fromDegrees(ELEVATOR_ANGLE_DEGREES).getTan());
+  }
+
+  /**
+   * Applies drift mode adjustments to setpoint states for realistic drifting behavior. Configures
+   * wheel angles and speeds based on physics principles of drifting vehicles.
+   *
+   * @param setpointStates The module states to modify
+   * @param rotationInput The current rotation input (-1 to 1)
+   */
+  private void applyDriftModeAdjustments(SwerveModuleState[] setpointStates, double rotationInput) {
+    if (!RobotContainer.isDriftModeActive) {
+      return;
+    }
+
+    // Adjust based on rotation input (turning left/right)
+    boolean turningLeft = rotationInput > DriveConstants.DRIFT_ROTATION_THRESHOLD;
+    boolean turningRight = rotationInput < -DriveConstants.DRIFT_ROTATION_THRESHOLD;
+    boolean hardTurn = Math.abs(rotationInput) > 0.7;
+
+    // Determine front/rear module indices
+    int frontLeft = 0;
+    int frontRight = 1;
+    int rearLeft = 2;
+    int rearRight = 3;
+
+    // Calculate dynamic angles based on turn intensity
+    double frontAngleOffset = hardTurn ? 0.0 : 0.0;
+    double rearAngleBase = DriveConstants.DRIFT_REAR_ANGLE_DEGREES;
+
+    // Front wheels - Dynamic steering angle based on turn direction
+    if (turningLeft) {
+      // When turning left: point left wheel more inward, right wheel less
+      setpointStates[frontLeft].angle =
+          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle =
+          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+    } else if (turningRight) {
+      // When turning right: point right wheel more inward, left wheel less
+      setpointStates[frontLeft].angle =
+          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle =
+          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+    } else {
+      // Going straight: normal angles
+      setpointStates[frontLeft].angle =
+          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle =
+          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+    }
+
+    // Rear wheels - Point slightly outward for stability, with dynamic adjustment
+    // for turning
+    if (turningLeft) {
+      setpointStates[rearLeft].angle =
+          Rotation2d.fromDegrees(-rearAngleBase * 1.2); // Exaggerate inside rear
+      setpointStates[rearRight].angle =
+          Rotation2d.fromDegrees(rearAngleBase * 0.8); // Reduce outside rear
+    } else if (turningRight) {
+      setpointStates[rearLeft].angle =
+          Rotation2d.fromDegrees(-rearAngleBase * 0.8); // Reduce outside rear
+      setpointStates[rearRight].angle =
+          Rotation2d.fromDegrees(rearAngleBase * 1.2); // Exaggerate inside rear
+    } else {
+      // Balanced for straight driving
+      setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase);
+      setpointStates[rearRight].angle = Rotation2d.fromDegrees(rearAngleBase);
+    }
+
+    // Apply power distribution
+    // Front wheels - always reversed for drift (pulling back)
+    double frontSpeedBase = DriveConstants.DRIFT_FRONT_SPEED_MULTIPLIER;
+    if (turningLeft) {
+      setpointStates[frontLeft].speedMetersPerSecond *=
+          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+      setpointStates[frontRight].speedMetersPerSecond *=
+          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+    } else if (turningRight) {
+      setpointStates[frontLeft].speedMetersPerSecond *=
+          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+      setpointStates[frontRight].speedMetersPerSecond *=
+          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+    } else {
+      setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase;
+      setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase;
+    }
+
+    // Rear wheels - reduced power (pushing forward)
+    double rearSpeedBase = DriveConstants.DRIFT_REAR_SPEED_MULTIPLIER;
+    // Apply more pronounced differential in hard turns
+    double innerMultiplier =
+        hardTurn ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8 : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+    double outerMultiplier =
+        hardTurn ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2 : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+
+    // if (turningLeft) {
+    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
+    // innerMultiplier;
+    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
+    // outerMultiplier;
+    // } else if (turningRight) {
+    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
+    // outerMultiplier;
+    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
+    // innerMultiplier;
+    // } else {
+    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase;
+    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase;
+    // }
   }
 
   /**

@@ -27,7 +27,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.drive.DriveConstants;
+
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -138,19 +139,19 @@ public class PhoenixUtil {
         // Adjust steer motor PID gains for simulation
         .withSteerMotorGains(
             new Slot0Configs()
-                .withKP(TunerConstants.kSteerP)
-                .withKI(TunerConstants.kSteerI)
-                .withKD(TunerConstants.kSteerD)
-                .withKS(TunerConstants.kSteerS)
-                .withKV(TunerConstants.kSteerV)
-                .withKA(TunerConstants.kSteerA)
-                .withStaticFeedforwardSign(TunerConstants.kStaticFeedforwardSign))
-        .withSteerMotorGearRatio(TunerConstants.kSteerGearRatio)
+                .withKP(DriveConstants.kSteerP)
+                .withKI(DriveConstants.kSteerI)
+                .withKD(DriveConstants.kSteerD)
+                .withKS(DriveConstants.kSteerS)
+                .withKV(DriveConstants.kSteerV)
+                .withKA(DriveConstants.kSteerA)
+                .withStaticFeedforwardSign(DriveConstants.kStaticFeedforwardSign))
+        .withSteerMotorGearRatio(DriveConstants.kSteerGearRatio)
         // Adjust friction voltages
-        .withDriveFrictionVoltage(TunerConstants.kDriveFrictionVoltage)
-        .withSteerFrictionVoltage(TunerConstants.kSteerFrictionVoltage)
+        .withDriveFrictionVoltage(DriveConstants.kDriveFrictionVoltage)
+        .withSteerFrictionVoltage(DriveConstants.kSteerFrictionVoltage)
         // Adjust steer inertia
-        .withSteerInertia(TunerConstants.kSteerInertia);
+        .withSteerInertia(DriveConstants.kSteerInertia);
   }
 
   public static String converted =
