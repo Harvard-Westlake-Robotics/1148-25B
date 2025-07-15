@@ -117,10 +117,10 @@ public final class Constants {
           0.3,
           0.0,
           0.0,
-          -1,
-          -1,
-          -1,
-          -1,
+          2,
+          3,
+          4,
+          5,
           0.55,
           0.005,
           99999.0,
@@ -288,6 +288,7 @@ public final class Constants {
     public static final double kS = 0.1;
     public static final double kV = 0.0;
     public static final double kA = 0.0;
+    public static final double hangVelocity = 6;
     public static final double rotationsToMetersRatio = (1);
   }
 }

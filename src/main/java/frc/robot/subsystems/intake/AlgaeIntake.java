@@ -14,12 +14,8 @@ public class AlgaeIntake extends SubsystemBase {
   private static AlgaeIntake instance;
   private Boolean hasAlgae = false;
 
-  public Boolean getHasAlgae() {
+  public Boolean hasAlgae() {
     return hasAlgae;
-  }
-
-  public void setHasAlgae(Boolean hasAlgae) {
-    this.hasAlgae = hasAlgae;
   }
 
   public static AlgaeIntake getInstance() {
@@ -32,7 +28,7 @@ public class AlgaeIntake extends SubsystemBase {
   public AlgaeIntake() {
     this.constants = Constants.AlgaeIntake;
     this.key = "RealOutputs/Algae Intake";
-    io = new IntakeIOTalonFX(constants);
+    io = new IntakeIOTalonFX(constants, 1);
   }
 
   public IntakeConstants getConstants() {

@@ -14,7 +14,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class CoralIntake extends SubsystemBase {
   private IntakeIOTalonFX io;
+  private IntakeIOTalonFX io2;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+  private final IntakeIOInputsAutoLogged inputs2 = new IntakeIOInputsAutoLogged();
   private IntakeConstants constants;
   private String key;
   private static CoralIntake instance;
@@ -31,7 +33,8 @@ public class CoralIntake extends SubsystemBase {
   public CoralIntake() {
     this.constants = Constants.CoralIntake;
     this.key = "RealOutputs/Coral Intake";
-    io = new IntakeIOTalonFX(constants);
+    io = new IntakeIOTalonFX(constants, 1);
+    io2 = new IntakeIOTalonFX(constants, 2);
     sysId =
         new SysIdRoutine(
             new Config(
@@ -52,8 +55,10 @@ public class CoralIntake extends SubsystemBase {
     Logger.recordOutput("Sensor 3", getSensor3());
     Logger.recordOutput("Sensor 4", getSensor4());
     io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
-    if ((getSensor4() && getSensor2()) && (!getSensor1() && !getSensor3())) {
+    io2.updateInputs(inputs2);
+    Logger.processInputs(key + "/Motor1", inputs);
+    Logger.processInputs(key + "/Motor2", inputs2);
+    if (getSensor4() && getSensor2()) {
       hasCoral = true;
     } else {
       hasCoral = false;
@@ -62,10 +67,22 @@ public class CoralIntake extends SubsystemBase {
 
   public void setVelocity(LinearVelocity velocity) {
     io.runVelocity(velocity);
+    io2.runVelocity(velocity.times(-1));
+  }
+
+  public void setVelocityShift(LinearVelocity velocity) {
+    io.runVelocity(velocity);
+    io2.runVelocity(velocity);
   }
 
   public void runVoltage(double volts) {
     io.runCharacterization(volts);
+    io2.runCharacterization(-volts);
+  }
+
+  public void setVoltageShift(double volts) {
+    io.runCharacterization(volts);
+    io2.runCharacterization(volts);
   }
 
   public Boolean getSensor1() {

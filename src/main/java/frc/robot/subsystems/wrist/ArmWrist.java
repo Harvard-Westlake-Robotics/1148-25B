@@ -25,7 +25,7 @@ public class ArmWrist extends SubsystemBase {
 
   public ArmWrist() {
     this.constants = Constants.ArmWrist;
-    this.key = "Arm Wrist";
+    this.key = "RealOutputs/Arm Wrist";
     io1 = new WristIOTalonFX(constants, 1);
     io2 = new WristIOTalonFX(constants, 2);
     io3 = new WristIOTalonFX(constants, 3);

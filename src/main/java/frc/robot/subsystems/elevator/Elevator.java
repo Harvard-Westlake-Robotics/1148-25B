@@ -32,13 +32,14 @@ public class Elevator extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Elevator/SysIdState", state.toString())),
+                (state) ->
+                    Logger.recordOutput("RealOutputs/Elevator/SysIdState", state.toString())),
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("RealOutputs/Elevator", inputs);
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
       io.zeroMotors();
     }

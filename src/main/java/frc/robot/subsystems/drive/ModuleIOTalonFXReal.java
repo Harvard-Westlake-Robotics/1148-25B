@@ -30,6 +30,7 @@ public class ModuleIOTalonFXReal extends ModuleIOTalonFX {
   private final Queue<Double> drivePositionQueue;
   private final Queue<Double> turnPositionQueue;
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public ModuleIOTalonFXReal(SwerveModuleConstants constants) {
     super(constants);
 

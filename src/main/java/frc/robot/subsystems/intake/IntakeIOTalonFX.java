@@ -46,9 +46,9 @@ public class IntakeIOTalonFX implements IntakeIO {
   // Connection debouncers
   private final Debouncer motorConnectedDebounce = new Debouncer(0.5);
 
-  public IntakeIOTalonFX(IntakeConstants intakeConstants) {
+  public IntakeIOTalonFX(IntakeConstants intakeConstants, int motorNum) {
     this.intakeConstants = intakeConstants;
-    intakeMotor = new TalonFX(intakeConstants.motorId);
+    intakeMotor = new TalonFX(intakeConstants.motorId + motorNum - 1);
     intakeMotor.setPosition(0);
     intakeController =
         new MotionMagicVelocityTorqueCurrentFOC(
@@ -81,15 +81,21 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorAppliedVolts = intakeMotor.getMotorVoltage();
     motorCurrent = intakeMotor.getStatorCurrent();
 
-    this.input1 =
-        intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "drive") : null;
-    this.input2 =
-        intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "drive") : null;
-    this.input3 =
-        intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "drive") : null;
-    this.input4 =
-        intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "drive") : null;
-
+    if (motorNum == 1) {
+      this.input1 =
+          intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "drive") : null;
+      this.input2 =
+          intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "drive") : null;
+      this.input3 =
+          intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "drive") : null;
+      this.input4 =
+          intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "drive") : null;
+    } else {
+      this.input1 = null;
+      this.input2 = null;
+      this.input3 = null;
+      this.input4 = null;
+    }
     intakeFeedforward =
         new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kA, intakeConstants.kV);
   }

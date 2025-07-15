@@ -23,7 +23,7 @@ public class IntakeWrist extends SubsystemBase {
 
   public IntakeWrist() {
     this.constants = Constants.ArmWrist;
-    this.key = "Intake Wrist";
+    this.key = "RealOutputs/Intake Wrist";
     io1 = new WristIOTalonFX(constants, 1);
     io2 = new WristIOTalonFX(constants, 2);
   }

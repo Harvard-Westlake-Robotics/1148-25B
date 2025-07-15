@@ -27,6 +27,7 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
   private final SwerveModuleSimulation simulation;
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public ModuleIOTalonFXSim(SwerveModuleConstants constants, SwerveModuleSimulation simulation) {
     super(PhoenixUtil.regulateModuleConstantForSimulation(constants));
 

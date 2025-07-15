@@ -26,7 +26,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlgaeIntakeCommand;
+import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.HangCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -66,6 +70,14 @@ public class RobotContainer {
   private final CoralIntake coralIntake;
   private final AlgaeIntake algaeIntake;
   private final Hang hang;
+
+  // Commands
+  public static ElevatorCommand elevatorCommand;
+  public static AlgaeIntakeCommand algaeIntakeCommand;
+  public static CoralIntakeCommand coralIntakeCommand;
+  public static HangCommand hangCommand;
+
+  // Max's Shenanigans
   public static boolean isDriftModeActive = false;
 
   // Controller
@@ -178,6 +190,16 @@ public class RobotContainer {
     preAutoChooser.addDefaultOption("None", Commands.none());
     preAutoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
     SmartDashboard.putData("Pre Auto Chooser", preAutoChooser.getSendableChooser());
+
+    // Define Commands:
+    elevatorCommand = new ElevatorCommand();
+    elevator.setDefaultCommand(elevatorCommand);
+    coralIntakeCommand = new CoralIntakeCommand();
+    coralIntake.setDefaultCommand(coralIntakeCommand);
+    algaeIntakeCommand = new AlgaeIntakeCommand();
+    algaeIntake.setDefaultCommand(algaeIntakeCommand);
+    hangCommand = new HangCommand();
+    hang.setDefaultCommand(hangCommand);
   }
 
   /**
