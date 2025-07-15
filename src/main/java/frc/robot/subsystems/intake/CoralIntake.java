@@ -32,7 +32,7 @@ public class CoralIntake extends SubsystemBase {
 
   public CoralIntake() {
     this.constants = Constants.CoralIntake;
-    this.key = "RealOutputs/Coral Intake";
+    this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);
     sysId =

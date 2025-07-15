@@ -14,6 +14,7 @@ public class Elevator extends SubsystemBase {
   private ElevatorIO io;
   private static Elevator instance = null;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private String key;
   private DigitalInput dio = new DigitalInput(5);
   SysIdRoutine sysId;
 
@@ -26,20 +27,20 @@ public class Elevator extends SubsystemBase {
 
   private Elevator() {
     io = new ElevatorIOTalonFX();
+    this.key = "Elevator";
     sysId =
         new SysIdRoutine(
             new Config(
                 null,
                 null,
                 null,
-                (state) ->
-                    Logger.recordOutput("RealOutputs/Elevator/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("RealOutputs/Elevator", inputs);
+    Logger.processInputs(key, inputs);
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
       io.zeroMotors();
     }

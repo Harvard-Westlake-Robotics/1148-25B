@@ -27,7 +27,7 @@ public class AlgaeIntake extends SubsystemBase {
 
   public AlgaeIntake() {
     this.constants = Constants.AlgaeIntake;
-    this.key = "RealOutputs/Algae Intake";
+    this.key = "Algae Intake";
     io = new IntakeIOTalonFX(constants, 1);
   }
 
