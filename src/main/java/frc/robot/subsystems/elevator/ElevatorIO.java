@@ -28,10 +28,6 @@ public interface ElevatorIO {
 
   public default void zeroMotors() {}
 
-  public default void setIsOverriding(boolean isOverriding) {}
-
-  public default void setHeightClosedLoopOverride(double velocity) {}
-
   public default void runCharacterization(double voltage) {}
 
   public default double getTarget() {

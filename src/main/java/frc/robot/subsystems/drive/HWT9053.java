@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.littletonrobotics.junction.Logger;
 
+// A class writen for the HWT9053 IMU gyroscope. We currently use a pigeon, but this class exists in case we need to switch
 public class HWT9053 implements GyroIO {
 
   private SerialPort serialPort;

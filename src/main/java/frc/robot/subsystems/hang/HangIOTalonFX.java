@@ -16,7 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class HangIOTalonFX implements HangIO {
   private TalonFX hangMotor;
@@ -43,8 +43,10 @@ public class HangIOTalonFX implements HangIO {
             AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
 
     TalonFXConfiguration hangConfig = new TalonFXConfiguration();
+
     hangConfig.MotorOutput.Inverted = Constants.Hang.motorInverted;
     hangConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     hangConfig.Slot0.kP = Constants.Hang.kP;
     hangConfig.Slot0.kI = Constants.Hang.kI;
     hangConfig.Slot0.kD = Constants.Hang.kD;

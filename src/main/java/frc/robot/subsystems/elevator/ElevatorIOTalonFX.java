@@ -10,7 +10,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   // Motors and elevator controllers
@@ -48,23 +48,27 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevator2Config.MotorOutput.Inverted = Constants.Elevator.elevator2Inverted;
 
     elevator1Config.MotionMagic.MotionMagicAcceleration = 390;
-    elevator2Config.MotionMagic.MotionMagicAcceleration = 390;
     elevator1Config.MotionMagic.MotionMagicCruiseVelocity = 250;
-    elevator2Config.MotionMagic.MotionMagicCruiseVelocity = 250;
     elevator1Config.MotionMagic.MotionMagicJerk = 990;
+
+    elevator2Config.MotionMagic.MotionMagicAcceleration = 390;
+    elevator2Config.MotionMagic.MotionMagicCruiseVelocity = 250;
     elevator2Config.MotionMagic.MotionMagicJerk = 990;
+
     elevator1Config.Slot0.kP = Constants.Elevator.kP;
     elevator1Config.Slot0.kI = Constants.Elevator.kI;
     elevator1Config.Slot0.kD = Constants.Elevator.kD;
     elevator1Config.Slot0.kG = Constants.Elevator.kG;
     elevator1Config.Slot0.kA = Constants.Elevator.kA;
     elevator1Config.Slot0.kV = Constants.Elevator.kV;
+
     elevator2Config.Slot0.kP = Constants.Elevator.kP;
     elevator2Config.Slot0.kI = Constants.Elevator.kI;
     elevator2Config.Slot0.kD = Constants.Elevator.kD;
     elevator2Config.Slot0.kG = Constants.Elevator.kG;
     elevator2Config.Slot0.kA = Constants.Elevator.kA;
     elevator2Config.Slot0.kV = Constants.Elevator.kV;
+
     elevator1Config.CurrentLimits.StatorCurrentLimitEnable = true;
     elevator1Config.CurrentLimits.StatorCurrentLimit = 120;
     elevator1Config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -131,19 +135,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setHeightClosedLoop(double meters) {
-    // double voltage =
-    // elevatorFeedforward.calculate(motor1Velocity.getValueAsDouble());
-    // elevatorController.FeedForward = voltage;
-    elevatorController.Position = meters; // / Constants.Elevator.rotationsToMetersRatio;
-    elevator2Controller.Position = meters; // / Constants.Elevator.rotationsToMetersRatio;
-    elevatorController.FeedForward = elevatorFeedforward.calculate(0);
-    elevatorController.FeedForward = elevatorFeedforward.calculate(0);
-    elevator1.setControl(elevatorController);
-    elevator2.setControl(elevator2Controller);
-  }
-
-  @Override
-  public void setHeightClosedLoopOverride(double meters) {
     // double voltage =
     // elevatorFeedforward.calculate(motor1Velocity.getValueAsDouble());
     // elevatorController.FeedForward = voltage;

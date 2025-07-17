@@ -13,8 +13,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
-import frc.robot.Constants.WristConstants;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.WristConstants;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers

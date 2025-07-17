@@ -17,6 +17,8 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.constants.Constants.DriveConstants;
+
 import java.util.Queue;
 
 /** IO implementation for NavX. */

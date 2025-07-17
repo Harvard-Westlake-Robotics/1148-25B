@@ -18,8 +18,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.IntakeConstants;
 
 public class IntakeIOTalonFX implements IntakeIO {
   private final IntakeConstants intakeConstants;
@@ -55,11 +55,13 @@ public class IntakeIOTalonFX implements IntakeIO {
             AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
     intakePositionController = new MotionMagicVoltage(0.0).withSlot(1).withEnableFOC(true);
     TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
+
     intakeConfig.MotorOutput.Inverted = intakeConstants.motorInverted;
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeConfig.MotionMagic.MotionMagicAcceleration = intakeConstants.ANGLE_MAX_ACCELERATION;
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = intakeConstants.ANGLE_MAX_VELOCITY;
     intakeConfig.MotionMagic.MotionMagicJerk = 0;
+
     intakeConfig.Slot0.kP = intakeConstants.kP;
     intakeConfig.Slot0.kI = intakeConstants.kI;
     intakeConfig.Slot0.kD = intakeConstants.kD;
@@ -68,6 +70,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     intakeConfig.Slot0.kV = intakeConstants.kV;
     intakeConfig.Slot1.kP = intakeConstants.positionkP;
     intakeConfig.Slot1.kD = intakeConstants.positionkP;
+
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     intakeConfig.CurrentLimits.StatorCurrentLimit = 120;
     intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;

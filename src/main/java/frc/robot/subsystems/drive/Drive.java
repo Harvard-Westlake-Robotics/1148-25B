@@ -45,9 +45,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Camera.BaseCam.AprilTagResult;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.DriveConstants;
+import frc.robot.constants.Constants.Mode;
+import frc.robot.constants.FieldConstants;
 import frc.robot.Camera.LimeLightCam;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.RobotContainer;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -105,10 +107,7 @@ public class Drive extends SubsystemBase {
   // Discretization time constant
   private static final double DISCRETIZATION_TIME_SECONDS = 0.02;
 
-  // Field dimensions and vision constants
-  private static final double FIELD_WIDTH_METERS = 16.54;
-  private static final double FIELD_HEIGHT_METERS = 8.02;
-  private static final double FIELD_BORDER_MARGIN_METERS = 0.05;
+  // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
   // private static final double MAX_VISION_CORRECTION_METERS = 5.0;
   // private static final double MAX_TAG_DISTANCE_METERS = 2.5;
@@ -118,12 +117,6 @@ public class Drive extends SubsystemBase {
   // private static final double AMBIGUITY_THRESHOLD = 0.75;
   // private static final double AMBIGUITY_SECONDARY_THRESHOLD = 0.2;
 
-  // Reef positioning constants
-  private static final double ROBOT_REEF_OFFSET_METERS = -0.3556;
-  private static final double BLUE_REEF_CENTER_X = 4.5;
-  private static final double RED_REEF_CENTER_X = 13.05;
-  private static final double REEF_CENTER_Y = 4.025;
-  private static final double REEF_CENTER_RADIUS = 1.1721;
   private static final double ELEVATOR_ANGLE_DEGREES = 40.0;
 
   private final Consumer<Pose2d> resetSimulationPoseCallBack;
@@ -601,55 +594,11 @@ public class Drive extends SubsystemBase {
 
   /** Checks if a pose is outside the field boundaries. */
   private boolean isOutsideFieldBounds(Pose2d pose) {
-    return pose.getX() < -FIELD_BORDER_MARGIN_METERS
-        || pose.getX() > FIELD_WIDTH_METERS + FIELD_BORDER_MARGIN_METERS
-        || pose.getY() < -FIELD_BORDER_MARGIN_METERS
-        || pose.getY() > FIELD_HEIGHT_METERS + FIELD_BORDER_MARGIN_METERS;
+    return pose.getX() < -FieldConstants.FIELD_BORDER_MARGIN_METERS
+        || pose.getX() > FieldConstants.FIELD_WIDTH_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS
+        || pose.getY() < -FieldConstants.FIELD_BORDER_MARGIN_METERS
+        || pose.getY() > FieldConstants.FIELD_HEIGHT_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS;
   }
-
-  // /** Checks if the vision correction would be too large. */
-  // private boolean isPoseCorrectionTooLarge(AprilTagResult result) {
-  //   if (result.ambiguity <= AMBIGUITY_SECONDARY_THRESHOLD) {
-  //     return false;
-  //   }
-
-  //   // // compare x and y values and total offset instead of distance vector
-  //   // double currentDistance = Math.hypot(getPose().getTranslation().getX(),
-  //   // getPose().getTranslation().getY());
-
-  //   // double visionDistance = Math.hypot(result.pose.getX(), result.pose.getY());
-
-  //   double offsetDistance =
-  //       Math.hypot(
-  //           getPose().getTranslation().getX() - result.pose.getX(),
-  //           getPose().getTranslation().getY() - result.pose.getY());
-
-  //   return offsetDistance > MAX_VISION_CORRECTION_METERS;
-  // }
-
-  // /** Checks if the tag detection is unreliable based on ambiguity and distance. */
-  // private boolean isTagDetectionUnreliable(AprilTagResult result) {
-  //   // High ambiguity is always bad
-  //   if (result.ambiguity > AMBIGUITY_THRESHOLD) {
-  //     return true;
-  //   }
-
-  //   // Only enabled robots care about distance and ambiguity
-  //   if (DriverStation.isEnabled()) {
-  //     // Tag too far with some ambiguity
-  //     if (result.distToTag > MAX_TAG_DISTANCE_METERS
-  //         && result.ambiguity > AMBIGUITY_SECONDARY_THRESHOLD) {
-  //       return true;
-  //     }
-
-  //     // Tag too close
-  //     if (result.distToTag < MIN_TAG_DISTANCE_METERS) {
-  //       return true;
-  //     }
-  //   }
-
-  //   return false;
-  // }
 
   /**
    * Converts wheel rotations to meters.
@@ -671,19 +620,19 @@ public class Drive extends SubsystemBase {
     Translation2d robotTranslation =
         getPose()
             .getTranslation()
-            .plus(new Translation2d(ROBOT_REEF_OFFSET_METERS, getPose().getRotation()));
+            .plus(new Translation2d(FieldConstants.ROBOT_REEF_OFFSET_METERS, getPose().getRotation()));
 
     // Determine reef center based on alliance
     double reefCenterX =
         DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-            ? BLUE_REEF_CENTER_X
-            : RED_REEF_CENTER_X;
+            ? FieldConstants.BLUE_REEF_CENTER_X
+            : FieldConstants.RED_REEF_CENTER_X;
 
     // Calculate distance to reef center and subtract reef radius
     double distToReefCenter =
-        robotTranslation.getDistance(new Translation2d(reefCenterX, REEF_CENTER_Y));
+        robotTranslation.getDistance(new Translation2d(reefCenterX, FieldConstants.REEF_CENTER_Y));
 
-    return distToReefCenter - REEF_CENTER_RADIUS;
+    return distToReefCenter - FieldConstants.REEF_CENTER_RADIUS;
   }
 
   /**
@@ -791,21 +740,6 @@ public class Drive extends SubsystemBase {
         hardTurn
             ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2
             : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
-
-    // if (turningLeft) {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
-    // innerMultiplier;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
-    // outerMultiplier;
-    // } else if (turningRight) {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase *
-    // outerMultiplier;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase *
-    // innerMultiplier;
-    // } else {
-    // setpointStates[rearLeft].speedMetersPerSecond *= rearSpeedBase;
-    // setpointStates[rearRight].speedMetersPerSecond *= rearSpeedBase;
-    // }
   }
 
   /**

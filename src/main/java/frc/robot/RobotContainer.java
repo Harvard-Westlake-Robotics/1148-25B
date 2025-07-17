@@ -31,8 +31,9 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.HangCommand;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.GyroIOSim;
@@ -180,6 +181,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysID (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    autoChooser.addOption(
+          "Elevator SysId (Quasistatic Forward)",
+          elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+          "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
     // Configure the button bindings
     configureButtonBindings();
     try {
@@ -190,16 +197,6 @@ public class RobotContainer {
     preAutoChooser.addDefaultOption("None", Commands.none());
     preAutoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
     SmartDashboard.putData("Pre Auto Chooser", preAutoChooser.getSendableChooser());
-
-    // Define Commands:
-    elevatorCommand = new ElevatorCommand();
-    elevator.setDefaultCommand(elevatorCommand);
-    coralIntakeCommand = new CoralIntakeCommand();
-    coralIntake.setDefaultCommand(coralIntakeCommand);
-    algaeIntakeCommand = new AlgaeIntakeCommand();
-    algaeIntake.setDefaultCommand(algaeIntakeCommand);
-    hangCommand = new HangCommand();
-    hang.setDefaultCommand(hangCommand);
   }
 
   /**
@@ -209,10 +206,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
+    // Default commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+    elevatorCommand = new ElevatorCommand();
+    elevator.setDefaultCommand(elevatorCommand);
+    coralIntakeCommand = new CoralIntakeCommand();
+    coralIntake.setDefaultCommand(coralIntakeCommand);
+    algaeIntakeCommand = new AlgaeIntakeCommand();
+    algaeIntake.setDefaultCommand(algaeIntakeCommand);
+    hangCommand = new HangCommand();
+    hang.setDefaultCommand(hangCommand);
 
     // Reset gyro / odometry
     final Runnable resetGyro =
@@ -220,8 +225,7 @@ public class RobotContainer {
             ? () ->
                 drive.setPose(
                     driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            // simulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during simulation
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
