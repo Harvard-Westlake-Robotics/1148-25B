@@ -13,8 +13,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.WristConstants;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -84,9 +82,9 @@ public class WristIOTalonFX implements WristIO {
 
     inputs.wristMotorConnected = motorConnectedDebounce.calculate(wristMotor.isConnected());
     inputs.wristPositionMeters =
-        motorPosition.getValueAsDouble() * Constants.ArmWrist.motorToWristRotations;
+        motorPosition.getValueAsDouble() * WristConstants.ArmWrist.motorToWristRotations;
     inputs.wristVelocityMPS =
-        motorVelocity.getValueAsDouble() * Constants.ArmWrist.motorToWristRotations;
+        motorVelocity.getValueAsDouble() * WristConstants.ArmWrist.motorToWristRotations;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -98,7 +96,7 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void setAngle(double angle) {
-    wristController.Position = angle * Constants.ArmWrist.motorToWristRotations;
+    wristController.Position = angle * WristConstants.ArmWrist.motorToWristRotations;
     wristMotor.setControl(wristController);
   }
 

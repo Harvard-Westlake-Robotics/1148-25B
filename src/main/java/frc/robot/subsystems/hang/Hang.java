@@ -27,7 +27,7 @@ public class Hang extends SubsystemBase {
   }
 
   public Hang() {
-    this.key = "Hang";
+    this.key = "RealOutputs/Hang";
     io = new HangIOTalonFX();
   }
 

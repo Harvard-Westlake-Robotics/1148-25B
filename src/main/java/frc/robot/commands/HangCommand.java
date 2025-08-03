@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.hang.HangConstants;
 
 public class HangCommand extends Command {
   private LinearVelocity velocity;
@@ -33,7 +33,7 @@ public class HangCommand extends Command {
   }
 
   public void run() {
-    this.velocity = LinearVelocity.ofBaseUnits(Constants.Hang.hangVelocity, MetersPerSecond);
+    this.velocity = LinearVelocity.ofBaseUnits(HangConstants.hangVelocity, MetersPerSecond);
   }
 
   public void stop() {

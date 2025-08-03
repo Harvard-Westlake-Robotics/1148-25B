@@ -7,9 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.IntakeConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntake extends SubsystemBase {
@@ -33,7 +30,7 @@ public class AlgaeIntake extends SubsystemBase {
   }
 
   public AlgaeIntake() {
-    this.constants = Constants.AlgaeIntake;
+    this.constants = IntakeConstants.AlgaeIntake;
     this.key = "Algae Intake";
     io = new IntakeIOTalonFX(constants, 1);
     sysId =

@@ -1,9 +1,6 @@
 package frc.robot.subsystems.wrist;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.WristConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeWrist extends SubsystemBase {
@@ -23,7 +20,7 @@ public class IntakeWrist extends SubsystemBase {
   }
 
   public IntakeWrist() {
-    this.constants = Constants.ArmWrist;
+    this.constants = WristConstants.ArmWrist;
     this.key = "RealOutputs/Intake Wrist";
     io1 = new WristIOTalonFX(constants, 1);
     io2 = new WristIOTalonFX(constants, 2);

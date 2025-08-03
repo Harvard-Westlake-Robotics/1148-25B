@@ -18,8 +18,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.IntakeConstants;
+import frc.robot.subsystems.wrist.WristConstants;
 
 public class IntakeIOTalonFX implements IntakeIO {
   private final IntakeConstants intakeConstants;
@@ -110,9 +109,9 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     inputs.intakeMotorConnected = motorConnectedDebounce.calculate(intakeMotor.isConnected());
     inputs.intakeMotorPositionMeters =
-        motorPosition.getValueAsDouble() * Constants.IntakeWrist.motorToWristRotations;
+        motorPosition.getValueAsDouble() * WristConstants.IntakeWrist.motorToWristRotations;
     inputs.intakeMotorVelocityMPS =
-        motorVelocity.getValueAsDouble() * Constants.IntakeWrist.motorToWristRotations;
+        motorVelocity.getValueAsDouble() * WristConstants.IntakeWrist.motorToWristRotations;
     inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.intakeMotorCurrentAmps = motorCurrent.getValueAsDouble();
   }

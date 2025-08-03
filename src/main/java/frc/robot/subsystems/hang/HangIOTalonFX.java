@@ -16,7 +16,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.Constants;
 
 public class HangIOTalonFX implements HangIO {
   private TalonFX hangMotor;
@@ -36,7 +35,7 @@ public class HangIOTalonFX implements HangIO {
   private final Debouncer motorConnectedDebounce = new Debouncer(0.5);
 
   public HangIOTalonFX() {
-    hangMotor = new TalonFX(Constants.Hang.motorId);
+    hangMotor = new TalonFX(HangConstants.motorId);
     hangMotor.setPosition(0);
     hangController =
         new MotionMagicVelocityTorqueCurrentFOC(
@@ -44,15 +43,15 @@ public class HangIOTalonFX implements HangIO {
 
     TalonFXConfiguration hangConfig = new TalonFXConfiguration();
 
-    hangConfig.MotorOutput.Inverted = Constants.Hang.motorInverted;
+    hangConfig.MotorOutput.Inverted = HangConstants.motorInverted;
     hangConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hangConfig.Slot0.kP = Constants.Hang.kP;
-    hangConfig.Slot0.kI = Constants.Hang.kI;
-    hangConfig.Slot0.kD = Constants.Hang.kD;
-    hangConfig.Slot0.kS = Constants.Hang.kS;
-    hangConfig.Slot0.kA = Constants.Hang.kA;
-    hangConfig.Slot0.kV = Constants.Hang.kV;
+    hangConfig.Slot0.kP = HangConstants.kP;
+    hangConfig.Slot0.kI = HangConstants.kI;
+    hangConfig.Slot0.kD = HangConstants.kD;
+    hangConfig.Slot0.kS = HangConstants.kS;
+    hangConfig.Slot0.kA = HangConstants.kA;
+    hangConfig.Slot0.kV = HangConstants.kV;
     hangMotor.getConfigurator().apply(hangConfig);
     this.hangConfig = hangConfig;
     hangMotor.setControl(hangController);
@@ -70,9 +69,9 @@ public class HangIOTalonFX implements HangIO {
 
     inputs.motorConnected = motorConnectedDebounce.calculate(hangMotor.isConnected());
     inputs.motorPositionMeters =
-        motorPosition.getValueAsDouble() * Constants.Hang.rotationsToMetersRatio;
+        motorPosition.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
     inputs.motorVelocityMPS =
-        motorVelocity.getValueAsDouble() * Constants.Hang.rotationsToMetersRatio;
+        motorVelocity.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrent = motorCurrent.getValueAsDouble();
   }
@@ -84,8 +83,8 @@ public class HangIOTalonFX implements HangIO {
     hangMotor.getConfigurator().apply(hangConfig);
     hangController.FeedForward =
         hangFeedforward.calculate(
-            velocity.in(MetersPerSecond) / Constants.Hang.rotationsToMetersRatio);
-    hangController.Velocity = velocity.in(MetersPerSecond) / Constants.Hang.rotationsToMetersRatio;
+            velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio);
+    hangController.Velocity = velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio;
     hangMotor.setControl(hangController);
   }
 

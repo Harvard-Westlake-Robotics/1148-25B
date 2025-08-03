@@ -23,9 +23,8 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.NetworkCommunicator;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
@@ -83,7 +82,7 @@ public class Robot extends LoggedRobot {
     // }
 
     // Set up data receivers & replay source
-    switch (Constants.currentMode) {
+    switch (RobotContainer.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter("/U/logs")); // home/lvuser/logs
@@ -111,10 +110,10 @@ public class Robot extends LoggedRobot {
     // Check for valid swerve config
     var modules =
         new SwerveModuleConstants[] {
-          DriveConstants.FrontLeft,
-          DriveConstants.FrontRight,
-          DriveConstants.BackLeft,
-          DriveConstants.BackRight
+          Drive.FrontLeft,
+          Drive.FrontRight,
+          Drive.BackLeft,
+          Drive.BackRight
         };
     for (var constants : modules) {
       if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
@@ -241,16 +240,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {}
 
-  /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {
-    robotContainer.resetSimulationField();
-  }
+  public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    System.out.println(">>>>>>>>>>>>>>>>");
     robotContainer.updateSimulation();
   }
 }

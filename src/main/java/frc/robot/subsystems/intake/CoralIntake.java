@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.IntakeConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class CoralIntake extends SubsystemBase {
@@ -32,7 +29,7 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public CoralIntake() {
-    this.constants = Constants.CoralIntake;
+    this.constants = IntakeConstants.CoralIntake;
     this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);

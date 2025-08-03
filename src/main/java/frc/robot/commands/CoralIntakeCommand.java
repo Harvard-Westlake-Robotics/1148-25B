@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.intake.CoralIntake;
+import frc.robot.subsystems.intake.IntakeConstants;
 
 public class CoralIntakeCommand extends Command {
   private Boolean eject;
@@ -33,7 +33,7 @@ public class CoralIntakeCommand extends Command {
     if (eject) {
       CoralIntake.getInstance()
           .setVelocity(
-              LinearVelocity.ofBaseUnits(Constants.CoralIntake.outtakeVelocity, MetersPerSecond));
+              LinearVelocity.ofBaseUnits(IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
     } else {
       // If Coral is in the "Jammed" position- covering all three top sensors
       if (CoralIntake.getInstance().getSensor1()

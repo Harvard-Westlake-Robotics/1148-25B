@@ -59,11 +59,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void goToHeightOverride(double height) {
-    io.setHeightClosedLoopOverride(getHeight());
-  }
-
-  public void setOverride(boolean over) {
-    io.setIsOverriding(over);
+    io.setHeightClosedLoop(getHeight());
   }
 
   public void runCharacterization(double voltage) {
