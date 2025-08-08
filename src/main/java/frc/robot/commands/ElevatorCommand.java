@@ -32,6 +32,7 @@ public class ElevatorCommand extends Command {
   public ElevatorCommand() {
     this.addRequirements(Elevator.getInstance());
     level = ScoringLevel.NEUTRAL;
+    setHeight(level);
   }
 
   @Override
@@ -73,7 +74,7 @@ public class ElevatorCommand extends Command {
     } else if (level == ScoringLevel.NET) {
       targetPos = new double[] {0, 0, 0};
       // Neutral
-    } else {
+    } else if (level == ScoringLevel.NEUTRAL) {
       targetPos = new double[] {0, 0, 0};
     }
   }

@@ -18,10 +18,10 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -33,7 +33,6 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.HangCommand;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.GyroIOSim;
@@ -59,24 +58,24 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   /**
- * This defines the runtime mode used by AdvantageKit. The mode is always "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
- * (log replay from a file).
- */
+   * This defines the runtime mode used by AdvantageKit. The mode is always "real" when running on a
+   * roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay" (log
+   * replay from a file).
+   */
+  public static final Mode simMode = Mode.SIM;
 
- public static final Mode simMode = Mode.SIM;
- public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
- public static enum Mode {
-   /** Running on a real robot. */
-   REAL,
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
-   /** Running a physics simulator. */
-   SIM,
+    /** Running a physics simulator. */
+    SIM,
 
-   /** Replaying from a log file. */
-   REPLAY
- }
+    /** Replaying from a log file. */
+    REPLAY
+  }
 
   // Paths
   private PathPlannerPath pathfindL;
@@ -137,14 +136,15 @@ public class RobotContainer {
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();
         this.hang = Hang.getInstance();
+        algaeIntakeCommand = new AlgaeIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new HangCommand();
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-
         driveSimulation =
-            new SwerveDriveSimulation(
-                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
@@ -160,6 +160,9 @@ public class RobotContainer {
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();
         this.hang = Hang.getInstance();
+        algaeIntakeCommand = new AlgaeIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new HangCommand();
         break;
 
       default:
@@ -178,6 +181,9 @@ public class RobotContainer {
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();
         this.hang = Hang.getInstance();
+        algaeIntakeCommand = new AlgaeIntakeCommand();
+        coralIntakeCommand = new CoralIntakeCommand();
+        hangCommand = new HangCommand();
         break;
     }
 
@@ -205,6 +211,20 @@ public class RobotContainer {
         elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+    autoChooser.addOption(
+        "CoralIntake SysId (Quasistatic Forward)",
+        coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "CoralIntake SysId (Dynamic Forward)",
+        coralIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+    autoChooser.addOption(
+        "AlgaeIntake SysId (Quasistatic Forward)",
+        algaeIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "AlgaeIntake SysId (Dynamic Forward)",
+        algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -242,10 +262,9 @@ public class RobotContainer {
     final Runnable resetGyro =
         currentMode == Mode.SIM
             ? () ->
-                drive.setPose(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            // simulation
+                // simulation
+                drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
+            // real / test
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro

@@ -28,7 +28,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.drive.DriveConstants;
-
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -122,6 +121,7 @@ public class PhoenixUtil {
    * <h4>Note:This function is skipped when running on a real robot, ensuring no impact on constants
    * used on real robot hardware.</h4>
    */
+  @SuppressWarnings("rawtypes")
   public static SwerveModuleConstants regulateModuleConstantForSimulation(
       SwerveModuleConstants<?, ?, ?> moduleConstants) {
     // Skip regulation if running on a real robot

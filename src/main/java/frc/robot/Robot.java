@@ -110,10 +110,7 @@ public class Robot extends LoggedRobot {
     // Check for valid swerve config
     var modules =
         new SwerveModuleConstants[] {
-          Drive.FrontLeft,
-          Drive.FrontRight,
-          Drive.BackLeft,
-          Drive.BackRight
+          Drive.FrontLeft, Drive.FrontRight, Drive.BackLeft, Drive.BackRight
         };
     for (var constants : modules) {
       if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
@@ -131,6 +128,10 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     NetworkCommunicator.getInstance().setIsAuto(true);
+
+    if (RobotContainer.currentMode == RobotContainer.Mode.SIM) {
+      robotContainer.resetSimulationField();
+    }
   }
 
   /** This function is called periodically during all modes. */

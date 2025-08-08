@@ -104,8 +104,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motor2Current = elevator2.getStatorCurrent();
 
     elevatorFeedforward =
-        new ElevatorFeedforward(
-            ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+        new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
   }
 
   @Override

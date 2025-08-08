@@ -33,7 +33,8 @@ public class CoralIntakeCommand extends Command {
     if (eject) {
       CoralIntake.getInstance()
           .setVelocity(
-              LinearVelocity.ofBaseUnits(IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
+              LinearVelocity.ofBaseUnits(
+                  IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
     } else {
       // If Coral is in the "Jammed" position- covering all three top sensors
       if (CoralIntake.getInstance().getSensor1()

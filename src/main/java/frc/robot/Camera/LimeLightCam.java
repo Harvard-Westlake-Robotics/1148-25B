@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
-/* Maybe in future remove limelightHelpers Dependency,
-really just copy pasting but I'm lazy */
-
 public class LimeLightCam extends BaseCam {
   public String name = "";
   public static int LimeLightCount = 0;
@@ -121,7 +118,7 @@ public class LimeLightCam extends BaseCam {
     return -1 * _ntTable.getEntry("tx").getDouble(0);
   }
 
-  /* Used with MegaTag2, don't know how that thing works tho */
+  /* Used with MegaTag2, sets Robot Yaw */
   public void SetRobotOrientation(Rotation2d curYaw) {
     LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(), 0, 0, 0, 0, 0);
   }
@@ -130,6 +127,12 @@ public class LimeLightCam extends BaseCam {
     LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(), curYawRate, 0, 0, 0, 0);
   }
 
+  /**
+   * Takes the latest estimate from the limelight and returns it as an AprilTagResult. If the robot
+   * is disabled, it uses MegaTag1 for more accurate stationary readings. If the robot is enabled,
+   * it uses MegaTag2 for auto-filtered readings while moving. Variance is also logged for potential
+   * tuning of LimeLight constants
+   */
   public Optional<AprilTagResult> getEstimate() {
     if (runNeuralNetwork) {
       return Optional.empty();
@@ -137,91 +140,15 @@ public class LimeLightCam extends BaseCam {
     LimelightHelpers.PoseEstimate latestEstimate;
     if (DriverStation.isDisabled()) {
       latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+      if (latestEstimate != null) calcVarianceMT1(latestEstimate);
     } else {
       latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+      if (latestEstimate != null) calcVarianceMT2(latestEstimate);
     }
 
     if (latestEstimate == null) return Optional.empty();
 
     if (latestEstimate.tagCount == 0) return Optional.empty();
-
-    if (DriverStation.isDisabled()) {
-      // Logs the variance, stdDev, ambiguity, and tag distance of a given limelight
-      if (latestEstimate.pose.getX() > X_MT1_VARIENCE_MAX) {
-        X_MT1_VARIENCE_MAX = latestEstimate.pose.getX();
-      }
-      if (latestEstimate.pose.getX() < X_MT1_VARIENCE_MIN) {
-        X_MT1_VARIENCE_MIN = latestEstimate.pose.getX();
-      }
-      if (latestEstimate.pose.getY() > Y_MT1_VARIENCE_MAX) {
-        Y_MT1_VARIENCE_MAX = latestEstimate.pose.getY();
-      }
-      if (latestEstimate.pose.getY() < Y_MT1_VARIENCE_MIN) {
-        Y_MT1_VARIENCE_MIN = latestEstimate.pose.getY();
-      }
-      if (latestEstimate.pose.getRotation().getRadians() > T_MT1_VARIENCE_MAX) {
-        T_MT1_VARIENCE_MAX = latestEstimate.pose.getRotation().getRadians();
-      }
-      if (latestEstimate.pose.getRotation().getRadians() < T_MT1_VARIENCE_MIN) {
-        T_MT1_VARIENCE_MIN = latestEstimate.pose.getRotation().getRadians();
-      }
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/XVarience", X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/XStdDev",
-          Math.sqrt(X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/YVarience", Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/YStdDev",
-          Math.sqrt(Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/AngleVarience", T_MT1_VARIENCE_MAX - T_MT1_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/AngleStdDev",
-          Math.sqrt(T_MT1_VARIENCE_MAX - T_MT1_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT1/ambiguity", latestEstimate.rawFiducials[0].ambiguity);
-      Logger.recordOutput("RealOutputs/" + name + "/MT1/tagDistance", latestEstimate.avgTagDist);
-    } else {
-      // Logs the variance, stdDev, ambiguity, and tag distance of a given limelight
-      if (latestEstimate.pose.getX() > X_MT2_VARIENCE_MAX) {
-        X_MT2_VARIENCE_MAX = latestEstimate.pose.getX();
-      }
-      if (latestEstimate.pose.getX() < X_MT2_VARIENCE_MIN) {
-        X_MT2_VARIENCE_MIN = latestEstimate.pose.getX();
-      }
-      if (latestEstimate.pose.getX() > Y_MT2_VARIENCE_MAX) {
-        Y_MT2_VARIENCE_MAX = latestEstimate.pose.getY();
-      }
-      if (latestEstimate.pose.getY() < Y_MT2_VARIENCE_MIN) {
-        Y_MT2_VARIENCE_MIN = latestEstimate.pose.getY();
-      }
-      if (latestEstimate.pose.getRotation().getRadians() > T_MT2_VARIENCE_MAX) {
-        T_MT2_VARIENCE_MAX = latestEstimate.pose.getRotation().getRadians();
-      }
-      if (latestEstimate.pose.getRotation().getRadians() < T_MT2_VARIENCE_MIN) {
-        T_MT2_VARIENCE_MIN = latestEstimate.pose.getRotation().getRadians();
-      }
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/XVarience", X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/XStdDev",
-          Math.sqrt(X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/YVarience", Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/YStdDev",
-          Math.sqrt(Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/AngleVarience", T_MT2_VARIENCE_MAX - T_MT2_VARIENCE_MIN);
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/AngleStdDev",
-          Math.sqrt(T_MT2_VARIENCE_MAX - T_MT2_VARIENCE_MIN));
-      Logger.recordOutput(
-          "RealOutputs/" + name + "/MT2/ambiguity", latestEstimate.rawFiducials[0].ambiguity);
-      Logger.recordOutput("RealOutputs/" + name + "/MT2/tagDistance", latestEstimate.avgTagDist);
-    }
 
     return Optional.of(
         new AprilTagResult(
@@ -258,5 +185,91 @@ public class LimeLightCam extends BaseCam {
     }
 
     return Optional.of(results);
+  }
+
+  /**
+   * Logs the variance, stdDev, ambiguity, and tag distance of a given limelight using MegaTag1.
+   * This is used when the robot is disabled for more accurate stationary readings
+   *
+   * @param latestEstimate latest LimeLight estimated position from getEstimate()
+   */
+  private void calcVarianceMT1(LimelightHelpers.PoseEstimate latestEstimate) {
+    if (latestEstimate.pose.getX() > X_MT1_VARIENCE_MAX) {
+      X_MT1_VARIENCE_MAX = latestEstimate.pose.getX();
+    }
+    if (latestEstimate.pose.getX() < X_MT1_VARIENCE_MIN) {
+      X_MT1_VARIENCE_MIN = latestEstimate.pose.getX();
+    }
+    if (latestEstimate.pose.getY() > Y_MT1_VARIENCE_MAX) {
+      Y_MT1_VARIENCE_MAX = latestEstimate.pose.getY();
+    }
+    if (latestEstimate.pose.getY() < Y_MT1_VARIENCE_MIN) {
+      Y_MT1_VARIENCE_MIN = latestEstimate.pose.getY();
+    }
+    if (latestEstimate.pose.getRotation().getRadians() > T_MT1_VARIENCE_MAX) {
+      T_MT1_VARIENCE_MAX = latestEstimate.pose.getRotation().getRadians();
+    }
+    if (latestEstimate.pose.getRotation().getRadians() < T_MT1_VARIENCE_MIN) {
+      T_MT1_VARIENCE_MIN = latestEstimate.pose.getRotation().getRadians();
+    }
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/XVarience", X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/XStdDev", Math.sqrt(X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/YVarience", Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/YStdDev", Math.sqrt(Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/AngleVarience", T_MT1_VARIENCE_MAX - T_MT1_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/AngleStdDev",
+        Math.sqrt(T_MT1_VARIENCE_MAX - T_MT1_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT1/ambiguity", latestEstimate.rawFiducials[0].ambiguity);
+    Logger.recordOutput("RealOutputs/" + name + "/MT1/tagDistance", latestEstimate.avgTagDist);
+  }
+
+  /**
+   * Logs the variance, stdDev, ambiguity, and tag distance of a given limelight using MegaTag2.
+   * This is used when the robot is enabled for auto-filtered readings while moving
+   *
+   * @param latestEstimate latest LimeLight estimated position from getEstimate()
+   */
+  private void calcVarianceMT2(LimelightHelpers.PoseEstimate latestEstimate) {
+    if (latestEstimate.pose.getX() > X_MT2_VARIENCE_MAX) {
+      X_MT2_VARIENCE_MAX = latestEstimate.pose.getX();
+    }
+    if (latestEstimate.pose.getX() < X_MT2_VARIENCE_MIN) {
+      X_MT2_VARIENCE_MIN = latestEstimate.pose.getX();
+    }
+    if (latestEstimate.pose.getX() > Y_MT2_VARIENCE_MAX) {
+      Y_MT2_VARIENCE_MAX = latestEstimate.pose.getY();
+    }
+    if (latestEstimate.pose.getY() < Y_MT2_VARIENCE_MIN) {
+      Y_MT2_VARIENCE_MIN = latestEstimate.pose.getY();
+    }
+    if (latestEstimate.pose.getRotation().getRadians() > T_MT2_VARIENCE_MAX) {
+      T_MT2_VARIENCE_MAX = latestEstimate.pose.getRotation().getRadians();
+    }
+    if (latestEstimate.pose.getRotation().getRadians() < T_MT2_VARIENCE_MIN) {
+      T_MT2_VARIENCE_MIN = latestEstimate.pose.getRotation().getRadians();
+    }
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/XVarience", X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/XStdDev", Math.sqrt(X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/YVarience", Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/YStdDev", Math.sqrt(Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/AngleVarience", T_MT2_VARIENCE_MAX - T_MT2_VARIENCE_MIN);
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/AngleStdDev",
+        Math.sqrt(T_MT2_VARIENCE_MAX - T_MT2_VARIENCE_MIN));
+    Logger.recordOutput(
+        "RealOutputs/" + name + "/MT2/ambiguity", latestEstimate.rawFiducials[0].ambiguity);
+    Logger.recordOutput("RealOutputs/" + name + "/MT2/tagDistance", latestEstimate.avgTagDist);
   }
 }

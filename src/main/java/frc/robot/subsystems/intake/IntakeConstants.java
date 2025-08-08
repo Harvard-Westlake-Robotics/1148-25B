@@ -3,69 +3,69 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 public class IntakeConstants {
-    public final int motorId;
-    public final InvertedValue motorInverted;
-    public final double intakeVelocity;
-    public final double outtakeVelocity;
-    public double kP;
-    public double kI;
-    public double kD;
-    public double kS;
-    public double kV;
-    public double kA;
-    public double positionkP;
-    public double positionkD;
-    public int sensor1ID;
-    public int sensor2ID;
-    public int sensor3ID;
-    public int sensor4ID;
+  public final int motorId;
+  public final InvertedValue motorInverted;
+  public final double intakeVelocity;
+  public final double outtakeVelocity;
+  public double kP;
+  public double kI;
+  public double kD;
+  public double kS;
+  public double kV;
+  public double kA;
+  public double positionkP;
+  public double positionkD;
+  public int sensor1ID;
+  public int sensor2ID;
+  public int sensor3ID;
+  public int sensor4ID;
 
-    public final double ANGLE_MAX_ACCELERATION;
-    public final double ANGLE_MAX_VELOCITY;
-    public final double ANGLe_MAX_JERK;
-    public final double rotationsToMetersRatio;
+  public final double ANGLE_MAX_ACCELERATION;
+  public final double ANGLE_MAX_VELOCITY;
+  public final double ANGLe_MAX_JERK;
+  public final double rotationsToMetersRatio;
 
-    public IntakeConstants(
-        int motorId,
-        InvertedValue motorInverted,
-        double intakeVelocity,
-        double outtakeVelocity,
-        double kP,
-        double kI,
-        double kD,
-        double kS,
-        double kV,
-        double kA,
-        int sensor1ID,
-        int sensor2ID,
-        int sensor3ID,
-        int sensor4ID,
-        double positionkP,
-        double positionkD,
-        double ANGLE_MAX_ACCELERATION,
-        double ANGLE_MAX_VELOCITY,
-        double ANGLe_MAX_JERK,
-        double rotationsToMetersRatio) {
-      this.motorId = motorId;
-      this.motorInverted = motorInverted;
-      this.intakeVelocity = intakeVelocity;
-      this.outtakeVelocity = outtakeVelocity;
-      this.kP = kP;
-      this.kI = kI;
-      this.kD = kD;
-      this.kS = kS;
-      this.kV = kV;
-      this.kA = kA;
-      this.sensor1ID = sensor1ID;
-      this.sensor2ID = sensor2ID;
-      this.sensor3ID = sensor3ID;
-      this.positionkP = positionkP;
-      this.positionkD = positionkD;
-      this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
-      this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
-      this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
-      this.rotationsToMetersRatio = rotationsToMetersRatio;
-    }
+  public IntakeConstants(
+      int motorId,
+      InvertedValue motorInverted,
+      double intakeVelocity,
+      double outtakeVelocity,
+      double kP,
+      double kI,
+      double kD,
+      double kS,
+      double kV,
+      double kA,
+      int sensor1ID,
+      int sensor2ID,
+      int sensor3ID,
+      int sensor4ID,
+      double positionkP,
+      double positionkD,
+      double ANGLE_MAX_ACCELERATION,
+      double ANGLE_MAX_VELOCITY,
+      double ANGLe_MAX_JERK,
+      double rotationsToMetersRatio) {
+    this.motorId = motorId;
+    this.motorInverted = motorInverted;
+    this.intakeVelocity = intakeVelocity;
+    this.outtakeVelocity = outtakeVelocity;
+    this.kP = kP;
+    this.kI = kI;
+    this.kD = kD;
+    this.kS = kS;
+    this.kV = kV;
+    this.kA = kA;
+    this.sensor1ID = sensor1ID;
+    this.sensor2ID = sensor2ID;
+    this.sensor3ID = sensor3ID;
+    this.positionkP = positionkP;
+    this.positionkD = positionkD;
+    this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
+    this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
+    this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
+    this.rotationsToMetersRatio = rotationsToMetersRatio;
+  }
 
   public static final IntakeConstants CoralIntake =
       new IntakeConstants(
