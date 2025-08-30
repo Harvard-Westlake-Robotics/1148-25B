@@ -73,7 +73,6 @@ public class ElevatorCommand extends Command {
       targetPos = new double[] {0, 0, 0};
     } else if (level == ScoringLevel.NET) {
       targetPos = new double[] {0, 0, 0};
-      // Neutral
     } else if (level == ScoringLevel.NEUTRAL) {
       targetPos = new double[] {0, 0, 0};
     }

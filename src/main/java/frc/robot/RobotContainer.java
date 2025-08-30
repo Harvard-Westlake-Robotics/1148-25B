@@ -107,7 +107,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private final LoggedDashboardChooser<Command> preAutoChooser;
 
-  private SwerveDriveSimulation driveSimulation = null;
+  public static SwerveDriveSimulation driveSimulation = null;
 
   public boolean elevatorDeployed = false;
 
@@ -284,10 +284,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
     // return preAutoChooser
-    //     .get()
-    //     .andThen(
-    //         new Command() {}.withTimeout(0.3)
-    //             .andThen(NetworkCommunicator.getInstance().getCustomAuto()));
+    // .get()
+    // .andThen(
+    // new Command() {}.withTimeout(0.3)
+    // .andThen(NetworkCommunicator.getInstance().getCustomAuto()));
   }
 
   public void resetSimulationField() {

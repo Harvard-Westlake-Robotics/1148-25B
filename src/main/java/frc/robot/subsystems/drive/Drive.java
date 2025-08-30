@@ -69,6 +69,47 @@ public class Drive extends SubsystemBase {
   private static Drive instance;
 
   public static Drive getInstance() {
+    if (instance == null) {
+      switch (RobotContainer.currentMode) {
+        case REAL:
+          // Real robot, instantiate hardware IO implementations
+          instance =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonFXReal(Drive.FrontLeft),
+                  new ModuleIOTalonFXReal(Drive.FrontRight),
+                  new ModuleIOTalonFXReal(Drive.BackLeft),
+                  new ModuleIOTalonFXReal(Drive.BackRight),
+                  pose -> {});
+          break;
+
+        case SIM:
+          instance =
+              new Drive(
+                  new GyroIOSim(RobotContainer.driveSimulation.getGyroSimulation()),
+                  new ModuleIOTalonFXSim(
+                      Drive.FrontLeft, RobotContainer.driveSimulation.getModules()[0]),
+                  new ModuleIOTalonFXSim(
+                      Drive.FrontRight, RobotContainer.driveSimulation.getModules()[1]),
+                  new ModuleIOTalonFXSim(
+                      Drive.BackLeft, RobotContainer.driveSimulation.getModules()[2]),
+                  new ModuleIOTalonFXSim(
+                      Drive.BackRight, RobotContainer.driveSimulation.getModules()[3]),
+                  RobotContainer.driveSimulation::setSimulationWorldPose);
+          break;
+        default:
+          // Replayed robot, disable IO implementations
+          instance =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIOTalonFX(Drive.FrontLeft) {},
+                  new ModuleIOTalonFX(Drive.FrontRight) {},
+                  new ModuleIOTalonFX(Drive.BackLeft) {},
+                  new ModuleIOTalonFX(Drive.BackRight) {},
+                  pose -> {});
+          break;
+      }
+    }
     return instance;
   }
 
@@ -128,7 +169,8 @@ public class Drive extends SubsystemBase {
 
   private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
-  // ================================= Module Configurations =================================
+  // ================================= Module Configurations
+  // =================================
 
   public static final SwerveModuleConstantsFactory<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -213,7 +255,8 @@ public class Drive extends SubsystemBase {
                   DriveConstants.kBackRightEncoderInverted)
               .withSlipCurrent(DriveConstants.kSlipCurrent);
 
-  // ================================= PathPlanner Configs =================================
+  // ================================= PathPlanner Configs
+  // =================================
 
   public static final RobotConfig PP_CONFIG =
       new RobotConfig(
@@ -228,7 +271,8 @@ public class Drive extends SubsystemBase {
               1),
           Drive.getModuleTranslations());
 
-  // ================================= Simulation Configs =================================
+  // ================================= Simulation Configs
+  // =================================
 
   // Create and configure a drivetrain simulation configuration
   public static final DriveTrainSimulationConfig mapleSimConfig =
