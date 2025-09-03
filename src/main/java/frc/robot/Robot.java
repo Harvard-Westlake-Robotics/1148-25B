@@ -108,7 +108,6 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     // Check for valid swerve config
-    Drive.getInstance();
     var modules =
         new SwerveModuleConstants[] {
           Drive.FrontLeft, Drive.FrontRight, Drive.BackLeft, Drive.BackRight
