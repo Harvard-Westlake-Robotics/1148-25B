@@ -15,14 +15,8 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -42,7 +36,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -59,9 +52,6 @@ import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -76,10 +66,10 @@ public class Drive extends SubsystemBase {
           instance =
               new Drive(
                   new GyroIOPigeon2(),
-                  new ModuleIOTalonFXReal(Drive.FrontLeft),
-                  new ModuleIOTalonFXReal(Drive.FrontRight),
-                  new ModuleIOTalonFXReal(Drive.BackLeft),
-                  new ModuleIOTalonFXReal(Drive.BackRight),
+                  new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
+                  new ModuleIOTalonFXReal(DriveConstants.FrontRight),
+                  new ModuleIOTalonFXReal(DriveConstants.BackLeft),
+                  new ModuleIOTalonFXReal(DriveConstants.BackRight),
                   pose -> {});
           break;
 
@@ -88,13 +78,13 @@ public class Drive extends SubsystemBase {
               new Drive(
                   new GyroIOSim(RobotContainer.driveSimulation.getGyroSimulation()),
                   new ModuleIOTalonFXSim(
-                      Drive.FrontLeft, RobotContainer.driveSimulation.getModules()[0]),
+                      DriveConstants.FrontLeft, RobotContainer.driveSimulation.getModules()[0]),
                   new ModuleIOTalonFXSim(
-                      Drive.FrontRight, RobotContainer.driveSimulation.getModules()[1]),
+                      DriveConstants.FrontRight, RobotContainer.driveSimulation.getModules()[1]),
                   new ModuleIOTalonFXSim(
-                      Drive.BackLeft, RobotContainer.driveSimulation.getModules()[2]),
+                      DriveConstants.BackLeft, RobotContainer.driveSimulation.getModules()[2]),
                   new ModuleIOTalonFXSim(
-                      Drive.BackRight, RobotContainer.driveSimulation.getModules()[3]),
+                      DriveConstants.BackRight, RobotContainer.driveSimulation.getModules()[3]),
                   RobotContainer.driveSimulation::setSimulationWorldPose);
           break;
         default:
@@ -102,10 +92,10 @@ public class Drive extends SubsystemBase {
           instance =
               new Drive(
                   new GyroIO() {},
-                  new ModuleIOTalonFX(Drive.FrontLeft) {},
-                  new ModuleIOTalonFX(Drive.FrontRight) {},
-                  new ModuleIOTalonFX(Drive.BackLeft) {},
-                  new ModuleIOTalonFX(Drive.BackRight) {},
+                  new ModuleIOTalonFX(DriveConstants.FrontLeft) {},
+                  new ModuleIOTalonFX(DriveConstants.FrontRight) {},
+                  new ModuleIOTalonFX(DriveConstants.BackLeft) {},
+                  new ModuleIOTalonFX(DriveConstants.BackRight) {},
                   pose -> {});
           break;
       }
@@ -169,137 +159,6 @@ public class Drive extends SubsystemBase {
 
   private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
-  // ================================= Module Configurations
-  // =================================
-
-  public static final SwerveModuleConstantsFactory<
-          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-      ConstantCreator =
-          new SwerveModuleConstantsFactory<
-                  TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
-              .withDriveMotorGearRatio(DriveConstants.kDriveGearRatio)
-              .withSteerMotorGearRatio(DriveConstants.kSteerGearRatio)
-              .withCouplingGearRatio(DriveConstants.kCoupleRatio)
-              .withWheelRadius(DriveConstants.kWheelRadius)
-              .withSteerMotorGains(DriveConstants.steerGains)
-              .withDriveMotorGains(DriveConstants.driveGains)
-              .withSteerMotorClosedLoopOutput(DriveConstants.kSteerClosedLoopOutput)
-              .withDriveMotorClosedLoopOutput(DriveConstants.kDriveClosedLoopOutput)
-              .withSlipCurrent(DriveConstants.kSlipCurrent)
-              .withSpeedAt12Volts(DriveConstants.kSpeedAt12Volts)
-              .withDriveMotorType(DriveConstants.kDriveMotorType)
-              .withSteerMotorType(DriveConstants.kSteerMotorType)
-              .withFeedbackSource(DriveConstants.kSteerFeedbackType)
-              .withDriveMotorInitialConfigs(DriveConstants.driveInitialConfigs)
-              .withSteerMotorInitialConfigs(DriveConstants.steerInitialConfigs)
-              .withEncoderInitialConfigs(DriveConstants.encoderInitialConfigs)
-              .withSteerInertia(DriveConstants.kSteerInertia)
-              .withDriveInertia(DriveConstants.kDriveInertia)
-              .withSteerFrictionVoltage(DriveConstants.kSteerFrictionVoltage)
-              .withDriveFrictionVoltage(DriveConstants.kDriveFrictionVoltage);
-
-  public static final SwerveModuleConstants<
-          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-      FrontLeft =
-          ConstantCreator.createModuleConstants(
-                  DriveConstants.kFrontLeftSteerMotorId,
-                  DriveConstants.kFrontLeftDriveMotorId,
-                  DriveConstants.kFrontLeftEncoderId,
-                  DriveConstants.kFrontLeftEncoderOffset,
-                  DriveConstants.kFrontLeftXPos,
-                  DriveConstants.kFrontLeftYPos,
-                  DriveConstants.kInvertLeftSide,
-                  DriveConstants.kFrontLeftSteerMotorInverted,
-                  DriveConstants.kFrontLeftEncoderInverted)
-              .withSlipCurrent(DriveConstants.kSlipCurrent);
-  public static final SwerveModuleConstants<
-          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-      FrontRight =
-          ConstantCreator.createModuleConstants(
-                  DriveConstants.kFrontRightSteerMotorId,
-                  DriveConstants.kFrontRightDriveMotorId,
-                  DriveConstants.kFrontRightEncoderId,
-                  DriveConstants.kFrontRightEncoderOffset,
-                  DriveConstants.kFrontRightXPos,
-                  DriveConstants.kFrontRightYPos,
-                  DriveConstants.kInvertRightSide,
-                  DriveConstants.kFrontRightSteerMotorInverted,
-                  DriveConstants.kFrontRightEncoderInverted)
-              .withSlipCurrent(DriveConstants.kSlipCurrent);
-  public static final SwerveModuleConstants<
-          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-      BackLeft =
-          ConstantCreator.createModuleConstants(
-                  DriveConstants.kBackLeftSteerMotorId,
-                  DriveConstants.kBackLeftDriveMotorId,
-                  DriveConstants.kBackLeftEncoderId,
-                  DriveConstants.kBackLeftEncoderOffset,
-                  DriveConstants.kBackLeftXPos,
-                  DriveConstants.kBackLeftYPos,
-                  DriveConstants.kInvertLeftSide,
-                  DriveConstants.kBackLeftSteerMotorInverted,
-                  DriveConstants.kBackLeftEncoderInverted)
-              .withSlipCurrent(DriveConstants.kSlipCurrent);
-  public static final SwerveModuleConstants<
-          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-      BackRight =
-          ConstantCreator.createModuleConstants(
-                  DriveConstants.kBackRightSteerMotorId,
-                  DriveConstants.kBackRightDriveMotorId,
-                  DriveConstants.kBackRightEncoderId,
-                  DriveConstants.kBackRightEncoderOffset,
-                  DriveConstants.kBackRightXPos,
-                  DriveConstants.kBackRightYPos,
-                  DriveConstants.kInvertRightSide,
-                  DriveConstants.kBackRightSteerMotorInverted,
-                  DriveConstants.kBackRightEncoderInverted)
-              .withSlipCurrent(DriveConstants.kSlipCurrent);
-
-  // ================================= PathPlanner Configs
-  // =================================
-
-  public static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          DriveConstants.ROBOT_MASS_KG,
-          DriveConstants.ROBOT_MOI,
-          new ModuleConfig(
-              DriveConstants.kWheelRadius.baseUnitMagnitude(),
-              DriveConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              DriveConstants.WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1).withReduction(DriveConstants.kDriveGearRatio),
-              DriveConstants.kSlipCurrent.in(Amps),
-              1),
-          Drive.getModuleTranslations());
-
-  // ================================= Simulation Configs
-  // =================================
-
-  // Create and configure a drivetrain simulation configuration
-  public static final DriveTrainSimulationConfig mapleSimConfig =
-      DriveTrainSimulationConfig.Default()
-          // Specify robot mass
-          .withRobotMass(Kilograms.of(DriveConstants.ROBOT_MASS_KG)) // Set robot mass in kg
-          // Specify gyro type (for realistic gyro drifting and error simulation)
-          .withGyro(COTS.ofPigeon2())
-          // Specify module positions
-          .withCustomModuleTranslations(Drive.getModuleTranslations())
-          // Specify swerve module (for realistic swerve dynamics)
-          .withSwerveModule(
-              new SwerveModuleSimulationConfig(
-                  DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
-                  DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
-                  DriveConstants.kDriveGearRatio, // Drive motor gear ratio.
-                  DriveConstants.kSteerGearRatio, // Steer motor gear ratio.
-                  DriveConstants.kDriveFrictionVoltage, // Drive friction voltage.
-                  DriveConstants.kSteerFrictionVoltage, // Steer friction voltage
-                  Inches.of(DriveConstants.kWheelRadius.magnitude()), // Wheel radius
-                  DriveConstants.kSteerInertia, // Steer MOI
-                  1.2)) // Wheel COF
-          // Configures the track length and track width (spacing between swerve modules)
-          .withTrackLengthTrackWidth(Inches.of(21), Inches.of(21))
-          // Configures the bumper size (dimensions of the robot bumper)
-          .withBumperSize(Inches.of(33.6), Inches.of(33.6));
-
   public Drive(
       GyroIO gyroIO,
       ModuleIOTalonFX flModuleIO,
@@ -309,10 +168,10 @@ public class Drive extends SubsystemBase {
       Consumer<Pose2d> resetSimulationPoseCallBack) {
     this.gyroIO = gyroIO;
     this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
-    modules[0] = new Module(flModuleIO, 0, FrontLeft);
-    modules[1] = new Module(frModuleIO, 1, FrontRight);
-    modules[2] = new Module(blModuleIO, 2, BackLeft);
-    modules[3] = new Module(brModuleIO, 3, BackRight);
+    modules[0] = new Module(flModuleIO, 0, DriveConstants.FrontLeft);
+    modules[1] = new Module(frModuleIO, 1, DriveConstants.FrontRight);
+    modules[2] = new Module(blModuleIO, 2, DriveConstants.BackLeft);
+    modules[3] = new Module(brModuleIO, 3, DriveConstants.BackRight);
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -335,7 +194,7 @@ public class Drive extends SubsystemBase {
                 DriveConstants.PP_ROTATION_P,
                 DriveConstants.PP_ROTATION_I,
                 DriveConstants.PP_ROTATION_D)),
-        PP_CONFIG,
+        DriveConstants.PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
@@ -713,10 +572,10 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(FrontLeft.LocationX, FrontLeft.LocationY),
-      new Translation2d(FrontRight.LocationX, FrontRight.LocationY),
-      new Translation2d(BackLeft.LocationX, BackLeft.LocationY),
-      new Translation2d(BackRight.LocationX, BackRight.LocationY)
+      new Translation2d(DriveConstants.FrontLeft.LocationX, DriveConstants.FrontLeft.LocationY),
+      new Translation2d(DriveConstants.FrontRight.LocationX, DriveConstants.FrontRight.LocationY),
+      new Translation2d(DriveConstants.BackLeft.LocationX, DriveConstants.BackLeft.LocationY),
+      new Translation2d(DriveConstants.BackRight.LocationX, DriveConstants.BackRight.LocationY)
     };
   }
 
@@ -789,7 +648,7 @@ public class Drive extends SubsystemBase {
    * @return The equivalent distance in meters
    */
   public static double rotationsToMeters(double wheelRotations) {
-    return wheelRotations * FrontLeft.WheelRadius * 2 * Math.PI;
+    return wheelRotations * DriveConstants.FrontLeft.WheelRadius * 2 * Math.PI;
   }
 
   /**

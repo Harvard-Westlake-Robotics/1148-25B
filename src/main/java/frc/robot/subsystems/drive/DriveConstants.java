@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -20,11 +21,16 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -35,6 +41,9 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Camera.BaseCam.AprilTagResult;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
 public class DriveConstants {
   // The steer motor uses any SwerveModule.SteerRequestType control request with
@@ -261,6 +270,134 @@ public class DriveConstants {
           .withCANBusName(kCANBus.getName())
           .withPigeon2Id(kPigeonId)
           .withPigeon2Configs(pigeonConfigs);
+
+  // ================================= Module Configurations =================================
+
+  public static final SwerveModuleConstantsFactory<
+          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+      ConstantCreator =
+          new SwerveModuleConstantsFactory<
+                  TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
+              .withDriveMotorGearRatio(kDriveGearRatio)
+              .withSteerMotorGearRatio(kSteerGearRatio)
+              .withCouplingGearRatio(kCoupleRatio)
+              .withWheelRadius(kWheelRadius)
+              .withSteerMotorGains(steerGains)
+              .withDriveMotorGains(driveGains)
+              .withSteerMotorClosedLoopOutput(kSteerClosedLoopOutput)
+              .withDriveMotorClosedLoopOutput(kDriveClosedLoopOutput)
+              .withSlipCurrent(kSlipCurrent)
+              .withSpeedAt12Volts(kSpeedAt12Volts)
+              .withDriveMotorType(kDriveMotorType)
+              .withSteerMotorType(kSteerMotorType)
+              .withFeedbackSource(kSteerFeedbackType)
+              .withDriveMotorInitialConfigs(driveInitialConfigs)
+              .withSteerMotorInitialConfigs(steerInitialConfigs)
+              .withEncoderInitialConfigs(encoderInitialConfigs)
+              .withSteerInertia(kSteerInertia)
+              .withDriveInertia(kDriveInertia)
+              .withSteerFrictionVoltage(kSteerFrictionVoltage)
+              .withDriveFrictionVoltage(kDriveFrictionVoltage);
+
+  public static final SwerveModuleConstants<
+          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+      FrontLeft =
+          ConstantCreator.createModuleConstants(
+                  DriveConstants.kFrontLeftSteerMotorId,
+                  DriveConstants.kFrontLeftDriveMotorId,
+                  DriveConstants.kFrontLeftEncoderId,
+                  DriveConstants.kFrontLeftEncoderOffset,
+                  DriveConstants.kFrontLeftXPos,
+                  DriveConstants.kFrontLeftYPos,
+                  DriveConstants.kInvertLeftSide,
+                  DriveConstants.kFrontLeftSteerMotorInverted,
+                  DriveConstants.kFrontLeftEncoderInverted)
+              .withSlipCurrent(DriveConstants.kSlipCurrent);
+  public static final SwerveModuleConstants<
+          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+      FrontRight =
+          ConstantCreator.createModuleConstants(
+                  DriveConstants.kFrontRightSteerMotorId,
+                  DriveConstants.kFrontRightDriveMotorId,
+                  DriveConstants.kFrontRightEncoderId,
+                  DriveConstants.kFrontRightEncoderOffset,
+                  DriveConstants.kFrontRightXPos,
+                  DriveConstants.kFrontRightYPos,
+                  DriveConstants.kInvertRightSide,
+                  DriveConstants.kFrontRightSteerMotorInverted,
+                  DriveConstants.kFrontRightEncoderInverted)
+              .withSlipCurrent(DriveConstants.kSlipCurrent);
+  public static final SwerveModuleConstants<
+          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+      BackLeft =
+          ConstantCreator.createModuleConstants(
+                  DriveConstants.kBackLeftSteerMotorId,
+                  DriveConstants.kBackLeftDriveMotorId,
+                  DriveConstants.kBackLeftEncoderId,
+                  DriveConstants.kBackLeftEncoderOffset,
+                  DriveConstants.kBackLeftXPos,
+                  DriveConstants.kBackLeftYPos,
+                  DriveConstants.kInvertLeftSide,
+                  DriveConstants.kBackLeftSteerMotorInverted,
+                  DriveConstants.kBackLeftEncoderInverted)
+              .withSlipCurrent(DriveConstants.kSlipCurrent);
+  public static final SwerveModuleConstants<
+          TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+      BackRight =
+          ConstantCreator.createModuleConstants(
+                  DriveConstants.kBackRightSteerMotorId,
+                  DriveConstants.kBackRightDriveMotorId,
+                  DriveConstants.kBackRightEncoderId,
+                  DriveConstants.kBackRightEncoderOffset,
+                  DriveConstants.kBackRightXPos,
+                  DriveConstants.kBackRightYPos,
+                  DriveConstants.kInvertRightSide,
+                  DriveConstants.kBackRightSteerMotorInverted,
+                  DriveConstants.kBackRightEncoderInverted)
+              .withSlipCurrent(DriveConstants.kSlipCurrent);
+
+  // ================================= PathPlanner Configs =================================
+
+  public static final RobotConfig PP_CONFIG =
+      new RobotConfig(
+          DriveConstants.ROBOT_MASS_KG,
+          DriveConstants.ROBOT_MOI,
+          new ModuleConfig(
+              DriveConstants.kWheelRadius.baseUnitMagnitude(),
+              DriveConstants.kSpeedAt12Volts.in(MetersPerSecond),
+              DriveConstants.WHEEL_COF,
+              DCMotor.getKrakenX60Foc(1).withReduction(DriveConstants.kDriveGearRatio),
+              DriveConstants.kSlipCurrent.in(Amps),
+              1),
+          Drive.getModuleTranslations());
+
+  // ================================= Simulation Configs =================================
+
+  // Create and configure a drivetrain simulation configuration
+  public static final DriveTrainSimulationConfig mapleSimConfig =
+      DriveTrainSimulationConfig.Default()
+          // Specify robot mass
+          .withRobotMass(Kilograms.of(DriveConstants.ROBOT_MASS_KG)) // Set robot mass in kg
+          // Specify gyro type (for realistic gyro drifting and error simulation)
+          .withGyro(COTS.ofPigeon2())
+          // Specify module positions
+          .withCustomModuleTranslations(Drive.getModuleTranslations())
+          // Specify swerve module (for realistic swerve dynamics)
+          .withSwerveModule(
+              new SwerveModuleSimulationConfig(
+                  DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                  DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+                  DriveConstants.kDriveGearRatio, // Drive motor gear ratio.
+                  DriveConstants.kSteerGearRatio, // Steer motor gear ratio.
+                  DriveConstants.kDriveFrictionVoltage, // Drive friction voltage.
+                  DriveConstants.kSteerFrictionVoltage, // Steer friction voltage
+                  Inches.of(DriveConstants.kWheelRadius.magnitude()), // Wheel radius
+                  DriveConstants.kSteerInertia, // Steer MOI
+                  1.2)) // Wheel COF
+          // Configures the track length and track width (spacing between swerve modules)
+          .withTrackLengthTrackWidth(Inches.of(21), Inches.of(21))
+          // Configures the bumper size (dimensions of the robot bumper)
+          .withBumperSize(Inches.of(33.6), Inches.of(33.6));
 
   // ================================= Extra Configurations =================================
 
