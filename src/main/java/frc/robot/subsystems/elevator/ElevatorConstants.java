@@ -11,9 +11,9 @@ public class ElevatorConstants {
   public static final int elevator2ID = 14;
   public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
   public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
-  public static double kP = 2.0;
-  public static double kI = 0.01;
-  public static double kD = 0.00;
+  public static double kP = 5.0;
+  public static double kI = 0.0;
+  public static double kD = 0.0;
   public static double kS = 0.1;
   public static double kV = 0.0;
   public static double kG = 0.0;

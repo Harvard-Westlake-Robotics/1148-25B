@@ -127,7 +127,7 @@ public final class ArmKinematics {
                         Rotation2d.fromRotations(theta2),
                         Meters.of(L2),
                         Rotation2d.fromRotations(beta2),
-                        false, false, false, true, "α adjusted to wrist limits; (x,y) preserved.");
+                        false, false, false, true, "a adjusted to wrist limits; (x,y) preserved.");
             }
 
             // If the recomputed pose violates other limits, fall through to projection path
@@ -195,7 +195,11 @@ public final class ArmKinematics {
         if (clampedShoulder)
             sb.append(" shoulder clamped;");
         if (clampedWrist)
-            sb.append(" wrist clamped (α adjusted);");
+            sb.append(" wrist clamped (a adjusted);");
+
+        if (clampedLen && clampedShoulder && clampedWrist)
+            sb = new StringBuilder("Illegal Immigrants Found, deploying ICE");
+        System.out.println(sb.toString());
 
         return new Solution(
                 Rotation2d.fromRotations(thetaProj),

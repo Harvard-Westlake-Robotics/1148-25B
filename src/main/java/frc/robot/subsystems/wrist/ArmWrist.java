@@ -54,15 +54,7 @@ public class ArmWrist extends SubsystemBase {
     io3.runCharacterization(volts);
   }
 
-  public double getWristPosition(int ioNum) {
-    if (ioNum == 1) {
-      return inputs1.wristPositionMeters;
-    } else if (ioNum == 2) {
-      return inputs2.wristPositionMeters;
-    } else if (ioNum == 3) {
-      return inputs3.wristPositionMeters;
-    } else {
-      return 0;
-    }
+  public double getWristPosition() {
+    return inputs1.wristPositionRot;
   }
 }

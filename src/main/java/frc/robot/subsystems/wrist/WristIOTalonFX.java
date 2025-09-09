@@ -78,7 +78,7 @@ public class WristIOTalonFX implements WristIO {
     var wristStatus = StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.wristMotorConnected = motorConnectedDebounce.calculate(wristMotor.isConnected());
-    inputs.wristPositionMeters = motorPosition.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
+    inputs.wristPositionRot = motorPosition.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
     inputs.wristVelocityMPS = motorVelocity.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
