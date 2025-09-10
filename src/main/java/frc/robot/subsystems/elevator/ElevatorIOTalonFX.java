@@ -139,7 +139,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorController.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
     elevator2Controller.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
     elevatorController.FeedForward = elevatorFeedforward.calculate(0);
-    elevatorController.FeedForward = elevatorFeedforward.calculate(0);
+    elevator2Controller.FeedForward = elevatorFeedforward.calculate(0);
     elevator1.setControl(elevatorController);
     elevator2.setControl(elevator2Controller);
   }
