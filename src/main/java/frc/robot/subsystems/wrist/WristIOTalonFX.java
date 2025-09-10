@@ -52,7 +52,8 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.StatorCurrentLimit = wristConstants.statorLimit;
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     wristConfig.CurrentLimits.SupplyCurrentLimit = wristConstants.supplyLimit;
-    this.wristConfig.MotionMagic.MotionMagicAcceleration = this.wristConstants.ANGLE_MAX_ACCELERATION;
+    this.wristConfig.MotionMagic.MotionMagicAcceleration =
+        this.wristConstants.ANGLE_MAX_ACCELERATION;
     this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.wristConstants.ANGLE_MAX_VELOCITY;
     this.wristConfig.MotionMagic.MotionMagicJerk = this.wristConstants.ANGLe_MAX_JERK;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
@@ -69,17 +70,21 @@ public class WristIOTalonFX implements WristIO {
     motorAppliedVolts = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
 
-    wristFeedforward = new ArmFeedforward(
-        wristConstants.kS, wristConstants.kV, wristConstants.kG, wristConstants.kA);
+    wristFeedforward =
+        new ArmFeedforward(
+            wristConstants.kS, wristConstants.kV, wristConstants.kG, wristConstants.kA);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-    var wristStatus = StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
+    var wristStatus =
+        StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.wristMotorConnected = motorConnectedDebounce.calculate(wristMotor.isConnected());
-    inputs.wristPositionRot = motorPosition.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
-    inputs.wristVelocityMPS = motorVelocity.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
+    inputs.wristPositionRot =
+        motorPosition.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
+    inputs.wristVelocityMPS =
+        motorVelocity.getValueAsDouble() * WristConstants.ShoulderWrist.motorToWristRotations;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
   }

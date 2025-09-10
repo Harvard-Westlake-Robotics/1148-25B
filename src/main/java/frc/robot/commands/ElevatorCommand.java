@@ -43,8 +43,7 @@ public class ElevatorCommand extends Command {
   }
 
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -54,8 +53,7 @@ public class ElevatorCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
@@ -66,10 +64,11 @@ public class ElevatorCommand extends Command {
     ElevatorCommand.level = level;
 
     // Current joint pose (rotations + meters)
-    var current = new ArmKinematics.JointPose(
-        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-        Meters.of(Elevator.getInstance().getHeight()), // L
-        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
+    var current =
+        new ArmKinematics.JointPose(
+            Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+            Meters.of(Elevator.getInstance().getHeight()), // L
+            Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
 
     Distance y = Meters.of(0);
     Rotation2d wristAngle = Rotation2d.fromDegrees(0);
@@ -99,17 +98,15 @@ public class ElevatorCommand extends Command {
         break;
     }
 
-    var target = new ArmKinematics.Target(
-        Meters.of(Drive.getInstance().distanceFromReefEdge()), // X
-        y, // Y
-        wristAngle);
+    var target =
+        new ArmKinematics.Target(
+            Meters.of(Drive.getInstance().distanceFromReefEdge()), // X
+            y, // Y
+            wristAngle);
 
     var sol = ArmKinematics.solve(current, target);
 
-    targetPos = new double[] {
-        sol.theta().getRotations(),
-        sol.L().abs(Meters),
-        sol.beta().getRotations()
-    };
+    targetPos =
+        new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
   }
 }
