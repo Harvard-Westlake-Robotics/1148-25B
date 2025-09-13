@@ -70,7 +70,7 @@ public class WristIOTalonFX implements WristIO {
     motorCurrent = wristMotor.getStatorCurrent();
 
     wristFeedforward = new ArmFeedforward(
-        wristConstants.kS, wristConstants.kV, wristConstants.kG, wristConstants.kA);
+        wristConstants.kS, wristConstants.kG, wristConstants.kV, wristConstants.kA);
   }
 
   @Override

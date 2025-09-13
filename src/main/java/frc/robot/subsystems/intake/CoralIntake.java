@@ -33,14 +33,13 @@ public class CoralIntake extends SubsystemBase {
     this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);
-    sysId =
-        new SysIdRoutine(
-            new Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+    sysId = new SysIdRoutine(
+        new Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+        new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {
@@ -68,6 +67,7 @@ public class CoralIntake extends SubsystemBase {
     io2.runVelocity(velocity.times(-1));
   }
 
+  // Sets motors to the same direction
   public void setVelocityShift(LinearVelocity velocity) {
     io.runVelocity(velocity);
     io2.runVelocity(velocity);

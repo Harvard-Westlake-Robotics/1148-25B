@@ -12,16 +12,18 @@ import frc.robot.subsystems.wrist.IntakeWrist;
 import frc.robot.util.ArmKinematics;
 
 public class ElevatorCommand extends Command {
-  /*
-   * Stores values needed for scoring in an array. The list is as follows:
-   * [0] : Elevator Angle (deg)
-   * [1] : Elevator Height (m)
-   * [2] : Intake Wrist Angle (deg)
-   */
-  private double[] targetPos;
 
+  private double[] targetPos;
+  public boolean straightIntakePosition;
+
+  /*
+   * An enum that stores y and wrist values that are fed into our ArmKinematics
+   * class.
+   * The x value is taken from our distance from the reef
+   */
   public enum ScoringLevel {
     NEUTRAL,
+    SOURCE_CORAL,
     GROUND_CORAL,
     GROUND_ALGAE,
     L1,
@@ -39,6 +41,7 @@ public class ElevatorCommand extends Command {
   public ElevatorCommand() {
     this.addRequirements(Elevator.getInstance());
     level = ScoringLevel.NEUTRAL;
+    straightIntakePosition = false;
     setHeight(level);
   }
 
@@ -72,30 +75,44 @@ public class ElevatorCommand extends Command {
         Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
 
     Distance y = Meters.of(0);
-    Rotation2d wristAngle = Rotation2d.fromDegrees(0);
+    Rotation2d wristAngle = Rotation2d.fromRotations(0);
 
     switch (level) {
       case BOTTOM_REMOVE:
+        straightIntakePosition = false;
         break;
       case GROUND_ALGAE:
+        straightIntakePosition = false;
         break;
       case GROUND_CORAL:
+        straightIntakePosition = false;
+        break;
+      case SOURCE_CORAL:
+        straightIntakePosition = false;
         break;
       case L1:
+        straightIntakePosition = false;
         break;
       case L2:
+        straightIntakePosition = true;
         break;
       case L3:
+        straightIntakePosition = true;
         break;
       case L4:
-        break;
+        straightIntakePosition = true;
+        wristAngle = Rotation2d.fromRotations(0);
       case NET:
+        straightIntakePosition = false;
         break;
       case NEUTRAL:
+        straightIntakePosition = false;
         break;
       case TOP_REMOVE:
+        straightIntakePosition = false;
         break;
       default:
+        straightIntakePosition = false;
         break;
     }
 
