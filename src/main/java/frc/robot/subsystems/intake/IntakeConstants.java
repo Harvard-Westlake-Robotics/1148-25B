@@ -71,8 +71,8 @@ public class IntakeConstants {
       new IntakeConstants(
           17,
           InvertedValue.Clockwise_Positive,
-          100,
-          -100,
+          8,
+          -8,
           8.569162,
           0.0,
           0.0,
