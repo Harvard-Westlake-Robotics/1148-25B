@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import edu.wpi.first.units.measure.Distance;
 
 public class ElevatorConstants {

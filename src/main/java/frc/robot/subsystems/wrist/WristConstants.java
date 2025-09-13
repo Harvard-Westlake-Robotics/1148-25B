@@ -3,7 +3,6 @@ package frc.robot.subsystems.wrist;
 import static edu.wpi.first.units.Units.Degrees;
 
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 
@@ -77,50 +76,52 @@ public class WristConstants {
   }
 
   // TODO: Fix later with real values
-  public static final WristConstants ShoulderWrist = new WristConstants(
-      18,
-      19,
-      20,
-      InvertedValue.CounterClockwise_Positive,
-      100000,
-      5,
-      0.0,
-      0.0,
-      0.000,
-      0.0,
-      0.0,
-      0.0,
-      1000.0,
-      1000.0,
-      1000.0,
-      1.0, // 4.846
-      Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-      40,
-      80,
-      Rotation2d.fromRotations(-0.25), // -90°
-      Rotation2d.fromRotations(0.25)); // +90°
+  public static final WristConstants ShoulderWrist =
+      new WristConstants(
+          18,
+          19,
+          20,
+          InvertedValue.CounterClockwise_Positive,
+          100000,
+          5,
+          0.0,
+          0.0,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          1.0, // 4.846
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          40,
+          80,
+          Rotation2d.fromRotations(0), // Resting on base
+          Rotation2d.fromRotations(0.569)); // 205 deg
 
   // TODO: Fix later with real values
-  public static final WristConstants IntakeWrist = new WristConstants(
-      0,
-      0,
-      0,
-      InvertedValue.CounterClockwise_Positive,
-      10,
-      5,
-      0.0,
-      0.0,
-      0.000,
-      0.0,
-      0.0,
-      0.0,
-      1000.0,
-      1000.0,
-      1000.0,
-      1.0,
-      Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-      40,
-      80,
-      Rotation2d.fromRotations(-1.0 / 3.0), // -120°
-      Rotation2d.fromRotations(1.0 / 3.0)); // +120°
+  public static final WristConstants IntakeWrist =
+      new WristConstants(
+          0,
+          0,
+          0,
+          InvertedValue.CounterClockwise_Positive,
+          10,
+          5,
+          0.0,
+          0.0,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          1.0,
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          40,
+          80,
+          Rotation2d.fromRotations(-1.0 / 3.0), // -120°
+          Rotation2d.fromRotations(1.0 / 3.0)); // +120°
 }
