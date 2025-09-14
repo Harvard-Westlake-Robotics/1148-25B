@@ -7,6 +7,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intake.AlgaeIntake;
+import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.wrist.ArmWrist;
 import frc.robot.subsystems.wrist.IntakeWrist;
 import frc.robot.util.ArmKinematics;
@@ -14,7 +16,7 @@ import frc.robot.util.ArmKinematics;
 public class ElevatorCommand extends Command {
 
   private double[] targetPos;
-  public boolean straightIntakePosition;
+  public boolean outtakePosition;
 
   /*
    * An enum that stores y and wrist values that are fed into our ArmKinematics
@@ -32,7 +34,9 @@ public class ElevatorCommand extends Command {
     L4,
     TOP_REMOVE,
     BOTTOM_REMOVE,
-    NET
+    NET,
+    PROCESSOR,
+    HANG
   }
 
   // For accessing the set ScoringLevel by other commands
@@ -41,12 +45,13 @@ public class ElevatorCommand extends Command {
   public ElevatorCommand() {
     this.addRequirements(Elevator.getInstance());
     level = ScoringLevel.NEUTRAL;
-    straightIntakePosition = false;
+    outtakePosition = false;
     setHeight(level);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   @Override
   public void execute() {
@@ -56,7 +61,8 @@ public class ElevatorCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   @Override
   public boolean isFinished() {
@@ -67,63 +73,78 @@ public class ElevatorCommand extends Command {
     ElevatorCommand.level = level;
 
     // Current joint pose (rotations + meters)
-    var current =
-        new ArmKinematics.JointPose(
-            Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-            Meters.of(Elevator.getInstance().getHeight()), // L
-            Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
+    var current = new ArmKinematics.JointPose(
+        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+        Meters.of(Elevator.getInstance().getHeight()), // L
+        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
 
     Distance y = Meters.of(0);
     Rotation2d wristAngle = Rotation2d.fromRotations(0);
 
     switch (level) {
       case BOTTOM_REMOVE:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
       case GROUND_ALGAE:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
       case GROUND_CORAL:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
       case SOURCE_CORAL:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
       case L1:
-        straightIntakePosition = false;
+        // Might want to make the boolean false here depending on if L1 outtakes
+        // differently
+        outtakePosition = true;
         break;
       case L2:
-        straightIntakePosition = true;
+        outtakePosition = true;
         break;
       case L3:
-        straightIntakePosition = true;
+        outtakePosition = true;
         break;
       case L4:
-        straightIntakePosition = true;
+        outtakePosition = true;
         wristAngle = Rotation2d.fromRotations(0);
       case NET:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
       case NEUTRAL:
-        straightIntakePosition = false;
+        outtakePosition = false;
+        // Different position based on what is happening
+        if (CoralIntake.getInstance().hasCoral()) {
+          // "Keeps it slightly up, ready to go up and score"
+        } else if (CoralIntake.getInstance().hasCoralHotDog()) {
+          // "L1 scoring position"
+        } else if (AlgaeIntake.getInstance().hasAlgae()) {
+          // "Keeps elevator straight up but contracted, like lolipop
+        } else { // Nothing in intake
+          // Elevator fully down and intake stowed in.
+        }
         break;
       case TOP_REMOVE:
-        straightIntakePosition = false;
+        outtakePosition = false;
+        break;
+      case PROCESSOR:
+        outtakePosition = false;
+        break;
+      case HANG:
+        outtakePosition = false;
         break;
       default:
-        straightIntakePosition = false;
+        outtakePosition = false;
         break;
     }
 
-    var target =
-        new ArmKinematics.Target(
-            Meters.of(Drive.getInstance().distanceFromReefEdge()), // X
-            y, // Y
-            wristAngle);
+    var target = new ArmKinematics.Target(
+        Meters.of(Drive.getInstance().distanceFromReefEdge()), // X
+        y, // Y
+        wristAngle);
 
     var sol = ArmKinematics.solve(current, target);
 
-    targetPos =
-        new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
+    targetPos = new double[] { sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations() };
   }
 }
