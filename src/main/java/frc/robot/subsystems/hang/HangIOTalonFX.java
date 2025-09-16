@@ -37,8 +37,9 @@ public class HangIOTalonFX implements HangIO {
   public HangIOTalonFX() {
     hangMotor = new TalonFX(HangConstants.motorId);
     hangMotor.setPosition(0);
-    hangController = new MotionMagicVelocityTorqueCurrentFOC(
-        AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
+    hangController =
+        new MotionMagicVelocityTorqueCurrentFOC(
+            AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
 
     TalonFXConfiguration hangConfig = new TalonFXConfiguration();
 
@@ -60,16 +61,20 @@ public class HangIOTalonFX implements HangIO {
     motorAppliedVolts = hangMotor.getMotorVoltage();
     motorCurrent = hangMotor.getStatorCurrent();
 
-    hangFeedforward = new SimpleMotorFeedforward(HangConstants.kS, HangConstants.kV, HangConstants.kA);
+    hangFeedforward =
+        new SimpleMotorFeedforward(HangConstants.kS, HangConstants.kV, HangConstants.kA);
   }
 
   @Override
   public void updateInputs(HangIOInputs inputs) {
-    var hangStatus = StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
+    var hangStatus =
+        StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.motorConnected = motorConnectedDebounce.calculate(hangMotor.isConnected());
-    inputs.motorPositionMeters = motorPosition.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
-    inputs.motorVelocityMPS = motorVelocity.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
+    inputs.motorPositionMeters =
+        motorPosition.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
+    inputs.motorVelocityMPS =
+        motorVelocity.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrent = motorCurrent.getValueAsDouble();
   }
@@ -79,8 +84,9 @@ public class HangIOTalonFX implements HangIO {
     hangConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     hangConfig.MotionMagic.MotionMagicAcceleration = 9999;
     hangMotor.getConfigurator().apply(hangConfig);
-    hangController.FeedForward = hangFeedforward.calculate(
-        velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio);
+    hangController.FeedForward =
+        hangFeedforward.calculate(
+            velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio);
     hangController.Velocity = velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio;
     hangMotor.setControl(hangController);
   }

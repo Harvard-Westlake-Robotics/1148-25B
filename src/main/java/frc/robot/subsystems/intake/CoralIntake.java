@@ -20,10 +20,10 @@ public class CoralIntake extends SubsystemBase {
   private static CoralIntake instance;
   // hasCoralStraight is a boolean on whether we have the coral straight in the
   // intake or not
-  private boolean hasCoralStraight;
-  // hasCoralHotDog is a boolean on whether we have the coral hotdog style in the
+  private boolean hasCoralHotdog;
+  // hasCoralBurger is a boolean on whether we have the coral burger style in the
   // intake
-  private boolean hasCoralHotDog;
+  private boolean hasCoralBurger;
   SysIdRoutine sysId;
 
   public static CoralIntake getInstance() {
@@ -61,14 +61,14 @@ public class CoralIntake extends SubsystemBase {
     Logger.processInputs(key + "/Motor1", inputs);
     Logger.processInputs(key + "/Motor2", inputs2);
     if (getSensor4() && getSensor2()) {
-      hasCoralStraight = true;
+      hasCoralHotdog = true;
     } else {
-      hasCoralStraight = false;
+      hasCoralHotdog = false;
     }
     if (getSensor1() && getSensor2() && getSensor3()) {
-      hasCoralHotDog = true;
+      hasCoralBurger = true;
     } else {
-      hasCoralHotDog = false;
+      hasCoralBurger = false;
     }
   }
 
@@ -121,12 +121,12 @@ public class CoralIntake extends SubsystemBase {
     return io.getSensor4();
   }
 
-  public Boolean hasCoral() {
-    return hasCoralStraight;
+  public Boolean hasCoralHotDog() {
+    return hasCoralHotdog;
   }
 
-  public boolean hasCoralHotDog() {
-    return hasCoralHotDog;
+  public boolean hasCoralBurger() {
+    return hasCoralBurger;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

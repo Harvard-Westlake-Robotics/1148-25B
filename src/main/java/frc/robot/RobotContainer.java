@@ -52,20 +52,15 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   /**
-   * This defines the runtime mode used by AdvantageKit. The mode is always "real"
-   * when running on a
-   * roboRIO. Change the value of "simMode" to switch between "sim" (physics sim)
-   * and "replay" (log
+   * This defines the runtime mode used by AdvantageKit. The mode is always "real" when running on a
+   * roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay" (log
    * replay from a file).
    */
   public static final Mode simMode = Mode.SIM;
@@ -123,21 +118,19 @@ public class RobotContainer {
     Integer.parseInt(motorSerialString);
   }
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive = new Drive(
-            new GyroIOPigeon2(),
-            new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
-            new ModuleIOTalonFXReal(DriveConstants.FrontRight),
-            new ModuleIOTalonFXReal(DriveConstants.BackLeft),
-            new ModuleIOTalonFXReal(DriveConstants.BackRight),
-            pose -> {
-            });
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
+                new ModuleIOTalonFXReal(DriveConstants.FrontRight),
+                new ModuleIOTalonFXReal(DriveConstants.BackLeft),
+                new ModuleIOTalonFXReal(DriveConstants.BackRight),
+                pose -> {});
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
@@ -152,16 +145,18 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        driveSimulation = new SwerveDriveSimulation(
-            DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        driveSimulation =
+            new SwerveDriveSimulation(
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-        drive = new Drive(
-            new GyroIOSim(driveSimulation.getGyroSimulation()),
-            new ModuleIOTalonFXSim(DriveConstants.FrontLeft, driveSimulation.getModules()[0]),
-            new ModuleIOTalonFXSim(DriveConstants.FrontRight, driveSimulation.getModules()[1]),
-            new ModuleIOTalonFXSim(DriveConstants.BackLeft, driveSimulation.getModules()[2]),
-            new ModuleIOTalonFXSim(DriveConstants.BackRight, driveSimulation.getModules()[3]),
-            driveSimulation::setSimulationWorldPose);
+        drive =
+            new Drive(
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOTalonFXSim(DriveConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOTalonFXSim(DriveConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOTalonFXSim(DriveConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOTalonFXSim(DriveConstants.BackRight, driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
@@ -176,19 +171,14 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
-        drive = new Drive(
-            new GyroIO() {
-            },
-            new ModuleIOTalonFX(DriveConstants.FrontLeft) {
-            },
-            new ModuleIOTalonFX(DriveConstants.FrontRight) {
-            },
-            new ModuleIOTalonFX(DriveConstants.BackLeft) {
-            },
-            new ModuleIOTalonFX(DriveConstants.BackRight) {
-            },
-            pose -> {
-            });
+        drive =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIOTalonFX(DriveConstants.FrontLeft) {},
+                new ModuleIOTalonFX(DriveConstants.FrontRight) {},
+                new ModuleIOTalonFX(DriveConstants.BackLeft) {},
+                new ModuleIOTalonFX(DriveConstants.BackRight) {},
+                pose -> {});
         this.armWrist = ArmWrist.getInstance();
         this.intakeWrist = IntakeWrist.getInstance();
         this.elevator = Elevator.getInstance();
@@ -254,11 +244,9 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
+   * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
@@ -276,13 +264,15 @@ public class RobotContainer {
     hang.setDefaultCommand(hangCommand);
 
     // Reset gyro / odometry
-    final Runnable resetGyro = currentMode == Mode.SIM
-        ? () ->
-        // simulation
-        drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
-        // real / test
-        : () -> drive.setPose(
-            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    final Runnable resetGyro =
+        currentMode == Mode.SIM
+            ? () ->
+                // simulation
+                drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
+            // real / test
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driver.povCenter().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // Add drift mode toggle to the driver's right bumper button
@@ -306,16 +296,14 @@ public class RobotContainer {
   }
 
   public void resetSimulationField() {
-    if (currentMode != Mode.SIM)
-      return;
+    if (currentMode != Mode.SIM) return;
 
     driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
   public void updateSimulation() {
-    if (currentMode != Mode.SIM)
-      return;
+    if (currentMode != Mode.SIM) return;
 
     SimulatedArena.getInstance().simulationPeriodic();
     Logger.recordOutput(

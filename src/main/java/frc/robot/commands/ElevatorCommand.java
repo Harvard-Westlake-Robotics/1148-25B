@@ -114,9 +114,9 @@ public class ElevatorCommand extends Command {
       case NEUTRAL:
         outtakePosition = false;
         // Different position based on what is happening
-        if (CoralIntake.getInstance().hasCoral()) {
+        if (CoralIntake.getInstance().hasCoralHotDog()) {
           // "Keeps it slightly up, ready to go up and score"
-        } else if (CoralIntake.getInstance().hasCoralHotDog()) {
+        } else if (CoralIntake.getInstance().hasCoralBurger()) {
           // "L1 scoring position"
         } else if (AlgaeIntake.getInstance().hasAlgae()) {
           // "Keeps elevator straight up but contracted, like lolipop
