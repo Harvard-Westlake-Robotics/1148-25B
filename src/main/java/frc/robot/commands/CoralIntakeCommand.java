@@ -4,62 +4,32 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.ArmCommand.ScoringLevel;
-import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.intake.IntakeConstants;
 
 public class CoralIntakeCommand extends Command {
-<<<<<<< HEAD
   private Boolean eject;
   private LinearVelocity velocity;
   public Boolean getEject() {
     return eject;
-=======
-  /*
-   * Notes for intake
-   * Two styles of intaking: Intake straight and intake wide
-   * At Coral source, intake hotdog ALWAYS
-   * when intaking on ground, keep two choices:
-   * 1. Intake straight
-   * 2. Intake wide
-   * 
-   * Different shift modes for the two choices
-   */
-  // intake straight or intake wide
-  private Boolean intakingHotdog;
-  private boolean outtaking;
-  // boolean on if we're running the intake
-  private boolean running;
-
-  // For ignoring intake logic
-  public Boolean manual;
-  public LinearVelocity velocity;
-
-  public Boolean getIntakingHotdog() {
-    return intakingHotdog;
->>>>>>> 881f855db7a8e3847ef7597e771ab1eb9e196097
   }
 
-  public void setIntakingHotdog(Boolean intakingHotdog) {
-    this.intakingHotdog = intakingHotdog;
+  public void setEject(Boolean eject) {
+    this.eject = eject;
   }
 
   public CoralIntakeCommand() {
     addRequirements(CoralIntake.getInstance());
-    this.intakingHotdog = true;
-    this.outtaking = false;
-    this.running = false;
-    velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    this.eject = false;
   }
 
   @Override
   public void initialize() {
+    CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
   }
 
   @Override
   public void execute() {
-<<<<<<< HEAD
     //Quinn I'm killing your code- Daniel
     // if (eject) {
     //   CoralIntake.getInstance()
@@ -82,90 +52,6 @@ public class CoralIntakeCommand extends Command {
     //   }
     // }
     driver.R1().whileTrue(new InstantCommand())
-=======
-    if (!manual){
-      // Code for automatic intaking
-    if (ArmCommand.level == ScoringLevel.SOURCE_CORAL) {
-      // If we're at the source, always intake straight
-      intakingHotdog = true;
-      running = true;
-      outtaking = false;
-    }
-    if (running) {
-      if (!outtaking) {
-        intake();
-      } else {
-        // We outtake
-        outtake();
-      }
-    } else {
-      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
-    }
-    } else {
-      CoralIntake.getInstance().setVelocity(velocity);
-    }
-    
-  }
-
-  // Runs the intake based on whether we are intaking straight or hot dog
-  // Sensor requirements may need to change based on how the intake actually runs
-  public void intake() {
-    if (intakingHotdog) {
-      // Intake straight --> Shift when sensors 1, 2, 3 are triggered
-      if (CoralIntake.getInstance().getSensor1()
-          && CoralIntake.getInstance().getSensor2()
-          && CoralIntake.getInstance().getSensor3()) {
-        // Coral stuck, shift
-        CoralIntake.getInstance()
-            .shift(
-                true,
-                LinearVelocity.ofBaseUnits(
-                    IntakeConstants.CoralIntake.shiftVelocity, MetersPerSecond));
-      } else {
-        // We're good to keep intaking
-        CoralIntake.getInstance()
-            .setVelocity(
-                LinearVelocity.ofBaseUnits(
-                    IntakeConstants.CoralIntake.intakeVelocity, MetersPerSecond));
-      }
-    } else {
-      // Intake hamburger --> shift when sensors 1 and 3 are triggered BUT NOT WHEN
-      // BOTH
-      // Sensor 2 should be trigerred if sensors 1 and 3 are both triggered
-      AlgaeIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
-      if ((CoralIntake.getInstance().getSensor1() || CoralIntake.getInstance().getSensor3())
-          && CoralIntake.getInstance().getSensor2()) {
-        // We're good, keep intaking
-        CoralIntake.getInstance()
-            .setVelocity(
-                LinearVelocity.ofBaseUnits(
-                    IntakeConstants.CoralIntake.intakeVelocity, MetersPerSecond));
-      } else {
-        // Bad things, gotta shift depending on situation
-        if (CoralIntake.getInstance().getSensor1()) {
-          CoralIntake.getInstance()
-              .shift(
-                  true,
-                  LinearVelocity.ofBaseUnits(
-                      IntakeConstants.CoralIntake.shiftVelocity, MetersPerSecond));
-        } else if (CoralIntake.getInstance().getSensor3()) {
-          // Shift left
-          CoralIntake.getInstance()
-              .shift(
-                  false,
-                  LinearVelocity.ofBaseUnits(
-                      IntakeConstants.CoralIntake.shiftVelocity, MetersPerSecond));
-        }
-      }
-    }
->>>>>>> 881f855db7a8e3847ef7597e771ab1eb9e196097
-  }
-
-  public void outtake() {
-    CoralIntake.getInstance()
-        .setVelocity(
-            LinearVelocity.ofBaseUnits(
-                IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
   }
 
   @Override
@@ -173,33 +59,14 @@ public class CoralIntakeCommand extends Command {
     CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
   }
 
-  public void runIntake(boolean intakingStraight) {
-    running = true;
-    outtaking = false;
-    this.intakingHotdog = intakingStraight;
-  }
-
-  public void runOuttake() {
-    running = true;
-    outtaking = true;
-  }
-
-  public void stopIntake() {
-    running = false;
-    AlgaeIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
-  }
-
   @Override
   public boolean isFinished() {
-    // Deprecated code but idk if we want this in or not
-    // if (intakingStraight) {
-    // // returns when the Coral has been scored
-    // return !CoralIntake.getInstance().getSensor4();
-    // } else {
-    // // returns when the Coral is in position
-    // return CoralIntake.getInstance().hasCoral();
-    // }
-
-    return false;
+    if (eject) {
+      // returns when the Coral has been scored
+      return !CoralIntake.getInstance().getSensor4();
+    } else {
+      // returns when the Coral is in position
+      return CoralIntake.getInstance().hasCoral();
+    }
   }
 }

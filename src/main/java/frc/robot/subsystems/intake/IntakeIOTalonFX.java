@@ -99,7 +99,7 @@ public class IntakeIOTalonFX implements IntakeIO {
       this.input4 = null;
     }
     intakeFeedforward =
-        new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kV, intakeConstants.kA);
+        new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kA, intakeConstants.kV);
   }
 
   @Override

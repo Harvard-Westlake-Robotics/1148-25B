@@ -19,8 +19,8 @@ public class ElevatorConstants {
   public static double kA = 0.0;
   public static final double elevatorForwardSoftLimitRotations = 55;
   public static final double elevatorReverseSoftLimitRotations = 0.0;
-  public static final double rotationsToMetersRatio = (0.028448);
+  public static final double rotationsToMetersRatio = (1);
   public static final double elevatorGroundOffsetMeters = 0.2125;
-  public static final Distance ARM_MIN_LEN = Meters.of(0.0);
-  public static final Distance ARM_MAX_LEN = Meters.of(42.5);
+  public static final Distance ARM_MIN_LEN = Meters.of(0.50);
+  public static final Distance ARM_MAX_LEN = Meters.of(1.00);
 }

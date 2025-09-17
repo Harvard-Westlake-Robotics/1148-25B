@@ -72,7 +72,7 @@ public class WristIOTalonFX implements WristIO {
 
     wristFeedforward =
         new ArmFeedforward(
-            wristConstants.kS, wristConstants.kG, wristConstants.kV, wristConstants.kA);
+            wristConstants.kS, wristConstants.kV, wristConstants.kG, wristConstants.kA);
   }
 
   @Override

@@ -7,7 +7,6 @@ public class IntakeConstants {
   public final InvertedValue motorInverted;
   public final double intakeVelocity;
   public final double outtakeVelocity;
-  public final double shiftVelocity;
   public double kP;
   public double kI;
   public double kD;
@@ -31,7 +30,6 @@ public class IntakeConstants {
       InvertedValue motorInverted,
       double intakeVelocity,
       double outtakeVelocity,
-      double shiftVelocity,
       double kP,
       double kI,
       double kD,
@@ -52,7 +50,6 @@ public class IntakeConstants {
     this.motorInverted = motorInverted;
     this.intakeVelocity = intakeVelocity;
     this.outtakeVelocity = outtakeVelocity;
-    this.shiftVelocity = shiftVelocity;
     this.kP = kP;
     this.kI = kI;
     this.kD = kD;
@@ -76,7 +73,6 @@ public class IntakeConstants {
           InvertedValue.Clockwise_Positive,
           100,
           -100,
-          100,
           8.569162,
           0.0,
           0.0,
@@ -100,7 +96,6 @@ public class IntakeConstants {
           InvertedValue.CounterClockwise_Positive,
           100,
           -100,
-          0,
           1.669162,
           0.0,
           0.0,

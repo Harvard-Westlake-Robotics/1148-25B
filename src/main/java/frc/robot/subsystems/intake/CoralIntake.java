@@ -18,12 +18,7 @@ public class CoralIntake extends SubsystemBase {
   private IntakeConstants constants;
   private String key;
   private static CoralIntake instance;
-  // hasCoralStraight is a boolean on whether we have the coral straight in the
-  // intake or not
-  private boolean hasCoralHotdog;
-  // hasCoralBurger is a boolean on whether we have the coral burger style in the
-  // intake
-  private boolean hasCoralBurger;
+  private boolean hasCoral;
   SysIdRoutine sysId;
 
   public static CoralIntake getInstance() {
@@ -38,13 +33,14 @@ public class CoralIntake extends SubsystemBase {
     this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);
-    sysId = new SysIdRoutine(
-        new Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-        new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {
@@ -61,14 +57,9 @@ public class CoralIntake extends SubsystemBase {
     Logger.processInputs(key + "/Motor1", inputs);
     Logger.processInputs(key + "/Motor2", inputs2);
     if (getSensor4() && getSensor2()) {
-      hasCoralHotdog = true;
+      hasCoral = true;
     } else {
-      hasCoralHotdog = false;
-    }
-    if (getSensor1() && getSensor2() && getSensor3()) {
-      hasCoralBurger = true;
-    } else {
-      hasCoralBurger = false;
+      hasCoral = false;
     }
   }
 
@@ -77,7 +68,6 @@ public class CoralIntake extends SubsystemBase {
     io2.runVelocity(velocity.times(-1));
   }
 
-  // Sets motors to the same direction
   public void setVelocityShift(LinearVelocity velocity) {
     io.runVelocity(velocity);
     io2.runVelocity(velocity);
@@ -91,18 +81,6 @@ public class CoralIntake extends SubsystemBase {
   public void setVoltageShift(double volts) {
     io.runCharacterization(volts);
     io2.runCharacterization(volts);
-  }
-
-  // Shifts the motors by setting them to spin in the same direction
-  // Boolean direction -> true is go right, false is go left
-  // might not work yet because we're unsure how the shifting will actually need
-  // to work
-  public void shift(boolean direction, LinearVelocity velocity) {
-    if (direction) {
-      setVelocityShift(velocity);
-    } else {
-      setVelocityShift(velocity.times(-1));
-    }
   }
 
   public Boolean getSensor1() {
@@ -121,12 +99,8 @@ public class CoralIntake extends SubsystemBase {
     return io.getSensor4();
   }
 
-  public Boolean hasCoralHotDog() {
-    return hasCoralHotdog;
-  }
-
-  public boolean hasCoralBurger() {
-    return hasCoralBurger;
+  public Boolean hasCoral() {
+    return hasCoral;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
