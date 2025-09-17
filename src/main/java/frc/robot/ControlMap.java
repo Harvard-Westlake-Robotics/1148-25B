@@ -37,14 +37,7 @@ public class ControlMap {
     // Intake commands
 
     // Coral Intake
-    driver.R1()whileTrue(new InstantCommand(
-      () ->{
-        RobotContainer.CoralIntakeCommand.setVelocity(LinearVelocity.ofBaseUnits(IntakeConstants.CoralIntake.intakeVelocity, MetersPerSecond))
-    }))
-    driver.R1()onFalse(new InstantCommand(
-      () -> {
-        RobotContainer.CoralIntake.setVelocity(0)
-    }))
+
     // Algae Intake
 
     // Elevator
