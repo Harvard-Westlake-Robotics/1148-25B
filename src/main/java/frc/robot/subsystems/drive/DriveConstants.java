@@ -139,8 +139,8 @@ public class DriveConstants {
   public static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.388671875);
   public static final boolean kFrontLeftSteerMotorInverted = true;
   public static final boolean kFrontLeftEncoderInverted = false;
-  public static final Distance kFrontLeftXPos = Inches.of(13.5);
-  public static final Distance kFrontLeftYPos = Inches.of(13.5);
+  public static final Distance kFrontLeftXPos = Inches.of(11.5);
+  public static final Distance kFrontLeftYPos = Inches.of(11.5);
 
   // Front Right
   public static final int kFrontRightDriveMotorId = 4;
@@ -150,8 +150,8 @@ public class DriveConstants {
   public static final boolean kFrontRightSteerMotorInverted = true;
   public static final boolean kFrontRightEncoderInverted = false;
 
-  public static final Distance kFrontRightXPos = Inches.of(13.5);
-  public static final Distance kFrontRightYPos = Inches.of(-13.5);
+  public static final Distance kFrontRightXPos = Inches.of(11.5);
+  public static final Distance kFrontRightYPos = Inches.of(-11.5);
 
   // Back Left
   public static final int kBackLeftDriveMotorId = 6;
@@ -161,8 +161,8 @@ public class DriveConstants {
   public static final boolean kBackLeftSteerMotorInverted = true;
   public static final boolean kBackLeftEncoderInverted = false;
 
-  public static final Distance kBackLeftXPos = Inches.of(-13.5);
-  public static final Distance kBackLeftYPos = Inches.of(13.5);
+  public static final Distance kBackLeftXPos = Inches.of(-11.5);
+  public static final Distance kBackLeftYPos = Inches.of(11.5);
 
   // Back Right
   public static final int kBackRightDriveMotorId = 8;
@@ -172,8 +172,8 @@ public class DriveConstants {
   public static final boolean kBackRightSteerMotorInverted = true;
   public static final boolean kBackRightEncoderInverted = false;
 
-  public static final Distance kBackRightXPos = Inches.of(-13.5);
-  public static final Distance kBackRightYPos = Inches.of(-13.5);
+  public static final Distance kBackRightXPos = Inches.of(-11.5);
+  public static final Distance kBackRightYPos = Inches.of(-11.5);
 
   public static final double DRIVE_BASE_RADIUS =
       Math.max(

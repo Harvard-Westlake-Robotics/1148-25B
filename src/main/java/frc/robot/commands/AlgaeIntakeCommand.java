@@ -54,4 +54,8 @@ public class AlgaeIntakeCommand extends Command {
       algaeLastStop = false;
     }
   }
+
+  public void setVelocity(LinearVelocity velocity) {
+    this.velocity = velocity;
+  }
 }
