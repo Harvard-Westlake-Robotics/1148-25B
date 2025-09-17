@@ -9,7 +9,7 @@ import frc.robot.subsystems.intake.IntakeConstants;
 
 public class CoralIntakeCommand extends Command {
   private Boolean eject;
-
+  private LinearVelocity velocity;
   public Boolean getEject() {
     return eject;
   }
@@ -30,26 +30,28 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void execute() {
-    if (eject) {
-      CoralIntake.getInstance()
-          .setVelocity(
-              LinearVelocity.ofBaseUnits(
-                  IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
-    } else {
-      // If Coral is in the "Jammed" position- covering all three top sensors
-      if (CoralIntake.getInstance().getSensor1()
-          && CoralIntake.getInstance().getSensor2()
-          && CoralIntake.getInstance().getSensor3()) {
-        CoralIntake.getInstance().setVelocityShift(LinearVelocity.ofBaseUnits(6, MetersPerSecond));
-        // If Coral is in intake-ready position
-      } else if ((CoralIntake.getInstance().getSensor1() || CoralIntake.getInstance().getSensor3())
-          && CoralIntake.getInstance().getSensor2()) {
-        CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(8, MetersPerSecond));
-        // Deafult intake velocity
-      } else {
-        CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
-      }
-    }
+    //Quinn I'm killing your code- Daniel
+    // if (eject) {
+    //   CoralIntake.getInstance()
+    //       .setVelocity(
+    //           LinearVelocity.ofBaseUnits(
+    //               IntakeConstants.CoralIntake.outtakeVelocity, MetersPerSecond));
+    // } else {
+    //   // If Coral is in the "Jammed" position- covering all three top sensors
+    //   if (CoralIntake.getInstance().getSensor1()
+    //       && CoralIntake.getInstance().getSensor2()
+    //       && CoralIntake.getInstance().getSensor3()) {
+    //     CoralIntake.getInstance().setVelocityShift(LinearVelocity.ofBaseUnits(6, MetersPerSecond));
+    //     // If Coral is in intake-ready position
+    //   } else if ((CoralIntake.getInstance().getSensor1() || CoralIntake.getInstance().getSensor3())
+    //       && CoralIntake.getInstance().getSensor2()) {
+    //     CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(8, MetersPerSecond));
+    //     // Deafult intake velocity
+    //   } else {
+    //     CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
+    //   }
+    // }
+    driver.R1().whileTrue(new InstantCommand())
   }
 
   @Override
