@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ElevatorCommand;
-import frc.robot.commands.ElevatorCommand.ScoringLevel;
+import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.IntakeConstants;
 
@@ -50,7 +50,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  if (ElevatorCommand.level == ScoringLevel.GROUND_ALGAE) {
+                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     // If at algae level, intake algae
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(
@@ -63,7 +63,7 @@ public class ControlMap {
         .onFalse(
             new InstantCommand(
                 () -> {
-                  if (ElevatorCommand.level == ScoringLevel.GROUND_ALGAE) {
+                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     // If at algae level, intake algae
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(0, MetersPerSecond));
@@ -77,7 +77,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  if (ElevatorCommand.level == ScoringLevel.GROUND_ALGAE) {
+                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     // If at algae level, intake algae
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(
@@ -90,7 +90,7 @@ public class ControlMap {
         .onFalse(
             new InstantCommand(
                 () -> {
-                  if (ElevatorCommand.level == ScoringLevel.GROUND_ALGAE) {
+                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     // If at algae level, intake algae
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(0, MetersPerSecond));
@@ -107,7 +107,7 @@ public class ControlMap {
                 () -> {
                   if (RobotContainer.elevatorCommand.outtakePosition) {
                     RobotContainer.coralIntakeCommand.runOuttake();
-                  } else if (ElevatorCommand.level == ScoringLevel.GROUND_ALGAE) {
+                  } else if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(
                             IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond));

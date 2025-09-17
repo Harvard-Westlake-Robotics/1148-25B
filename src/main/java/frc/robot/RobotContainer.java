@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.HangCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -92,7 +92,7 @@ public class RobotContainer {
   private final Hang hang;
 
   // Commands
-  public static ElevatorCommand elevatorCommand;
+  public static ArmCommand elevatorCommand;
   public static AlgaeIntakeCommand algaeIntakeCommand;
   public static CoralIntakeCommand coralIntakeCommand;
   public static HangCommand hangCommand;
@@ -139,7 +139,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
-        elevatorCommand = new ElevatorCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
 
@@ -165,7 +165,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
-        elevatorCommand = new ElevatorCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
 
@@ -187,7 +187,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
-        elevatorCommand = new ElevatorCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
     }
@@ -254,7 +254,7 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
-    elevatorCommand = new ElevatorCommand();
+    elevatorCommand = new ArmCommand();
     elevator.setDefaultCommand(elevatorCommand);
     coralIntakeCommand = new CoralIntakeCommand();
     coralIntake.setDefaultCommand(coralIntakeCommand);

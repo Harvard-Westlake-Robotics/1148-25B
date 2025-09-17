@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.ElevatorCommand.ScoringLevel;
+import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.intake.IntakeConstants;
@@ -26,6 +26,10 @@ public class CoralIntakeCommand extends Command {
   // boolean on if we're running the intake
   private boolean running;
 
+  // For ignoring intake logic
+  public Boolean manual;
+  public LinearVelocity velocity;
+
   public Boolean getIntakingHotdog() {
     return intakingHotdog;
   }
@@ -39,6 +43,7 @@ public class CoralIntakeCommand extends Command {
     this.intakingHotdog = true;
     this.outtaking = false;
     this.running = false;
+    velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
   }
 
   @Override
@@ -47,8 +52,9 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void execute() {
-    // Code for manual intaking
-    if (ElevatorCommand.level == ScoringLevel.SOURCE_CORAL) {
+    if (!manual){
+      // Code for automatic intaking
+    if (ArmCommand.level == ScoringLevel.SOURCE_CORAL) {
       // If we're at the source, always intake straight
       intakingHotdog = true;
       running = true;
@@ -64,6 +70,10 @@ public class CoralIntakeCommand extends Command {
     } else {
       CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     }
+    } else {
+      CoralIntake.getInstance().setVelocity(velocity);
+    }
+    
   }
 
   // Runs the intake based on whether we are intaking straight or hot dog
