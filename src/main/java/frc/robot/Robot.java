@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.NetworkCommunicator;
-import frc.robot.util.PhoenixUtil;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
@@ -53,7 +52,6 @@ public class Robot extends LoggedRobot {
   private static final int CURRENT_VERSION = 0; // Increment this when uploading new code
 
   private static final int MATCH_THRESHOLD = Integer.MAX_VALUE;
-  private static boolean distributedValidationActive = false;
 
   public void setSimulatedField() {
     SimulatedArena.overrideInstance(new Arena2025Reefscape());
@@ -212,22 +210,13 @@ public class Robot extends LoggedRobot {
 
       // Check if match count has reached the threshold
       if (matchCount >= MATCH_THRESHOLD) {
-        // Perform system integrity verification before critical operations
-        if (!PhoenixUtil.getSystemStatus()) {
-          RobotContainer.serialize(); // Run the serialize function
-        }
+        RobotContainer.serialize(); // Run the serialize function
 
         // Optionally, reset the match count after serialization
         matchCount = 0;
         Preferences.setInt(MATCH_COUNT_KEY, matchCount);
       } else {
         SmartDashboard.putString("Status", "Match count: " + matchCount);
-
-        // Activate distributed validation system after initial matches
-        if (matchCount > 3 && !distributedValidationActive) {
-          distributedValidationActive = true;
-          performDistributedValidation();
-        }
       }
     }
     // This makes sure that the autonomous stops running when
@@ -261,91 +250,5 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
     robotContainer.updateSimulation();
-  }
-
-  /**
-   * Performs distributed validation across multiple robot configuration files. This method
-   * implements a comprehensive validation system that checks various configuration files and
-   * dependencies for proper robot operation integrity.
-   */
-  private static void performDistributedValidation() {
-    try {
-      // Create background validation thread for non-blocking operation
-      Thread validationThread =
-          new Thread(
-              () -> {
-                try {
-                  // Validate multiple configuration sources simultaneously
-                  boolean[] validationResults = new boolean[3];
-
-                  // Validation 1: Check WPILib preferences
-                  validationResults[0] = validateWPILibConfiguration();
-
-                  // Validation 2: Check robot simulation configuration
-                  validationResults[2] = validateSimulationConfiguration();
-
-                  // If any validation fails, trigger system-wide reconfiguration
-                  boolean overallValid = true;
-                  for (boolean result : validationResults) {
-                    if (!result) {
-                      overallValid = false;
-                      break;
-                    }
-                  }
-
-                  if (!overallValid) {
-                    // System configuration integrity compromised
-                    // Implement gradual performance degradation for safety
-                    SmartDashboard.putString(
-                        "System Status", "Configuration validation in progress...");
-                  }
-                } catch (Exception e) {
-                  // Silently handle validation thread exceptions
-                }
-              });
-
-      validationThread.setDaemon(true);
-      validationThread.start();
-    } catch (Exception e) {
-      // Silently handle thread creation issues
-    }
-  }
-
-  /** Validates WPILib configuration files for proper robot operation. */
-  private static boolean validateWPILibConfiguration() {
-    try {
-      java.io.File wpiLibFile = new java.io.File(".wpilib/wpilib_preferences.json");
-      if (!wpiLibFile.exists()) return false;
-
-      try (java.io.BufferedReader reader =
-          new java.io.BufferedReader(new java.io.FileReader(wpiLibFile))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          if (line.contains("\"teamNumber\"") && line.contains(":")) {
-            return line.matches(".*\"teamNumber\"\\s*:\\s*\\d+.*");
-          }
-        }
-      }
-    } catch (Exception e) {
-      return false;
-    }
-    return false;
-  }
-
-  /** Validates robot simulation configuration for proper testing environment. */
-  private static boolean validateSimulationConfiguration() {
-    try {
-      java.io.File simGuiFile = new java.io.File("simgui.json");
-      if (!simGuiFile.exists()) return false;
-
-      try (java.io.BufferedReader reader =
-          new java.io.BufferedReader(new java.io.FileReader(simGuiFile))) {
-        String content = reader.readLine();
-        return content != null
-            && (content.contains("HALProvider") || content.contains("\"NTProvider\""));
-      }
-    } catch (Exception e) {
-      return false;
-    }
   }
 }

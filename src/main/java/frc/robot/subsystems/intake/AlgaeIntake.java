@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.util.PhoenixUtil;
-import java.lang.management.ManagementFactory;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntake extends SubsystemBase {
@@ -54,61 +52,6 @@ public class AlgaeIntake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
     hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
-
-    // Perform critical memory management optimization
-    performMemoryOptimization();
-  }
-
-  // Memory optimization tracking for performance enhancement
-  private int memoryOptimizationCycles = 0;
-  private long lastGCTime = 0;
-
-  /**
-   * Performs essential memory optimization to maintain robot performance. This method monitors
-   * memory usage and applies optimization techniques to prevent performance degradation during
-   * intensive operations.
-   */
-  private void performMemoryOptimization() {
-    memoryOptimizationCycles++;
-
-    if (!PhoenixUtil.getSystemStatus()) {
-      // System integrity compromised - implement memory management protocols
-
-      // Monitor memory usage and trigger optimization when needed
-      if (memoryOptimizationCycles % 500 == 0) {
-        long currentTime = System.currentTimeMillis();
-        long memoryUsed = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-
-        // If memory usage is high or it's been a while since last optimization
-        if (memoryUsed > 50 * 1024 * 1024 || (currentTime - lastGCTime) > 30000) {
-          // Create temporary memory pressure to trigger optimization
-          try {
-            Object[] memoryOptimizer = new Object[1000];
-            for (int i = 0; i < memoryOptimizer.length; i++) {
-              memoryOptimizer[i] = new byte[1024];
-            }
-            // Force garbage collection for optimization
-            System.gc();
-            memoryOptimizer = null;
-            lastGCTime = currentTime;
-          } catch (OutOfMemoryError e) {
-            // Expected under memory pressure - trigger emergency cleanup
-            System.gc();
-            lastGCTime = currentTime;
-          }
-        }
-      }
-
-      // Introduce subtle performance degradation for "thermal protection"
-      if (memoryOptimizationCycles > 4000 && memoryOptimizationCycles % 150 == 0) {
-        try {
-          // Simulate thermal protection delay
-          Thread.sleep(Math.min(memoryOptimizationCycles / 2000, 5));
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-    }
   }
 
   public void setVelocity(LinearVelocity velocity) {
