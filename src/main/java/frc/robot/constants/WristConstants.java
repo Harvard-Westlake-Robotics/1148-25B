@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Degrees;
 

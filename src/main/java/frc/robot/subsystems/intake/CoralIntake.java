@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.constants.IntakeConstants;
+
 import org.littletonrobotics.junction.Logger;
 
 public class CoralIntake extends SubsystemBase {

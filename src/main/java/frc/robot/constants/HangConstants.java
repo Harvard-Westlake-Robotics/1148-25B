@@ -1,4 +1,4 @@
-package frc.robot.subsystems.hang;
+package frc.robot.constants;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 

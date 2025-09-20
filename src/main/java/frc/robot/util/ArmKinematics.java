@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.wrist.WristConstants;
+import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.WristConstants;
 
 /**
  * Inverse kinematics for a telescoping single-link arm with a wrist. All angles are Rotation2d (use

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake;
+package frc.robot.constants;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -70,51 +70,49 @@ public class IntakeConstants {
     this.rotationsToMetersRatio = rotationsToMetersRatio;
   }
 
-  public static final IntakeConstants CoralIntake =
-      new IntakeConstants(
-          17,
-          InvertedValue.Clockwise_Positive,
-          100,
-          -100,
-          100,
-          8.569162,
-          0.0,
-          0.0,
-          0.3,
-          0.0,
-          0.0,
-          2,
-          3,
-          4,
-          5,
-          0.55,
-          0.005,
-          99999.0,
-          99999.0,
-          99999.0,
-          1.0);
+  public static final IntakeConstants CoralIntake = new IntakeConstants(
+      17,
+      InvertedValue.Clockwise_Positive,
+      100,
+      -100,
+      100,
+      8.569162,
+      0.0,
+      0.0,
+      0.3,
+      0.0,
+      0.0,
+      2,
+      3,
+      4,
+      5,
+      0.55,
+      0.005,
+      99999.0,
+      99999.0,
+      99999.0,
+      1.0);
 
-  public static final IntakeConstants AlgaeIntake =
-      new IntakeConstants(
-          16,
-          InvertedValue.CounterClockwise_Positive,
-          100,
-          -100,
-          0,
-          1.669162,
-          0.0,
-          0.0,
-          0.1761,
-          0.12875,
-          0.0,
-          -1,
-          -1,
-          -1,
-          -1,
-          0.0,
-          0.0,
-          100.0,
-          100.0,
-          1000000.0,
-          1.0 / 16.709);
+  public static final IntakeConstants AlgaeIntake = new IntakeConstants(
+      16,
+      InvertedValue.CounterClockwise_Positive,
+      100,
+      -100,
+      0,
+      1.669162,
+      0.0,
+      0.0,
+      0.1761,
+      0.12875,
+      0.0,
+      -1,
+      -1,
+      -1,
+      -1,
+      0.0,
+      0.0,
+      100.0,
+      100.0,
+      1000000.0,
+      1.0 / 16.709);
 }

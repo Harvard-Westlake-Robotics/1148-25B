@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommand.ScoringLevel;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.intake.IntakeConstants;
 
 public class ControlMap {
   private static ControlMap instance;
@@ -24,7 +24,8 @@ public class ControlMap {
     return instance;
   }
 
-  private ControlMap() {}
+  private ControlMap() {
+  }
 
   public void configurePreset1(CommandXboxController operator, CommandPS5Controller driver) {
     // Reset gyro to 0° when B button is pressed
@@ -32,13 +33,12 @@ public class ControlMap {
         .back()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        Drive.getInstance()
-                            .setPose(
-                                new Pose2d(
-                                    Drive.getInstance().getPose().getTranslation(),
-                                    new Rotation2d())),
-                    Drive.getInstance())
+                () -> Drive.getInstance()
+                    .setPose(
+                        new Pose2d(
+                            Drive.getInstance().getPose().getTranslation(),
+                            new Rotation2d())),
+                Drive.getInstance())
                 .ignoringDisable(true));
 
     // Intake commands

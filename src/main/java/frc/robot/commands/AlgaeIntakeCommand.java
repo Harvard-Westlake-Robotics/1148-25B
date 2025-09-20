@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.intake.AlgaeIntake;
-import frc.robot.subsystems.intake.IntakeConstants;
 
 public class AlgaeIntakeCommand extends Command {
   private LinearVelocity velocity;
@@ -27,7 +27,8 @@ public class AlgaeIntakeCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   @Override
   public boolean isFinished() {
@@ -36,11 +37,9 @@ public class AlgaeIntakeCommand extends Command {
 
   public void intake() {
     if (!algaeLastStop) {
-      this.velocity =
-          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond);
+      this.velocity = LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond);
     } else {
-      this.velocity =
-          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond);
+      this.velocity = LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond);
     }
   }
 

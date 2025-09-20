@@ -1,6 +1,8 @@
 package frc.robot.subsystems.wrist;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.WristConstants;
+
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeWrist extends SubsystemBase {

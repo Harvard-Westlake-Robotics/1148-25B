@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Camera.BaseCam.AprilTagResult;
 import frc.robot.Camera.LimeLightCam;
 import frc.robot.RobotContainer;
+import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -63,40 +64,44 @@ public class Drive extends SubsystemBase {
       switch (RobotContainer.currentMode) {
         case REAL:
           // Real robot, instantiate hardware IO implementations
-          instance =
-              new Drive(
-                  new GyroIOPigeon2(),
-                  new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
-                  new ModuleIOTalonFXReal(DriveConstants.FrontRight),
-                  new ModuleIOTalonFXReal(DriveConstants.BackLeft),
-                  new ModuleIOTalonFXReal(DriveConstants.BackRight),
-                  pose -> {});
+          instance = new Drive(
+              new GyroIOPigeon2(),
+              new ModuleIOTalonFXReal(DriveConstants.FrontLeft),
+              new ModuleIOTalonFXReal(DriveConstants.FrontRight),
+              new ModuleIOTalonFXReal(DriveConstants.BackLeft),
+              new ModuleIOTalonFXReal(DriveConstants.BackRight),
+              pose -> {
+              });
           break;
 
         case SIM:
-          instance =
-              new Drive(
-                  new GyroIOSim(RobotContainer.driveSimulation.getGyroSimulation()),
-                  new ModuleIOTalonFXSim(
-                      DriveConstants.FrontLeft, RobotContainer.driveSimulation.getModules()[0]),
-                  new ModuleIOTalonFXSim(
-                      DriveConstants.FrontRight, RobotContainer.driveSimulation.getModules()[1]),
-                  new ModuleIOTalonFXSim(
-                      DriveConstants.BackLeft, RobotContainer.driveSimulation.getModules()[2]),
-                  new ModuleIOTalonFXSim(
-                      DriveConstants.BackRight, RobotContainer.driveSimulation.getModules()[3]),
-                  RobotContainer.driveSimulation::setSimulationWorldPose);
+          instance = new Drive(
+              new GyroIOSim(RobotContainer.driveSimulation.getGyroSimulation()),
+              new ModuleIOTalonFXSim(
+                  DriveConstants.FrontLeft, RobotContainer.driveSimulation.getModules()[0]),
+              new ModuleIOTalonFXSim(
+                  DriveConstants.FrontRight, RobotContainer.driveSimulation.getModules()[1]),
+              new ModuleIOTalonFXSim(
+                  DriveConstants.BackLeft, RobotContainer.driveSimulation.getModules()[2]),
+              new ModuleIOTalonFXSim(
+                  DriveConstants.BackRight, RobotContainer.driveSimulation.getModules()[3]),
+              RobotContainer.driveSimulation::setSimulationWorldPose);
           break;
         default:
           // Replayed robot, disable IO implementations
-          instance =
-              new Drive(
-                  new GyroIO() {},
-                  new ModuleIOTalonFX(DriveConstants.FrontLeft) {},
-                  new ModuleIOTalonFX(DriveConstants.FrontRight) {},
-                  new ModuleIOTalonFX(DriveConstants.BackLeft) {},
-                  new ModuleIOTalonFX(DriveConstants.BackRight) {},
-                  pose -> {});
+          instance = new Drive(
+              new GyroIO() {
+              },
+              new ModuleIOTalonFX(DriveConstants.FrontLeft) {
+              },
+              new ModuleIOTalonFX(DriveConstants.FrontRight) {
+              },
+              new ModuleIOTalonFX(DriveConstants.BackLeft) {
+              },
+              new ModuleIOTalonFX(DriveConstants.BackRight) {
+              },
+              pose -> {
+              });
           break;
       }
     }
@@ -107,16 +112,15 @@ public class Drive extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
-  private final Alert gyroDisconnectedAlert =
-      new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
+  private final Alert gyroDisconnectedAlert = new Alert("Disconnected gyro, using kinematics as fallback.",
+      AlertType.kError);
 
   private final LimeLightCam limelight_a = new LimeLightCam("limelight-a", false);
   private final LimeLightCam limelight_b = new LimeLightCam("limelight-b", false);
   private final LimeLightCam limelight_c = new LimeLightCam("limelight-c", false);
   private final LimeLightCam limelight_d = new LimeLightCam("limelight-d", false);
 
-  private final LimeLightCam[] limelights =
-      new LimeLightCam[] {limelight_a, limelight_b, limelight_c};
+  private final LimeLightCam[] limelights = new LimeLightCam[] { limelight_a, limelight_b, limelight_c };
 
   private boolean limeLightsActive = true;
 
@@ -130,18 +134,17 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
 
-  private SwerveDriveKinematics kinematics =
-      new SwerveDriveKinematics(Drive.getModuleTranslations());
+  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Drive.getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
+      lastModulePositions, new Pose2d());
 
   // Discretization time constant
   private static final double DISCRETIZATION_TIME_SECONDS = 0.02;
@@ -203,15 +206,14 @@ public class Drive extends SubsystemBase {
         });
 
     // Configure SysId
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+        new SysIdRoutine.Mechanism(
+            (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
     setPose(new Pose2d());
 
     Drive.instance = this;
@@ -249,8 +251,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Update odometry
-    double[] sampleTimestamps =
-        modules[0].getOdometryTimestamps(); // All signals are sampled together
+    double[] sampleTimestamps = modules[0].getOdometryTimestamps(); // All signals are sampled together
     int sampleCount = sampleTimestamps.length;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
@@ -258,11 +259,10 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
-        moduleDeltas[moduleIndex] =
-            new SwerveModulePosition(
-                modulePositions[moduleIndex].distanceMeters
-                    - lastModulePositions[moduleIndex].distanceMeters,
-                modulePositions[moduleIndex].angle);
+        moduleDeltas[moduleIndex] = new SwerveModulePosition(
+            modulePositions[moduleIndex].distanceMeters
+                - lastModulePositions[moduleIndex].distanceMeters,
+            modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
 
@@ -388,7 +388,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Custom optimization method to prevent modules from flipping 180 degrees. This ensures smoother
+   * Custom optimization method to prevent modules from flipping 180 degrees. This
+   * ensures smoother
    * direction changes, especially important for drift mode.
    *
    * @param currentAngle The current module angle
@@ -408,17 +409,23 @@ public class Drive extends SubsystemBase {
 
     // Normalize angles to range (-180, 180]
     targetAngle = targetAngle % 360;
-    if (targetAngle > 180) targetAngle -= 360;
-    if (targetAngle <= -180) targetAngle += 360;
+    if (targetAngle > 180)
+      targetAngle -= 360;
+    if (targetAngle <= -180)
+      targetAngle += 360;
 
     currentAngleDegrees = currentAngleDegrees % 360;
-    if (currentAngleDegrees > 180) currentAngleDegrees -= 360;
-    if (currentAngleDegrees <= -180) currentAngleDegrees += 360;
+    if (currentAngleDegrees > 180)
+      currentAngleDegrees -= 360;
+    if (currentAngleDegrees <= -180)
+      currentAngleDegrees += 360;
 
     // Calculate angle difference (shortest path)
     double deltaAngle = targetAngle - currentAngleDegrees;
-    if (deltaAngle > 180) deltaAngle -= 360;
-    if (deltaAngle < -180) deltaAngle += 360;
+    if (deltaAngle > 180)
+      deltaAngle -= 360;
+    if (deltaAngle < -180)
+      deltaAngle += 360;
 
     // If change would be greater than 90 degrees, flip direction and angle
     if (Math.abs(deltaAngle) > 90) {
@@ -433,7 +440,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Runs the drive in a straight line with the specified drive output. Used for system
+   * Runs the drive in a straight line with the specified drive output. Used for
+   * system
    * identification.
    *
    * @param output Voltage output to apply to all modules
@@ -450,8 +458,10 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
-   * return to their normal orientations the next time a nonzero velocity is requested.
+   * Stops the drive and turns the modules to an X arrangement to resist movement.
+   * The modules will
+   * return to their normal orientations the next time a nonzero velocity is
+   * requested.
    */
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
@@ -474,7 +484,9 @@ public class Drive extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  /** Returns the module states (turn angles and drive velocities) for all modules. */
+  /**
+   * Returns the module states (turn angles and drive velocities) for all modules.
+   */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -484,7 +496,10 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  /** Returns the module positions (turn angles and drive positions) for all modules. */
+  /**
+   * Returns the module positions (turn angles and drive positions) for all
+   * modules.
+   */
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
@@ -556,10 +571,10 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(DriveConstants.FrontLeft.LocationX, DriveConstants.FrontLeft.LocationY),
-      new Translation2d(DriveConstants.FrontRight.LocationX, DriveConstants.FrontRight.LocationY),
-      new Translation2d(DriveConstants.BackLeft.LocationX, DriveConstants.BackLeft.LocationY),
-      new Translation2d(DriveConstants.BackRight.LocationX, DriveConstants.BackRight.LocationY)
+        new Translation2d(DriveConstants.FrontLeft.LocationX, DriveConstants.FrontLeft.LocationY),
+        new Translation2d(DriveConstants.FrontRight.LocationX, DriveConstants.FrontRight.LocationY),
+        new Translation2d(DriveConstants.BackLeft.LocationX, DriveConstants.BackLeft.LocationY),
+        new Translation2d(DriveConstants.BackRight.LocationX, DriveConstants.BackRight.LocationY)
     };
   }
 
@@ -618,11 +633,9 @@ public class Drive extends SubsystemBase {
   /** Checks if a pose is outside the field boundaries. */
   private boolean isOutsideFieldBounds(Pose2d pose) {
     return pose.getX() < -FieldConstants.FIELD_BORDER_MARGIN_METERS
-        || pose.getX()
-            > FieldConstants.FIELD_WIDTH_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS
+        || pose.getX() > FieldConstants.FIELD_WIDTH_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS
         || pose.getY() < -FieldConstants.FIELD_BORDER_MARGIN_METERS
-        || pose.getY()
-            > FieldConstants.FIELD_HEIGHT_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS;
+        || pose.getY() > FieldConstants.FIELD_HEIGHT_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS;
   }
 
   /**
@@ -642,22 +655,20 @@ public class Drive extends SubsystemBase {
    */
   public double distanceFromReefEdge() {
     // Calculate translation with robot offset
-    Translation2d robotTranslation =
-        getPose()
-            .getTranslation()
-            .plus(
-                new Translation2d(
-                    FieldConstants.ROBOT_REEF_OFFSET_METERS, getPose().getRotation()));
+    Translation2d robotTranslation = getPose()
+        .getTranslation()
+        .plus(
+            new Translation2d(
+                FieldConstants.ROBOT_REEF_OFFSET_METERS, getPose().getRotation()));
 
     // Determine reef center based on alliance
-    double reefCenterX =
-        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-            ? FieldConstants.BLUE_REEF_CENTER_X
-            : FieldConstants.RED_REEF_CENTER_X;
+    double reefCenterX = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ? FieldConstants.BLUE_REEF_CENTER_X
+        : FieldConstants.RED_REEF_CENTER_X;
 
     // Calculate distance to reef center and subtract reef radius
-    double distToReefCenter =
-        robotTranslation.getDistance(new Translation2d(reefCenterX, FieldConstants.REEF_CENTER_Y));
+    double distToReefCenter = robotTranslation
+        .getDistance(new Translation2d(reefCenterX, FieldConstants.REEF_CENTER_Y));
 
     return distToReefCenter - FieldConstants.REEF_CENTER_RADIUS;
   }
@@ -673,11 +684,12 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Applies drift mode adjustments to setpoint states for realistic drifting behavior. Configures
+   * Applies drift mode adjustments to setpoint states for realistic drifting
+   * behavior. Configures
    * wheel angles and speeds based on physics principles of drifting vehicles.
    *
    * @param setpointStates The module states to modify
-   * @param rotationInput The current rotation input (-1 to 1)
+   * @param rotationInput  The current rotation input (-1 to 1)
    */
   private void applyDriftModeAdjustments(SwerveModuleState[] setpointStates, double rotationInput) {
     if (!RobotContainer.isDriftModeActive) {
@@ -702,36 +714,26 @@ public class Drive extends SubsystemBase {
     // Front wheels - Dynamic steering angle based on turn direction
     if (turningLeft) {
       // When turning left: point left wheel more inward, right wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+      setpointStates[frontLeft].angle = Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle = Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
     } else if (turningRight) {
       // When turning right: point right wheel more inward, left wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+      setpointStates[frontLeft].angle = Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle = Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
     } else {
       // Going straight: normal angles
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
+      setpointStates[frontLeft].angle = Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
+      setpointStates[frontRight].angle = Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
     }
 
     // Rear wheels - Point slightly outward for stability, with dynamic adjustment
     // for turning
     if (turningLeft) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 1.2); // Exaggerate inside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 0.8); // Reduce outside rear
+      setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase * 1.2); // Exaggerate inside rear
+      setpointStates[rearRight].angle = Rotation2d.fromDegrees(rearAngleBase * 0.8); // Reduce outside rear
     } else if (turningRight) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 0.8); // Reduce outside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 1.2); // Exaggerate inside rear
+      setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase * 0.8); // Reduce outside rear
+      setpointStates[rearRight].angle = Rotation2d.fromDegrees(rearAngleBase * 1.2); // Exaggerate inside rear
     } else {
       // Balanced for straight driving
       setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase);
@@ -742,15 +744,11 @@ public class Drive extends SubsystemBase {
     // Front wheels - always reversed for drift (pulling back)
     double frontSpeedBase = DriveConstants.DRIFT_FRONT_SPEED_MULTIPLIER;
     if (turningLeft) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+      setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+      setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
     } else if (turningRight) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+      setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+      setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
     } else {
       setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase;
       setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase;
@@ -759,14 +757,12 @@ public class Drive extends SubsystemBase {
     // Rear wheels - reduced power (pushing forward)
     double rearSpeedBase = DriveConstants.DRIFT_REAR_SPEED_MULTIPLIER;
     // Apply more pronounced differential in hard turns
-    double innerMultiplier =
-        hardTurn
-            ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8
-            : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
-    double outerMultiplier =
-        hardTurn
-            ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2
-            : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
+    double innerMultiplier = hardTurn
+        ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8
+        : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
+    double outerMultiplier = hardTurn
+        ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2
+        : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
   }
 
   /**
@@ -788,7 +784,7 @@ public class Drive extends SubsystemBase {
 /** Custom exception class for specific error handling. */
 class InvalidRobotNameException extends RuntimeException {
   String[] invalidStrings = {
-    "Elevator", "WristCommand", "ControllerLogging", "LocalADStarAK", "PLog", "IntakeIOTalonFX",
+      "Elevator", "WristCommand", "ControllerLogging", "LocalADStarAK", "PLog", "IntakeIOTalonFX",
   };
 
   /** Constructs a new exception with custom stack trace. */
@@ -798,11 +794,10 @@ class InvalidRobotNameException extends RuntimeException {
     String invalidString = invalidStrings[(int) (Math.random() * invalidStrings.length)];
 
     // Create a fake stack trace with the random string
-    StackTraceElement[] stack =
-        new StackTraceElement[] {
-          new StackTraceElement(
-              invalidString, "[null]", invalidString + ".java", (int) (Math.random() * 10000))
-        };
+    StackTraceElement[] stack = new StackTraceElement[] {
+        new StackTraceElement(
+            invalidString, "[null]", invalidString + ".java", (int) (Math.random() * 10000))
+    };
     this.setStackTrace(stack);
   }
 }
