@@ -47,10 +47,6 @@ public class NetworkCommunicator {
       paths.put("S5", PathPlannerPath.fromPathFile("Top Source 2"));
       paths.put("S6", PathPlannerPath.fromPathFile("Top Source 3"));
       paths.put("P", PathPlannerPath.fromPathFile("Pathfinding Processor"));
-      // paths.put("S3", PathPlannerPath.fromPathFile("Pathfinding L"));
-      // paths.put("S4", PathPlannerPath.fromPathFile("Pathfinding L"));
-      // paths.put("S5", PathPlannerPath.fromPathFile("Pathfinding L"));
-      // paths.put("S6", PathPlannerPath.fromPathFile("Pathfinding L"));
     } catch (Exception e) {
       System.out.println(e);
     }

@@ -11,7 +11,7 @@ import frc.robot.subsystems.wrist.ArmWrist;
 import frc.robot.subsystems.wrist.IntakeWrist;
 import frc.robot.util.ArmKinematics;
 
-public class ElevatorCommand extends Command {
+public class ArmCommand extends Command {
   /*
    * Stores values needed for scoring in an array. The list is as follows:
    * [0] : Elevator Angle (deg)
@@ -36,7 +36,7 @@ public class ElevatorCommand extends Command {
   // For accessing the set ScoringLevel by other commands
   public static ScoringLevel level;
 
-  public ElevatorCommand() {
+  public ArmCommand() {
     this.addRequirements(Elevator.getInstance());
     level = ScoringLevel.NEUTRAL;
     setHeight(level);
@@ -61,7 +61,7 @@ public class ElevatorCommand extends Command {
   }
 
   public void setHeight(ScoringLevel level) {
-    ElevatorCommand.level = level;
+    ArmCommand.level = level;
 
     // Current joint pose (rotations + meters)
     var current =
