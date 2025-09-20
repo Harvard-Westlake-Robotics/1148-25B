@@ -1,7 +1,23 @@
 package frc.robot.subsystems.drive;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoScoreCommand;
+import frc.robot.RobotContainer;
+import frc.robot.commands.ArmCommand.ScoringLevel;
+import frc.robot.commands.TeleopCommand;
+import frc.robot.subsystems.intake.CoralIntake;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.HashMap;
 
 public class NetworkCommunicator {
@@ -47,6 +63,10 @@ public class NetworkCommunicator {
       paths.put("S5", PathPlannerPath.fromPathFile("Top Source 2"));
       paths.put("S6", PathPlannerPath.fromPathFile("Top Source 3"));
       paths.put("P", PathPlannerPath.fromPathFile("Pathfinding Processor"));
+      // paths.put("S3", PathPlannerPath.fromPathFile("Pathfinding L"));
+      // paths.put("S4", PathPlannerPath.fromPathFile("Pathfinding L"));
+      // paths.put("S5", PathPlannerPath.fromPathFile("Pathfinding L"));
+      // paths.put("S6", PathPlannerPath.fromPathFile("Pathfinding L"));
     } catch (Exception e) {
       System.out.println(e);
     }
@@ -93,5 +113,84 @@ public class NetworkCommunicator {
 
   public PathPlannerPath getSelectedReefPath() {
     return paths.get("" + (char) (getTeleopBranch() + 'A'));
+  }
+
+  public ScoringLevel getSelectedHeight() {
+    if (teleopSubHeight.get() == 1) {
+      return ScoringLevel.L1;
+    } else if (teleopSubHeight.get() == 2) {
+      return ScoringLevel.L2;
+    } else if (teleopSubHeight.get() == 3) {
+      return ScoringLevel.L3;
+    } else if (teleopSubHeight.get() == 4) {
+      return ScoringLevel.L4;
+    } else return ScoringLevel.NEUTRAL;
+  }
+
+  public TeleopCommand teleopCommand;
+
+  public TeleopCommand getTeleopCommand() {
+    if (teleopCommand == null) {
+      teleopCommand = new TeleopCommand();
+    }
+    return teleopCommand;
+  }
+
+  public Command getCustomAuto() {
+    ScoringLevel level = ScoringLevel.NEUTRAL;
+    String[] autoCommands = getAutoCommands();
+    if (autoCommands.length == 0) {
+      return new PathPlannerAuto(Commands.none());
+    } else {
+      Command auto = new SequentialCommandGroup();
+      auto = auto.andThen(new InstantCommand(() -> {
+        RobotContainer.elevatorCommand.setHeight(ScoringLevel.NEUTRAL);
+      }));
+      for (int i = 0; i < autoCommands.length; i++) {
+        if (autoCommands[i].charAt(0) == 'S') {
+          auto =
+              auto.andThen(
+                  AutoBuilder.pathfindThenFollowPath(
+                      paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS));
+          auto =
+              auto.andThen(
+                new InstantCommand(() -> {
+                  RobotContainer.coralIntakeCommand.manual = true;
+                  RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                }).until(() -> !CoralIntake.getInstance().getSensor1()));
+        } else {
+          auto =
+              auto.andThen(
+                  new ParallelCommandGroup(
+                      AutoBuilder.pathfindThenFollowPath(
+                          paths.get("" + (char) (autoCommands[i].charAt(0))), DriveConstants.PP_CONSTRAINTS),
+                      i == 0
+                          ? new InstantCommand(() -> {
+                            RobotContainer.elevatorCommand.setHeight(ScoringLevel.L1);
+                          })
+                          : new InstantCommand(() -> {
+                            RobotContainer.coralIntakeCommand.manual = true;
+                            RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                          })
+                              .andThen(new InstantCommand(() -> {
+                                RobotContainer.elevatorCommand.setHeight(ScoringLevel.L1);
+                              }))));
+          if (autoCommands[i].charAt(2) == '1') {
+            level = ScoringLevel.L1;
+          } else if (autoCommands[i].charAt(2) == '2') {
+            level = ScoringLevel.L2;
+          } else if (autoCommands[i].charAt(2) == '3') {
+            level = ScoringLevel.L3;
+          } else if (autoCommands[i].charAt(2) == '4') {
+            level = ScoringLevel.L4;
+          }
+          auto = auto.andThen(new Command() {}.withTimeout(0.1));
+          auto =
+              auto.andThen(
+                  new AutoScoreCommand(level, paths.get("" + (char) (autoCommands[i].charAt(0)))));
+        }
+      }
+      return auto;
+    }
   }
 }

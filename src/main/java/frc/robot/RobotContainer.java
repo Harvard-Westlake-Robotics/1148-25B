@@ -92,7 +92,7 @@ public class RobotContainer {
   private final Hang hang;
 
   // Commands
-  public static ArmCommand armCommand;
+  public static ArmCommand elevatorCommand;
   public static AlgaeIntakeCommand algaeIntakeCommand;
   public static CoralIntakeCommand coralIntakeCommand;
   public static HangCommand hangCommand;
@@ -139,6 +139,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
 
@@ -164,6 +165,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
 
@@ -185,6 +187,7 @@ public class RobotContainer {
         this.hang = Hang.getInstance();
         algaeIntakeCommand = new AlgaeIntakeCommand();
         coralIntakeCommand = new CoralIntakeCommand();
+        elevatorCommand = new ArmCommand();
         hangCommand = new HangCommand();
         break;
     }
@@ -251,8 +254,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
-    armCommand = new ArmCommand();
-    elevator.setDefaultCommand(armCommand);
+    elevatorCommand = new ArmCommand();
+    elevator.setDefaultCommand(elevatorCommand);
     coralIntakeCommand = new CoralIntakeCommand();
     coralIntake.setDefaultCommand(coralIntakeCommand);
     algaeIntakeCommand = new AlgaeIntakeCommand();

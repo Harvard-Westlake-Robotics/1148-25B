@@ -113,6 +113,7 @@ public class Drive extends SubsystemBase {
   private final LimeLightCam limelight_a = new LimeLightCam("limelight-a", false);
   private final LimeLightCam limelight_b = new LimeLightCam("limelight-b", false);
   private final LimeLightCam limelight_c = new LimeLightCam("limelight-c", false);
+  private final LimeLightCam limelight_d = new LimeLightCam("limelight-d", false);
 
   private final LimeLightCam[] limelights =
       new LimeLightCam[] {limelight_a, limelight_b, limelight_c};
@@ -147,13 +148,6 @@ public class Drive extends SubsystemBase {
 
   // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
-  // private static final double MAX_VISION_CORRECTION_METERS = 5.0;
-  // private static final double MAX_TAG_DISTANCE_METERS = 2.5;
-  // private static final double MIN_TAG_DISTANCE_METERS = 0.08;
-
-  // private static final double MAX_SPEED_FOR_VISION_METERS_PER_SEC = 3.0;
-  // private static final double AMBIGUITY_THRESHOLD = 0.75;
-  // private static final double AMBIGUITY_SECONDARY_THRESHOLD = 0.2;
 
   private static final double ELEVATOR_ANGLE_DEGREES = 40.0;
 
@@ -284,30 +278,6 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      // for (LimeLightCam limelight : limelights) {
-      // limelight.setIMUMode(2);
-      // }
-      // if (DriverStation.isDisabled()) {
-      // for (LimeLightCam cam : limelights) {
-      // cam.setUseMegaTag2(false);
-      // cam.setIMUMode(1);
-      // }
-      // } else {
-      // for (LimeLightCam cam : limelights) {
-      // cam.setUseMegaTag2(true);
-      // cam.setIMUMode(2);
-      // cam.SetRobotOrientation(getPose().getRotation());
-      // }
-      // }
-      // AprilTagResult result_a = limelight_a.getEstimate().orElse(null);
-      // if (result_a != null) Logger.recordOutput("RealOutputs/apriltagResultA",
-      // result_a.pose);
-      // AprilTagResult result_b = limelight_b.getEstimate().orElse(null);
-      // if (result_b != null) Logger.recordOutput("RealOutputs/apriltagResultB",
-      // result_b.pose);
-      // AprilTagResult result_c = limelight_c.getEstimate().orElse(null);
-      // if (result_c != null) Logger.recordOutput("RealOutputs/apriltagResultC",
-      // result_c.pose);
 
       Logger.recordOutput("Odometry/Velocity/LinearVelocity", getLinearVelocity());
       Logger.recordOutput("Odometry/Velocity/AngularVelocity", getAngularVelocity());
@@ -323,6 +293,10 @@ public class Drive extends SubsystemBase {
       AprilTagResult result_c = limelight_c.getEstimate().orElse(null);
       if (result_c != null) {
         Logger.recordOutput("RealOutputs/apriltagResultC", result_c.pose);
+      }
+      AprilTagResult result_d = limelight_d.getEstimate().orElse(null);
+      if (result_d != null) {
+        Logger.recordOutput("RealOutputs/apriltagResultD", result_d.pose);
       }
 
       if (result_a != null && !shouldRejectPose(result_a) && limeLightsActive) {
@@ -352,6 +326,16 @@ public class Drive extends SubsystemBase {
                   DriveConstants.xyStdDev(result_c),
                   DriveConstants.xyStdDev(result_c),
                   DriveConstants.rStdDev(result_c)));
+        }
+
+        if (result_d != null && !shouldRejectPose(result_d) && limeLightsActive) {
+          addVisionMeasurement(
+              result_d.pose,
+              result_d.time,
+              VecBuilder.fill(
+                  DriveConstants.xyStdDev(result_d),
+                  DriveConstants.xyStdDev(result_d),
+                  DriveConstants.rStdDev(result_d)));
         }
       }
 
