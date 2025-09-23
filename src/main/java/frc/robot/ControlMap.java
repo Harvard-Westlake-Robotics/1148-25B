@@ -105,7 +105,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  if (RobotContainer.elevatorCommand.outtakePosition) {
+                  if (RobotContainer.armCommand.outtakePosition) {
                     RobotContainer.coralIntakeCommand.runOuttake();
                   } else if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
                     RobotContainer.algaeIntakeCommand.setVelocity(
@@ -127,7 +127,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.SOURCE_CORAL);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.SOURCE_CORAL);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
@@ -136,7 +136,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.GROUND_CORAL);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_CORAL);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
@@ -145,7 +145,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.NET);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.NET);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                   RobotContainer.coralIntakeCommand.stopIntake();
@@ -155,7 +155,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.PROCESSOR);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.PROCESSOR);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                   RobotContainer.coralIntakeCommand.stopIntake();
@@ -165,7 +165,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.L2);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.L2);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
@@ -174,7 +174,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.L3);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.L3);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
@@ -183,7 +183,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.L4);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.L4);
                   RobotContainer.algaeIntakeCommand.setVelocity(
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
@@ -191,26 +191,26 @@ public class ControlMap {
         .povUp()
         .whileTrue(
             new InstantCommand(
-                () -> RobotContainer.elevatorCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
+                () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
     operator
         .povDown()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.elevatorCommand.setHeight(ScoringLevel.GROUND_ALGAE);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_ALGAE);
                   RobotContainer.coralIntakeCommand.stopIntake();
                 }));
     operator
         .povLeft()
         .whileTrue(
             new InstantCommand(
-                () -> RobotContainer.elevatorCommand.setHeight(ScoringLevel.TOP_REMOVE)));
+                () -> RobotContainer.armCommand.setHeight(ScoringLevel.TOP_REMOVE)));
     RobotContainer.algaeIntakeCommand.setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.coralIntakeCommand.stopIntake();
     operator
         .povRight()
         .whileTrue(
-            new InstantCommand(() -> RobotContainer.elevatorCommand.setHeight(ScoringLevel.HANG)));
+            new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.HANG)));
     RobotContainer.algaeIntakeCommand.setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.coralIntakeCommand.stopIntake();
 
