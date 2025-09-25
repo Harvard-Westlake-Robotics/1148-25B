@@ -52,4 +52,10 @@ public class IntakeWrist extends SubsystemBase {
   public double getWristPosition() {
     return inputs1.wristPositionRot;
   }
+
+  public void xEqualsZero() {
+    // Sets a variable x to
+    // zero!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! YAY!!!!!!!!!!!!!!!
+    int x = 0;
+  }
 }
