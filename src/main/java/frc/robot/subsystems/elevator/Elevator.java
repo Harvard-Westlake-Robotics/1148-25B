@@ -28,14 +28,13 @@ public class Elevator extends SubsystemBase {
   private Elevator() {
     io = new ElevatorIOTalonFX();
     this.key = "Elevator";
-    sysId =
-        new SysIdRoutine(
-            new Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId = new SysIdRoutine(
+        new Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+        new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
@@ -50,16 +49,8 @@ public class Elevator extends SubsystemBase {
     io.setHeightClosedLoop(height);
   }
 
-  public void goToHeightMeters(double height) {
-    io.setHeightMetersAdjusted(height);
-  }
-
   public double getHeight() {
     return inputs.elevator1PositionMeters;
-  }
-
-  public void goToHeightOverride(double height) {
-    io.setHeightClosedLoop(getHeight());
   }
 
   public void runCharacterization(double voltage) {

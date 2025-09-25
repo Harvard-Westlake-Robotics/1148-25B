@@ -109,23 +109,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     StatusSignal.refreshAll(motor2Position, motor2Velocity, motor2AppliedVolts, motor2Current);
 
     inputs.elevator1Connected = motor1ConnectedDebounce.calculate(elevator1.isConnected());
-    inputs.elevator1PositionMeters = motor1Position.getValueAsDouble() * ElevatorConstants.rotationsToMetersRatio;
-    inputs.elevator1VelocityMPS = motor1Velocity.getValueAsDouble() * ElevatorConstants.rotationsToMetersRatio;
+    inputs.elevator1PositionMeters = motor1Position.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
+    inputs.elevator1VelocityMPS = motor1Velocity.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
     inputs.elevator1AppliedVolts = motor1AppliedVolts.getValueAsDouble();
     inputs.elevator1CurrentAmps = motor1Current.getValueAsDouble();
 
     inputs.elevator2Connected = motor2ConnectedDebounce.calculate(elevator2.isConnected());
-    inputs.elevator2PositionMeters = motor2Position.getValueAsDouble() * ElevatorConstants.rotationsToMetersRatio;
-    inputs.elevator2VelocityMPS = motor2Velocity.getValueAsDouble() * ElevatorConstants.rotationsToMetersRatio;
+    inputs.elevator2PositionMeters = motor2Position.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
+    inputs.elevator2VelocityMPS = motor2Velocity.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
     inputs.elevator2AppliedVolts = motor2AppliedVolts.getValueAsDouble();
     inputs.elevator2CurrentAmps = motor2Current.getValueAsDouble();
   }
 
   @Override
   public void setHeightClosedLoop(double meters) {
-    // double voltage =
-    // elevatorFeedforward.calculate(motor1Velocity.getValueAsDouble());
-    // elevatorController.FeedForward = voltage;
     elevatorController.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
     elevator2Controller.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
     elevatorController.FeedForward = elevatorFeedforward.calculate(0);

@@ -67,8 +67,8 @@ public class HangIOTalonFX implements HangIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.motorConnected = motorConnectedDebounce.calculate(hangMotor.isConnected());
-    inputs.motorPositionMeters = motorPosition.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
-    inputs.motorVelocityMPS = motorVelocity.getValueAsDouble() * HangConstants.rotationsToMetersRatio;
+    inputs.motorPositionMeters = motorPosition.getValueAsDouble() * (1 / HangConstants.rotationsToMetersRatio);
+    inputs.motorVelocityMPS = motorVelocity.getValueAsDouble() * (1 / HangConstants.rotationsToMetersRatio);
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrent = motorCurrent.getValueAsDouble();
 

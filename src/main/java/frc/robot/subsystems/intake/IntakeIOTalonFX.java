@@ -55,7 +55,6 @@ public class IntakeIOTalonFX implements IntakeIO {
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeConfig.MotionMagic.MotionMagicAcceleration = intakeConstants.ANGLE_MAX_ACCELERATION;
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = intakeConstants.ANGLE_MAX_VELOCITY;
-    intakeConfig.MotionMagic.MotionMagicJerk = 0;
 
     intakeConfig.Slot0.kP = intakeConstants.kP;
     intakeConfig.Slot0.kI = intakeConstants.kI;
