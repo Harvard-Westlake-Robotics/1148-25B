@@ -90,6 +90,7 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void runCharacterization(double voltage) {
+    wristController.FeedForward = wristFeedforward.calculate(wristController.Position, voltage);
     wristMotor.setControl(new VoltageOut(voltage));
   }
 
