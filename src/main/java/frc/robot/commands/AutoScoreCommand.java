@@ -20,20 +20,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.DriveConstants;
+import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.wrist.ArmWrist;
 import frc.robot.subsystems.wrist.IntakeWrist;
 import frc.robot.util.ArmKinematics;
-
 import org.littletonrobotics.junction.Logger;
 
 /**
- * Command to automatically score game pieces at specified heights. This command
- * handles both the
- * elevator movement and drive positioning. It includes safety checks, timeouts,
- * and error handling.
+ * Command to automatically score game pieces at specified heights. This command handles both the
+ * elevator movement and drive positioning. It includes safety checks, timeouts, and error handling.
  */
 public class AutoScoreCommand extends Command {
   // Constants for position and timing
@@ -67,23 +65,27 @@ public class AutoScoreCommand extends Command {
    * Creates a new AutoScoreCommand with path following capability.
    *
    * @param level The scoring level to move to
-   * @param path  The path to follow to the scoring position
+   * @param path The path to follow to the scoring position
    */
   public AutoScoreCommand(ScoringLevel level, PathPlannerPath path) {
-    this.addRequirements(CoralIntake.getInstance(), Elevator.getInstance(), path == null ? Drive.getInstance() : null);
+    this.addRequirements(
+        CoralIntake.getInstance(),
+        Elevator.getInstance(),
+        path == null ? Drive.getInstance() : null);
     this.level = level;
     this.timeoutTimer = new Timer();
 
     // Initialize controllers with constants
-    this.xController = new ProfiledPIDController(
-        kP, 0, kD, new Constraints(MAX_VELOCITY, MAX_ACCELERATION));
-    this.yController = new ProfiledPIDController(
-        kP, 0, kD, new Constraints(MAX_VELOCITY, MAX_ACCELERATION));
-    this.thetaController = new ProfiledPIDController(
-        THETA_PID_P,
-        0,
-        THETA_PID_D,
-        new Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_ACCELERATION));
+    this.xController =
+        new ProfiledPIDController(kP, 0, kD, new Constraints(MAX_VELOCITY, MAX_ACCELERATION));
+    this.yController =
+        new ProfiledPIDController(kP, 0, kD, new Constraints(MAX_VELOCITY, MAX_ACCELERATION));
+    this.thetaController =
+        new ProfiledPIDController(
+            THETA_PID_P,
+            0,
+            THETA_PID_D,
+            new Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_ACCELERATION));
 
     // Set up controllers
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -101,20 +103,21 @@ public class AutoScoreCommand extends Command {
         Drive.getInstance().getCurrentCommand().cancel();
       }
 
-      this.endPose = new Pose2d(
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? path.getPathPoses()
-                  .get(path.getPathPoses().size() - 1)
-                  .getTranslation()
-                  .plus(new Translation2d(0.04, path.getGoalEndState().rotation()))
-              : path.flipPath()
-                  .getPathPoses()
-                  .get(path.getPathPoses().size() - 1)
-                  .getTranslation()
-                  .plus(new Translation2d(0.04, path.flipPath().getGoalEndState().rotation())),
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? path.getGoalEndState().rotation()
-              : path.flipPath().getGoalEndState().rotation());
+      this.endPose =
+          new Pose2d(
+              DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                  ? path.getPathPoses()
+                      .get(path.getPathPoses().size() - 1)
+                      .getTranslation()
+                      .plus(new Translation2d(0.04, path.getGoalEndState().rotation()))
+                  : path.flipPath()
+                      .getPathPoses()
+                      .get(path.getPathPoses().size() - 1)
+                      .getTranslation()
+                      .plus(new Translation2d(0.04, path.flipPath().getGoalEndState().rotation())),
+              DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                  ? path.getGoalEndState().rotation()
+                  : path.flipPath().getGoalEndState().rotation());
 
       Logger.recordOutput("RealOutputs/PIDEndPose", endPose);
     } else {
@@ -135,6 +138,7 @@ public class AutoScoreCommand extends Command {
     timeoutTimer.start();
 
     // Set initial positions and velocities
+    RobotContainer.coralIntakeCommand.manual = true;
     CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
@@ -162,7 +166,8 @@ public class AutoScoreCommand extends Command {
   private void handlePathFollowing() {
     Pose2d currentPose = Drive.getInstance().getPose();
     double distanceToTarget = currentPose.getTranslation().getDistance(endPose.getTranslation());
-    double rotationError = Math.abs(currentPose.getRotation().getRadians() - endPose.getRotation().getRadians());
+    double rotationError =
+        Math.abs(currentPose.getRotation().getRadians() - endPose.getRotation().getRadians());
 
     if (distanceToTarget > POSITION_TOLERANCE
         || rotationError > Math.toRadians(ROTATION_TOLERANCE)) {
@@ -170,15 +175,16 @@ public class AutoScoreCommand extends Command {
       Logger.recordOutput("RealOutputs/y_error", yController.getPositionError());
       Logger.recordOutput("RealOutputs/theta_error", thetaController.getPositionError());
       // Move to target position
-      ChassisSpeeds speeds = new ChassisSpeeds(
-          LinearVelocity.ofBaseUnits(
-              xController.calculate(currentPose.getX(), endPose.getX()), MetersPerSecond),
-          LinearVelocity.ofBaseUnits(
-              yController.calculate(currentPose.getY(), endPose.getY()), MetersPerSecond),
-          AngularVelocity.ofBaseUnits(
-              thetaController.calculate(
-                  currentPose.getRotation().getRadians(), endPose.getRotation().getRadians()),
-              RadiansPerSecond));
+      ChassisSpeeds speeds =
+          new ChassisSpeeds(
+              LinearVelocity.ofBaseUnits(
+                  xController.calculate(currentPose.getX(), endPose.getX()), MetersPerSecond),
+              LinearVelocity.ofBaseUnits(
+                  yController.calculate(currentPose.getY(), endPose.getY()), MetersPerSecond),
+              AngularVelocity.ofBaseUnits(
+                  thetaController.calculate(
+                      currentPose.getRotation().getRadians(), endPose.getRotation().getRadians()),
+                  RadiansPerSecond));
       Drive.getInstance()
           .runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -192,15 +198,18 @@ public class AutoScoreCommand extends Command {
   private void handleScoring() {
     Drive.getInstance().stop();
 
-    double currentHeight = ArmKinematics.getCurrentPose(new ArmKinematics.JointPose(
-        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-        Meters.of(Elevator.getInstance().getHeight()), // L
-        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()))).y().magnitude();
+    double currentHeight =
+        ArmKinematics.getCurrentPose(
+                new ArmKinematics.JointPose(
+                    Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+                    Meters.of(Elevator.getInstance().getExtention()), // L
+                    Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition())))
+            .y()
+            .magnitude();
 
-    double targetHeight = ArmCommand.getTargetY(level).magnitude();
+    double targetHeight = WristConstants.getTargetY(level).magnitude();
 
-    if (Math.abs(targetHeight - currentHeight) < ARM_Y_TOLERANCE
-        || currentHeight > targetHeight) {
+    if (Math.abs(targetHeight - currentHeight) < ARM_Y_TOLERANCE || currentHeight > targetHeight) {
       if (tickCounter >= SCORING_DELAY_TICKS) {
         CoralIntake.getInstance()
             .setVelocity(LinearVelocity.ofBaseUnits(SCORING_VELOCITY, MetersPerSecond));
@@ -216,12 +225,11 @@ public class AutoScoreCommand extends Command {
   public void end(boolean interrupted) {
     // Reset robot state
     if (CoralIntake.getInstance().hasCoralHotDog() || CoralIntake.getInstance().hasCoralBurger()) {
-      CoralIntake.getInstance().setVelocity(
-          LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     } else {
-      CoralIntake.getInstance().setVelocity(
-          LinearVelocity.ofBaseUnits(4, MetersPerSecond));
+      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
     }
+    RobotContainer.coralIntakeCommand.manual = false;
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
     Drive.getInstance().stop();
     DriveConstants.setSdMultiplier(1);
@@ -233,7 +241,8 @@ public class AutoScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return (!CoralIntake.getInstance().hasCoralHotDog() && !CoralIntake.getInstance().hasCoralBurger())
+    return (!CoralIntake.getInstance().hasCoralHotDog()
+            && !CoralIntake.getInstance().hasCoralBurger())
         || timeoutTimer.get() > COMMAND_TIMEOUT;
   }
 }

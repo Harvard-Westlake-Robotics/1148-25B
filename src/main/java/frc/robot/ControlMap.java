@@ -24,8 +24,7 @@ public class ControlMap {
     return instance;
   }
 
-  private ControlMap() {
-  }
+  private ControlMap() {}
 
   public void configurePreset1(CommandXboxController operator, CommandPS5Controller driver) {
     // Reset gyro to 0° when B button is pressed
@@ -33,12 +32,13 @@ public class ControlMap {
         .back()
         .onTrue(
             Commands.runOnce(
-                () -> Drive.getInstance()
-                    .setPose(
-                        new Pose2d(
-                            Drive.getInstance().getPose().getTranslation(),
-                            new Rotation2d())),
-                Drive.getInstance())
+                    () ->
+                        Drive.getInstance()
+                            .setPose(
+                                new Pose2d(
+                                    Drive.getInstance().getPose().getTranslation(),
+                                    new Rotation2d())),
+                    Drive.getInstance())
                 .ignoringDisable(true));
 
     // Intake commands
@@ -108,6 +108,10 @@ public class ControlMap {
                   if (RobotContainer.armCommand.outtakePosition) {
                     RobotContainer.coralIntakeCommand.runOuttake();
                   } else if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+                    RobotContainer.algaeIntakeCommand.setVelocity(
+                        LinearVelocity.ofBaseUnits(
+                            IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond));
+                  } else if (ArmCommand.level == ScoringLevel.NET) {
                     RobotContainer.algaeIntakeCommand.setVelocity(
                         LinearVelocity.ofBaseUnits(
                             IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond));
@@ -203,8 +207,7 @@ public class ControlMap {
     operator
         .povLeft()
         .whileTrue(
-            new InstantCommand(
-                () -> RobotContainer.armCommand.setHeight(ScoringLevel.TOP_REMOVE)));
+            new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.TOP_REMOVE)));
     RobotContainer.algaeIntakeCommand.setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.coralIntakeCommand.stopIntake();
     operator

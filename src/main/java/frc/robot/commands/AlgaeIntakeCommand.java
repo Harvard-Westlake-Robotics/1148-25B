@@ -27,8 +27,7 @@ public class AlgaeIntakeCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
@@ -37,9 +36,11 @@ public class AlgaeIntakeCommand extends Command {
 
   public void intake() {
     if (!algaeLastStop) {
-      this.velocity = LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond);
+      this.velocity =
+          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond);
     } else {
-      this.velocity = LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond);
+      this.velocity =
+          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond);
     }
   }
 
@@ -50,6 +51,7 @@ public class AlgaeIntakeCommand extends Command {
       algaeLastStop = true;
     } else {
       this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+      AlgaeIntake.getInstance().runVoltage(0);
       algaeLastStop = false;
     }
   }

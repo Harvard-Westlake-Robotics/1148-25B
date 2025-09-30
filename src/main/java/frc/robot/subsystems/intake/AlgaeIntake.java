@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.constants.IntakeConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntake extends SubsystemBase {
@@ -36,13 +35,14 @@ public class AlgaeIntake extends SubsystemBase {
     this.constants = IntakeConstants.AlgaeIntake;
     this.key = "Algae Intake";
     io = new IntakeIOTalonFX(constants, 1);
-    sysId = new SysIdRoutine(
-        new Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-        new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {

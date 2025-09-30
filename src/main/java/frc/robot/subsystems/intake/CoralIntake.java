@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.constants.IntakeConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class CoralIntake extends SubsystemBase {
@@ -40,13 +39,14 @@ public class CoralIntake extends SubsystemBase {
     this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);
-    sysId = new SysIdRoutine(
-        new Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-        new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {

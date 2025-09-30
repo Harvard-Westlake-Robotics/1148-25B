@@ -20,21 +20,24 @@ public class TeleopCommand extends Command {
     this.addRequirements(Drive.getInstance());
   }
 
-  private Command reefCommand = AutoBuilder.pathfindThenFollowPath(
-      NetworkCommunicator.getInstance().getSelectedReefPath(),
-      DriveConstants.PP_CONSTRAINTS)
-      .andThen(
-          new AutoScoreCommand(
-              NetworkCommunicator.getInstance().getSelectedHeight(),
-              NetworkCommunicator.getInstance().getSelectedReefPath()));
-  private Command sourceCommand = AutoBuilder.pathfindThenFollowPath(
-      NetworkCommunicator.getInstance().getSelectedSourcePath(),
-      DriveConstants.PP_CONSTRAINTS)
-      .andThen(
-          () -> {
-            RobotContainer.coralIntakeCommand.manual = true;
-            RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
-          });
+  private Command reefCommand =
+      AutoBuilder.pathfindThenFollowPath(
+              NetworkCommunicator.getInstance().getSelectedReefPath(),
+              DriveConstants.PP_CONSTRAINTS)
+          .andThen(
+              new AutoScoreCommand(
+                  NetworkCommunicator.getInstance().getSelectedHeight(),
+                  NetworkCommunicator.getInstance().getSelectedReefPath()));
+  private Command sourceCommand =
+      AutoBuilder.pathfindThenFollowPath(
+              NetworkCommunicator.getInstance().getSelectedSourcePath(),
+              DriveConstants.PP_CONSTRAINTS)
+          .andThen(
+              () -> {
+                RobotContainer.coralIntakeCommand.manual = true;
+                RobotContainer.coralIntakeCommand.velocity =
+                    LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+              });
 
   @Override
   public void initialize() {
@@ -44,7 +47,6 @@ public class TeleopCommand extends Command {
       sourceCommand.cancel();
       reefCommand.schedule();
     } else {
-
       RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
       sourceCommand.addRequirements(getRequirements());
       reefCommand.cancel();
@@ -54,26 +56,30 @@ public class TeleopCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    RobotContainer.coralIntakeCommand.manual = false;
     sourceCommand.cancel();
     reefCommand.cancel();
   }
 
   public void updateCommands() {
-    reefCommand = new ParallelCommandGroup(
+    reefCommand =
+        new ParallelCommandGroup(
+                AutoBuilder.pathfindThenFollowPath(
+                    NetworkCommunicator.getInstance().getSelectedReefPath(),
+                    DriveConstants.PP_CONSTRAINTS),
+                new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.L1)))
+            .andThen(
+                new AutoScoreCommand(
+                    NetworkCommunicator.getInstance().getSelectedHeight(),
+                    NetworkCommunicator.getInstance().getSelectedReefPath()));
+    sourceCommand =
         AutoBuilder.pathfindThenFollowPath(
-            NetworkCommunicator.getInstance().getSelectedReefPath(),
-            DriveConstants.PP_CONSTRAINTS),
-        new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.L1)))
-        .andThen(
-            new AutoScoreCommand(
-                NetworkCommunicator.getInstance().getSelectedHeight(),
-                NetworkCommunicator.getInstance().getSelectedReefPath()));
-    sourceCommand = AutoBuilder.pathfindThenFollowPath(
-        NetworkCommunicator.getInstance().getSelectedSourcePath(),
-        DriveConstants.PP_CONSTRAINTS)
-        .andThen(
-            () -> {
-              RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
-            });
+                NetworkCommunicator.getInstance().getSelectedSourcePath(),
+                DriveConstants.PP_CONSTRAINTS)
+            .andThen(
+                () -> {
+                  RobotContainer.coralIntakeCommand.velocity =
+                      LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                });
   }
 }

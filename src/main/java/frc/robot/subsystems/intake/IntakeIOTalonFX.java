@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.constants.WristConstants;
 
 public class IntakeIOTalonFX implements IntakeIO {
   private final IntakeConstants intakeConstants;
@@ -47,8 +46,9 @@ public class IntakeIOTalonFX implements IntakeIO {
     this.intakeConstants = intakeConstants;
     intakeMotor = new TalonFX(intakeConstants.motorId + motorNum - 1);
     intakeMotor.setPosition(0);
-    intakeController = new MotionMagicVelocityTorqueCurrentFOC(
-        AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
+    intakeController =
+        new MotionMagicVelocityTorqueCurrentFOC(
+            AngularVelocity.ofBaseUnits(0.0, RotationsPerSecond));
     TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
 
     intakeConfig.MotorOutput.Inverted = intakeConstants.motorInverted;
@@ -79,17 +79,22 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorCurrent = intakeMotor.getStatorCurrent();
 
     if (motorNum == 1) {
-      this.input1 = intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "drive") : null;
-      this.input2 = intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "drive") : null;
-      this.input3 = intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "drive") : null;
-      this.input4 = intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "drive") : null;
+      this.input1 =
+          intakeConstants.sensor1ID != -1 ? new CANrange(intakeConstants.sensor1ID, "drive") : null;
+      this.input2 =
+          intakeConstants.sensor2ID != -1 ? new CANrange(intakeConstants.sensor2ID, "drive") : null;
+      this.input3 =
+          intakeConstants.sensor3ID != -1 ? new CANrange(intakeConstants.sensor3ID, "drive") : null;
+      this.input4 =
+          intakeConstants.sensor4ID != -1 ? new CANrange(intakeConstants.sensor4ID, "drive") : null;
     } else {
       this.input1 = null;
       this.input2 = null;
       this.input3 = null;
       this.input4 = null;
     }
-    intakeFeedforward = new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kV, intakeConstants.kA);
+    intakeFeedforward =
+        new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kV, intakeConstants.kA);
   }
 
   @Override
@@ -97,9 +102,10 @@ public class IntakeIOTalonFX implements IntakeIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.intakeMotorConnected = motorConnectedDebounce.calculate(intakeMotor.isConnected());
-    inputs.intakeMotorPositionMeters = motorPosition.getValueAsDouble()
-        * WristConstants.IntakeWrist.motorToWristRotations;
-    inputs.intakeMotorVelocityMPS = motorVelocity.getValueAsDouble() * WristConstants.IntakeWrist.motorToWristRotations;
+    inputs.intakeMotorPositionMeters =
+        motorPosition.getValueAsDouble() * (1 / intakeConstants.rotationsToMetersRatio);
+    inputs.intakeMotorVelocityMPS =
+        motorVelocity.getValueAsDouble() * (1 / intakeConstants.rotationsToMetersRatio);
     inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.intakeMotorCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -114,9 +120,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     intakeConfig.MotionMagic.MotionMagicAcceleration = 9999;
     intakeMotor.getConfigurator().apply(intakeConfig);
-    intakeController.FeedForward = intakeFeedforward.calculate(
-        velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio);
-    intakeController.Velocity = velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio;
+    intakeController.FeedForward =
+        intakeFeedforward.calculate(
+            velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio);
+    intakeController.Velocity =
+        velocity.in(MetersPerSecond) / intakeConstants.rotationsToMetersRatio;
     intakeMotor.setControl(intakeController);
   }
 
@@ -128,8 +136,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public Boolean getSensor1() {
-    if (input1 == null)
-      return null;
+    if (input1 == null) return null;
     var distanceSignal = input1.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
@@ -141,8 +148,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public Boolean getSensor2() {
-    if (input2 == null)
-      return null;
+    if (input2 == null) return null;
     var distanceSignal = input2.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
@@ -154,8 +160,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public Boolean getSensor3() {
-    if (input3 == null)
-      return null;
+    if (input3 == null) return null;
     var distanceSignal = input3.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
@@ -167,8 +172,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   public Boolean getSensor4() {
-    if (input4 == null)
-      return null;
+    if (input4 == null) return null;
     var distanceSignal = input4.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();

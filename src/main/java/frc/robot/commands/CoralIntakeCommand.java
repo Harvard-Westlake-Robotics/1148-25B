@@ -17,7 +17,7 @@ public class CoralIntakeCommand extends Command {
    * when intaking on ground, keep two choices:
    * 1. Intake straight
    * 2. Intake wide
-   * 
+   *
    * Different shift modes for the two choices
    */
   // intake straight or intake wide
@@ -47,8 +47,7 @@ public class CoralIntakeCommand extends Command {
   }
 
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -73,7 +72,6 @@ public class CoralIntakeCommand extends Command {
     } else {
       CoralIntake.getInstance().setVelocity(velocity);
     }
-
   }
 
   // Runs the intake based on whether we are intaking straight or hot dog

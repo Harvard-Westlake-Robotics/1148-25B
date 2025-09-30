@@ -42,7 +42,6 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Camera.BaseCam.AprilTagResult;
 import frc.robot.subsystems.drive.Drive;
-
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;

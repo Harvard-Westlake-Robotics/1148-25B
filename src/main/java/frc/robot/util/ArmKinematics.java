@@ -234,27 +234,27 @@ public final class ArmKinematics {
 
   // ---------------- Utilities ----------------
   /**
- * Returns the intake's current x and y coordinates based on the given joint pose.
- *
- * @param pose The current joint pose (θ, L, β).
- * @return A Target object representing the current x and y coordinates of the intake.
- */
-public static Target getCurrentPose(JointPose pose) {
-  double theta = rot(pose.theta);
-  double beta = rot(pose.beta);
-  double alpha = 0.25 - theta - beta; // Global α
+   * Returns the intake's current x and y coordinates based on the given joint pose.
+   *
+   * @param pose The current joint pose (θ, L, β).
+   * @return A Target object representing the current x and y coordinates of the intake.
+   */
+  public static Target getCurrentPose(JointPose pose) {
+    double theta = rot(pose.theta);
+    double beta = rot(pose.beta);
+    double alpha = 0.25 - theta - beta; // Global α
 
-  double thetaRad = rot2rad(theta);
-  double alphaRad = rot2rad(alpha);
+    double thetaRad = rot2rad(theta);
+    double alphaRad = rot2rad(alpha);
 
-  double xw = pose.L.in(Meters) * Math.sin(thetaRad); // Wrist x
-  double yw = pose.L.in(Meters) * Math.cos(thetaRad); // Wrist y
+    double xw = pose.L.in(Meters) * Math.sin(thetaRad); // Wrist x
+    double yw = pose.L.in(Meters) * Math.cos(thetaRad); // Wrist y
 
-  double xc = xw + WRIST_TO_CENTER.in(Meters) * Math.cos(alphaRad); // Intake x
-  double yc = yw + WRIST_TO_CENTER.in(Meters) * Math.sin(alphaRad); // Intake y
+    double xc = xw + WRIST_TO_CENTER.in(Meters) * Math.cos(alphaRad); // Intake x
+    double yc = yw + WRIST_TO_CENTER.in(Meters) * Math.sin(alphaRad); // Intake y
 
-  return new Target(Meters.of(xc), Meters.of(yc), Rotation2d.fromRotations(alpha));
-}
+    return new Target(Meters.of(xc), Meters.of(yc), Rotation2d.fromRotations(alpha));
+  }
 
   private static double rot(Rotation2d r) {
     return r.getRotations();

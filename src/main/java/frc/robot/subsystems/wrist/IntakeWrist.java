@@ -2,7 +2,6 @@ package frc.robot.subsystems.wrist;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.WristConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class IntakeWrist extends SubsystemBase {
@@ -51,11 +50,5 @@ public class IntakeWrist extends SubsystemBase {
 
   public double getWristPosition() {
     return inputs1.wristPositionRot;
-  }
-
-  public void xEqualsZero() {
-    // Sets a variable x to
-    // zero!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! YAY!!!!!!!!!!!!!!!
-    int x = 0;
   }
 }

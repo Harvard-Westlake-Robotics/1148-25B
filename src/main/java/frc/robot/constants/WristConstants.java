@@ -1,10 +1,15 @@
 package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import frc.robot.commands.ArmCommand.ScoringLevel;
+import frc.robot.subsystems.intake.AlgaeIntake;
+import frc.robot.subsystems.intake.CoralIntake;
 
 public class WristConstants {
   public final int motorId;
@@ -22,7 +27,7 @@ public class WristConstants {
 
   public double ANGLE_MAX_ACCELERATION;
   public double ANGLE_MAX_VELOCITY;
-  public double ANGLe_MAX_JERK;
+  public double ANGLE_MAX_JERK;
   public double motorToWristRotations;
   public Angle angleOffset;
   public int statorLimit;
@@ -45,7 +50,7 @@ public class WristConstants {
       double kA,
       double ANGLE_MAX_ACCELERATION,
       double ANGLE_MAX_VELOCITY,
-      double ANGLe_MAX_JERK,
+      double ANGLE_MAX_JERK,
       double motorToWristRotations,
       Angle angleOffset,
       int supplyLimit,
@@ -66,7 +71,7 @@ public class WristConstants {
     this.kA = kA;
     this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
     this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
-    this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
+    this.ANGLE_MAX_JERK = ANGLE_MAX_JERK;
     this.motorToWristRotations = motorToWristRotations;
     this.angleOffset = angleOffset;
     this.supplyLimit = supplyLimit;
@@ -124,4 +129,49 @@ public class WristConstants {
           80,
           Rotation2d.fromRotations(-1.0 / 3.0), // -120°
           Rotation2d.fromRotations(1.0 / 3.0)); // +120°
+
+  public static Distance getTargetY(ScoringLevel level) {
+    switch (level) {
+      case SOURCE_CORAL:
+        return Meters.of(0);
+      case GROUND_CORAL:
+        return Meters.of(0);
+      case GROUND_ALGAE:
+        return Meters.of(0);
+      case L1:
+        return Meters.of(0);
+      case L2:
+        return Meters.of(0);
+      case L3:
+        return Meters.of(0);
+      case L4:
+        return Meters.of(0);
+      case TOP_REMOVE:
+        return Meters.of(0);
+      case BOTTOM_REMOVE:
+        return Meters.of(0);
+      case NET:
+        return Meters.of(0);
+      case PROCESSOR:
+        return Meters.of(0);
+      case HANG:
+        return Meters.of(0);
+      case NEUTRAL:
+      default:
+        // Different position based on what is happening
+        if (CoralIntake.getInstance().hasCoralHotDog()) {
+          // "Keeps it slightly up, ready to go up and score"
+          return Meters.of(0);
+        } else if (CoralIntake.getInstance().hasCoralBurger()) {
+          // "L1 scoring position"
+          return Meters.of(0);
+        } else if (AlgaeIntake.getInstance().hasAlgae()) {
+          // "Keeps elevator straight up but contracted, like lolipop
+          return Meters.of(0);
+        } else { // Nothing in intake
+          // Elevator fully down and intake stowed in.
+          return Meters.of(0);
+        }
+    }
+  }
 }

@@ -8,7 +8,7 @@ import edu.wpi.first.units.measure.Distance;
 public class ElevatorConstants {
   public static final int elevator1ID = 13;
   public static final int elevator2ID = 14;
-  public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
+  public static final InvertedValue elevator2Inverted = InvertedValue.Clockwise_Positive;
   public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
   public static double kP = 5.0;
   public static double kI = 0.0;

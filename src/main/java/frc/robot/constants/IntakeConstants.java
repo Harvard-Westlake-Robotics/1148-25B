@@ -23,7 +23,7 @@ public class IntakeConstants {
 
   public final double ANGLE_MAX_ACCELERATION;
   public final double ANGLE_MAX_VELOCITY;
-  public final double ANGLe_MAX_JERK;
+  public final double ANGLE_MAX_JERK;
   public final double rotationsToMetersRatio;
 
   public IntakeConstants(
@@ -46,7 +46,7 @@ public class IntakeConstants {
       double positionkD,
       double ANGLE_MAX_ACCELERATION,
       double ANGLE_MAX_VELOCITY,
-      double ANGLe_MAX_JERK,
+      double ANGLE_MAX_JERK,
       double rotationsToMetersRatio) {
     this.motorId = motorId;
     this.motorInverted = motorInverted;
@@ -66,53 +66,55 @@ public class IntakeConstants {
     this.positionkD = positionkD;
     this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
     this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
-    this.ANGLe_MAX_JERK = ANGLe_MAX_JERK;
+    this.ANGLE_MAX_JERK = ANGLE_MAX_JERK;
     this.rotationsToMetersRatio = rotationsToMetersRatio;
   }
 
-  public static final IntakeConstants CoralIntake = new IntakeConstants(
-      17,
-      InvertedValue.Clockwise_Positive,
-      100,
-      -100,
-      100,
-      8.569162,
-      0.0,
-      0.0,
-      0.3,
-      0.0,
-      0.0,
-      2,
-      3,
-      4,
-      5,
-      0.55,
-      0.005,
-      99999.0,
-      99999.0,
-      99999.0,
-      1.0);
+  public static final IntakeConstants CoralIntake =
+      new IntakeConstants(
+          17,
+          InvertedValue.Clockwise_Positive,
+          100,
+          -100,
+          100,
+          8.569162,
+          0.0,
+          0.0,
+          0.3,
+          0.0,
+          0.0,
+          2,
+          3,
+          4,
+          5,
+          0.55,
+          0.005,
+          99999.0,
+          99999.0,
+          99999.0,
+          1.0);
 
-  public static final IntakeConstants AlgaeIntake = new IntakeConstants(
-      16,
-      InvertedValue.CounterClockwise_Positive,
-      100,
-      -100,
-      0,
-      1.669162,
-      0.0,
-      0.0,
-      0.1761,
-      0.12875,
-      0.0,
-      -1,
-      -1,
-      -1,
-      -1,
-      0.0,
-      0.0,
-      100.0,
-      100.0,
-      1000000.0,
-      1.0 / 16.709);
+  public static final IntakeConstants AlgaeIntake =
+      new IntakeConstants(
+          16,
+          InvertedValue.CounterClockwise_Positive,
+          100,
+          -100,
+          0,
+          1.669162,
+          0.0,
+          0.0,
+          0.1761,
+          0.12875,
+          0.0,
+          -1,
+          -1,
+          -1,
+          -1,
+          0.0,
+          0.0,
+          100.0,
+          100.0,
+          1000000.0,
+          1.0 / 16.709);
 }
