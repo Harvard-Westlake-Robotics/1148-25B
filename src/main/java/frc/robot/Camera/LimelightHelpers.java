@@ -130,7 +130,7 @@ public class LimelightHelpers {
 
   /** Represents an AprilTag/Fiducial Target Result extracted from JSON Output */
   public static class LimelightTarget_Fiducial {
-
+    
     @JsonProperty("fID")
     public double fiducialID;
 
