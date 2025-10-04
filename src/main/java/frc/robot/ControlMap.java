@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -13,6 +14,8 @@ import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.NetworkCommunicator;
+import frc.robot.subsystems.elevator.Elevator;
 
 public class ControlMap {
   private static ControlMap instance;
@@ -125,6 +128,34 @@ public class ControlMap {
                       LinearVelocity.ofBaseUnits(0, MetersPerSecond));
                 }));
 
+    driver
+        .L2()
+        .whileTrue(
+            new Command() {
+              @Override
+              public void initialize() {
+                if (Drive.getInstance().getCurrentCommand() != null) {
+                  Drive.getInstance().getCurrentCommand().cancel();
+                }
+                if (Elevator.getInstance().getCurrentCommand() != null) {
+                  Elevator.getInstance().getCurrentCommand().cancel();
+                }
+              }
+
+              @Override
+              public void end(boolean interrupted) {
+                NetworkCommunicator.getInstance().getTeleopCommand().cancel();
+                RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+                Drive.getInstance().stop();
+                if (Drive.getInstance().getCurrentCommand() != null) {
+                  Drive.getInstance().getCurrentCommand().cancel();
+                }
+                if (Elevator.getInstance().getCurrentCommand() != null) {
+                  Elevator.getInstance().getCurrentCommand().cancel();
+                }
+              }
+            });
+
     // Elevator
     operator
         .a()
@@ -217,7 +248,11 @@ public class ControlMap {
     RobotContainer.algaeIntakeCommand.setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.coralIntakeCommand.stopIntake();
 
-    // Commands not done: Hang, auto-align, whatever the "rest position" thing is on
+    // Hang
+
+    driver.square().whileTrue(new InstantCommand(() -> RobotContainer.hangCommand.run()));
+
+    // Commands not done: whatever the "rest position" thing is on
     // the document
 
   }

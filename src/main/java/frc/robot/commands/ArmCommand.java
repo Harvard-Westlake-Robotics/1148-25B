@@ -4,8 +4,6 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Camera.LimelightHelpers;
-import frc.robot.Camera.LimelightHelpers.RawFiducial;
 import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.AlgaeIntake;
@@ -128,33 +126,33 @@ public class ArmCommand extends Command {
         outtakePosition = true;
         break;
       case L2:
-            // If front of robot is looking at reef:
-            if (facingForward()) {
-              wristAngle = Rotation2d.fromRotations(0);
-            } else if (facingBackward()) {
-              // if back of robot is looking at reef
-              wristAngle = Rotation2d.fromRotations(0);
-            }
+        // If front of robot is looking at reef:
+        if (facingForward()) {
+          wristAngle = Rotation2d.fromRotations(0);
+        } else if (facingBackward()) {
+          // if back of robot is looking at reef
+          wristAngle = Rotation2d.fromRotations(0);
+        }
         outtakePosition = true;
         break;
       case L3:
-            // If front of robot is looking at reef:
-            if (facingForward()) {
-              wristAngle = Rotation2d.fromRotations(0);
-            } else if (facingBackward()) {
-              // if back of robot is looking at reef
-              wristAngle = Rotation2d.fromRotations(0);
-            }
+        // If front of robot is looking at reef:
+        if (facingForward()) {
+          wristAngle = Rotation2d.fromRotations(0);
+        } else if (facingBackward()) {
+          // if back of robot is looking at reef
+          wristAngle = Rotation2d.fromRotations(0);
+        }
         outtakePosition = true;
         break;
       case L4:
-           // If front of robot is looking at reef:
-           if (facingForward()) {
-            wristAngle = Rotation2d.fromRotations(0);
-          } else if (facingBackward()) {
-            // if back of robot is looking at reef
-            wristAngle = Rotation2d.fromRotations(0);
-          }
+        // If front of robot is looking at reef:
+        if (facingForward()) {
+          wristAngle = Rotation2d.fromRotations(0);
+        } else if (facingBackward()) {
+          // if back of robot is looking at reef
+          wristAngle = Rotation2d.fromRotations(0);
+        }
         outtakePosition = true;
       case NET:
         wristAngle = Rotation2d.fromRotations(0);
@@ -181,7 +179,6 @@ public class ArmCommand extends Command {
         outtakePosition = false;
         break;
     }
-    
 
     var target =
         new ArmKinematics.Target(
@@ -196,47 +193,12 @@ public class ArmCommand extends Command {
     targetPos =
         new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
   }
+
   public boolean facingForward() {
-    // Get all the fiducial result arrays from limelights
-    /*
-     * For each fiducial result array
-     * Look at each result --> is its id equal to any id in tagIds?
-     * Yes --> return true
-     * No --> keep going
-     * return false at the end
-     */
-    RawFiducial[][] fiducials = new RawFiducial[][] {LimelightHelpers.getRawFiducials("limelight-a"), LimelightHelpers.getRawFiducials("limelight-b")};
-    for (RawFiducial[] results : fiducials) {
-      for (RawFiducial result : results) {
-        for (int tagId : tagIds) {
-          if (result.id == tagId) {
-            return true;
-          }
-        }
-      }
-    }
-    return  false;
+    return false;
   }
 
   public boolean facingBackward() {
-    // Get all the fiducial result arrays from limelights
-    /*
-     * For each fiducial result array
-     * Look at each result --> is its id equal to any id in tagIds?
-     * Yes --> return true
-     * No --> keep going
-     * return false at the end
-     */
-    RawFiducial[][] fiducials = new RawFiducial[][] {LimelightHelpers.getRawFiducials("limelight-c"), LimelightHelpers.getRawFiducials("limelight-d")};
-    for (RawFiducial[] results : fiducials) {
-      for (RawFiducial result : results) {
-        for (int tagId : tagIds) {
-          if (result.id == tagId) {
-            return true;
-          }
-        }
-      }
-    }
-    return  false;
+    return false;
   }
 }

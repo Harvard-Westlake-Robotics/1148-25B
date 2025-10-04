@@ -134,7 +134,7 @@ public class LimeLightCam extends BaseCam {
    * tuning of LimeLight constants
    */
   public Optional<AprilTagResult> getEstimate() {
-    
+
     if (runNeuralNetwork) {
       return Optional.empty();
     }

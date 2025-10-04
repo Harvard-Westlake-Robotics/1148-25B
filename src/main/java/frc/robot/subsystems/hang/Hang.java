@@ -1,6 +1,7 @@
 package frc.robot.subsystems.hang;
 
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -10,6 +11,7 @@ public class Hang extends SubsystemBase {
   private HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
   private String key;
   private boolean hasBar = false;
+  public Servo servo = new Servo(0);
 
   public static Hang getInstance() {
     if (instance == null) {

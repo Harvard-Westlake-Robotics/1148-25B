@@ -22,6 +22,10 @@ public class HangCommand extends Command {
   @Override
   public void execute() {
     Hang.getInstance().setVelocity(velocity);
+    if (Hang.getInstance().getHasBar()) {
+      Hang.getInstance().servo.setAngle(160);
+      stop();
+    }
   }
 
   @Override
