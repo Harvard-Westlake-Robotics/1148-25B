@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -62,6 +63,11 @@ public class AlgaeIntake extends SubsystemBase {
   public void runVoltage(double volts) {
     io.runCharacterization(volts);
   }
+
+  public void setVelocityMPS(double velocity) {
+    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
+    setVelocity(v);
+  } 
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

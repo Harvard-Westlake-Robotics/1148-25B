@@ -8,10 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Camera.LimelightHelpers;
-import frc.robot.Camera.LimelightHelpers.RawFiducial;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.AlgaeIntake;
@@ -22,7 +19,6 @@ import frc.robot.util.ArmKinematics;
 
 public class ArmCommand extends Command {
   // Tag ids corresponding to the reef ids
-  private final int[] tagIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
   private static double[] targetPos;
   public boolean outtakePosition;
 
@@ -90,111 +86,10 @@ public class ArmCommand extends Command {
         Meters.of(Elevator.getInstance().getExtention()), // L
         Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
 
-    Rotation2d wristAngle = Rotation2d.fromRotations(0);
-
-    switch (level) {
-      case NEUTRAL:
-        outtakePosition = false;
-        // Different position based on what is happening
-        if (CoralIntake.getInstance().hasCoralHotDog()) {
-          // "Keeps it slightly up, ready to go up and score"
-          wristAngle = Rotation2d.fromRotations(0);
-        } else if (CoralIntake.getInstance().hasCoralBurger()) {
-          // "L1 scoring position"
-          wristAngle = Rotation2d.fromRotations(0);
-        } else if (AlgaeIntake.getInstance().hasAlgae()) {
-          // "Keeps elevator straight up but contracted, like lolipop
-          wristAngle = Rotation2d.fromRotations(0);
-        } else { // Nothing in intake
-          // Elevator fully down and intake stowed in.
-          wristAngle = Rotation2d.fromRotations(0);
-        }
-        break;
-      case GROUND_ALGAE:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case GROUND_CORAL:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case SOURCE_CORAL:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case L1:
-        // Might want to make the boolean false here depending on if L1 outtakes
-        // differently
-        // If front of robot is looking at reef:
-        if (facingForward()) {
-          wristAngle = Rotation2d.fromRotations(0);
-        } else {
-          // if back of robot is looking at reef
-          wristAngle = Rotation2d.fromRotations(0);
-        }
-        outtakePosition = true;
-        break;
-      case L2:
-        // If front of robot is looking at reef:
-        if (facingForward()) {
-          wristAngle = Rotation2d.fromRotations(0);
-        } else  {
-          // if back of robot is looking at reef
-          wristAngle = Rotation2d.fromRotations(0);
-        }
-        outtakePosition = true;
-        break;
-      case L3:
-        // If front of robot is looking at reef:
-        if (facingForward()) {
-          wristAngle = Rotation2d.fromRotations(0);
-        } else {
-          // if back of robot is looking at reef
-          wristAngle = Rotation2d.fromRotations(0);
-        }
-        outtakePosition = true;
-        break;
-      case L4:
-        // If front of robot is looking at reef:
-        if (facingForward()) {
-          wristAngle = Rotation2d.fromRotations(0);
-        } else {
-          // if back of robot is looking at reef
-          wristAngle = Rotation2d.fromRotations(0);
-        }
-        outtakePosition = true;
-      case NET:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case BOTTOM_REMOVE:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case TOP_REMOVE:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case PROCESSOR:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      case HANG:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-      default:
-        wristAngle = Rotation2d.fromRotations(0);
-        outtakePosition = false;
-        break;
-    }
-
     var target = new ArmKinematics.Target(
-        Meters.of(
-            (Elevator.getInstance().getExtention())
-                * Math.cos(ArmWrist.getInstance().getWristPosition())), // X
-        WristConstants.getTargetY(level), // Y
-        wristAngle);
+        Meters.of(getTargetPos(level)[0]), // X
+        Meters.of(getTargetPos(level)[1]), // Y
+        Rotation2d.fromRotations(getTargetPos(level)[2])); // Intake angle
 
     var sol = ArmKinematics.solve(current, target);
 
@@ -227,6 +122,90 @@ public class ArmCommand extends Command {
     } else {
       return  false;
     }
+  }
 
+  public double[] getTargetPos(ScoringLevel level) {
+    switch (level) {
+      case SOURCE_CORAL:
+        outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case GROUND_CORAL:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case GROUND_ALGAE:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case L1:
+      outtakePosition = true;
+      // Might want to make the boolean false here depending on if L1 outtakes
+        // differently
+        // If front of robot is looking at reef:
+        if (facingForward()) {
+          return new double[]{0, 0, 0};
+        } else {
+          // if back of robot is looking at reef
+          return new double[]{0, 0, 0};
+        }
+      case L2:
+      outtakePosition = true;
+      // If front of robot is looking at reef:
+      if (facingForward()) {
+        return new double[]{0, 0, 0};
+      } else  {
+        // if back of robot is looking at reef
+        return new double[]{0, 0, 0};
+      }
+      case L3:
+      outtakePosition = true;
+      // If front of robot is looking at reef:
+      if (facingForward()) {
+        return new double[]{0, 0, 0};
+      } else  {
+        // if back of robot is looking at reef
+        return new double[]{0, 0, 0};
+      }
+      case L4:
+      outtakePosition = true;
+      // If front of robot is looking at reef:
+      if (facingForward()) {
+        return new double[]{0, 0, 0};
+      } else  {
+        // if back of robot is looking at reef
+        return new double[]{0, 0, 0};
+      }
+      case TOP_REMOVE:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case BOTTOM_REMOVE:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case NET:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case PROCESSOR:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case HANG:
+      outtakePosition = false;
+        return new double[]{0, 0, 0};
+      case NEUTRAL:
+      outtakePosition = false;
+        // Different position based on what is happening
+        if (CoralIntake.getInstance().hasCoralHotDog()) {
+          // "Keeps it slightly up, ready to go up and score"
+          return new double[]{0, 0, 0};
+        } else if (CoralIntake.getInstance().hasCoralBurger()) {
+          // "L1 scoring position"
+          return new double[]{0, 0, 0};
+        } else if (AlgaeIntake.getInstance().hasAlgae()) {
+          // "Keeps elevator straight up but contracted, like lolipop
+          return new double[]{0, 0, 0};
+        } else { // Nothing in intake
+          // Elevator fully down and intake stowed in.
+          return new double[]{0, 0, 0};
+        }
+        default:
+        return new double[]{0, 0, 0};
+    }
   }
 }

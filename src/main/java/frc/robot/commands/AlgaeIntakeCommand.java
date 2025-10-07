@@ -56,7 +56,8 @@ public class AlgaeIntakeCommand extends Command {
     }
   }
 
-  public void setVelocity(LinearVelocity velocity) {
-    this.velocity = velocity;
+  public void setVelocity(double velocity) {
+    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
+    this.velocity = v;
   }
 }
