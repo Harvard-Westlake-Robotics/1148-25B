@@ -8,8 +8,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Camera.LimelightHelpers;
-import frc.robot.Camera.LimelightHelpers.RawFiducial;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -22,7 +20,6 @@ import frc.robot.util.ArmKinematics;
 
 public class ArmCommand extends Command {
   // Tag ids corresponding to the reef ids
-  private final int[] tagIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
   private static double[] targetPos;
   public boolean outtakePosition;
 
@@ -138,7 +135,7 @@ public class ArmCommand extends Command {
         // If front of robot is looking at reef:
         if (facingForward()) {
           wristAngle = Rotation2d.fromRotations(0);
-        } else  {
+        } else {
           // if back of robot is looking at reef
           wristAngle = Rotation2d.fromRotations(0);
         }
@@ -206,26 +203,28 @@ public class ArmCommand extends Command {
     Translation2d translation = pose.getTranslation();
     // Construct unitVector for use later
     Translation2d unitVector = translation.plus(new Translation2d(0, 1).rotateBy(pose.getRotation()));
-    Translation2d robotTranslation =
-        Drive.getInstance().getPose()
-            .getTranslation()
-            .plus(
-                new Translation2d(
-                    FieldConstants.ROBOT_REEF_OFFSET_METERS, Drive.getInstance().getPose().getRotation()));
+    Translation2d robotTranslation = Drive.getInstance().getPose()
+        .getTranslation()
+        .plus(
+            new Translation2d(
+                FieldConstants.ROBOT_REEF_OFFSET_METERS, Drive.getInstance().getPose().getRotation()));
 
     // Determine reef center based on alliance
-    double reefCenterX =
-        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-            ? FieldConstants.BLUE_REEF_CENTER_X
-            : FieldConstants.RED_REEF_CENTER_X;
-    // Find vector from robot to reef, if anything is wrong its this or the atan statement
-    Translation2d vectorReef = new Translation2d(robotTranslation.getX() - reefCenterX, robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
-    // Find theta using atan2, if anything is wrong its this or the vector reef construction
-    double theta = Math.atan2(unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(), unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
+    double reefCenterX = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ? FieldConstants.BLUE_REEF_CENTER_X
+        : FieldConstants.RED_REEF_CENTER_X;
+    // Find vector from robot to reef, if anything is wrong its this or the atan
+    // statement
+    Translation2d vectorReef = new Translation2d(robotTranslation.getX() - reefCenterX,
+        robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
+    // Find theta using atan2, if anything is wrong its this or the vector reef
+    // construction
+    double theta = Math.atan2(unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(),
+        unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
     if (-1 * Math.PI <= theta && theta <= 0) {
       return true;
     } else {
-      return  false;
+      return false;
     }
 
   }
