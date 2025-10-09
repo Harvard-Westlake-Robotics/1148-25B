@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -85,6 +86,16 @@ public class CoralIntake extends SubsystemBase {
     io2.runVelocity(velocity);
   }
 
+  public void setVelocityMPS(double velocity) {
+    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
+    setVelocity(v);
+  }
+
+  public void setVelocityShiftMPS(double velocity) {
+    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
+    setVelocityShift(v);
+  }
+
   public void runVoltage(double volts) {
     io.runCharacterization(volts);
     io2.runCharacterization(-volts);
@@ -99,11 +110,11 @@ public class CoralIntake extends SubsystemBase {
   // Boolean direction -> true is go right, false is go left
   // might not work yet because we're unsure how the shifting will actually need
   // to work
-  public void shift(boolean direction, LinearVelocity velocity) {
+  public void shift(boolean direction, double velocity) {
     if (direction) {
-      setVelocityShift(velocity);
+      setVelocityShiftMPS(velocity);
     } else {
-      setVelocityShift(velocity.times(-1));
+      setVelocityShiftMPS(velocity * -1);
     }
   }
 

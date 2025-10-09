@@ -207,7 +207,7 @@ public class AutoScoreCommand extends Command {
             .y()
             .magnitude();
 
-    double targetHeight = WristConstants.getTargetY(level).magnitude();
+    double targetHeight = ArmCommand.getTargetPos()[1];
 
     if (Math.abs(targetHeight - currentHeight) < ARM_Y_TOLERANCE || currentHeight > targetHeight) {
       if (tickCounter >= SCORING_DELAY_TICKS) {

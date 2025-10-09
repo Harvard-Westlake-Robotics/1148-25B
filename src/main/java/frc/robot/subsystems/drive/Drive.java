@@ -117,7 +117,7 @@ public class Drive extends SubsystemBase {
   private final LimeLightCam limelight_d = new LimeLightCam("limelight-d", false);
 
   private final LimeLightCam[] limelights =
-      new LimeLightCam[] {limelight_a, limelight_b, limelight_c};
+      new LimeLightCam[] {limelight_a, limelight_b, limelight_c, limelight_d};
 
   private boolean limeLightsActive = true;
 
