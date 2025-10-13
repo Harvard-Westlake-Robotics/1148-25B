@@ -31,9 +31,13 @@ public class HangIOTalonFX implements HangIO {
   private final StatusSignal<Voltage> motorAppliedVolts;
   private final StatusSignal<Current> motorCurrent;
 
-  // Connection debouncers
+  // Connection debouncers // A comment anouncing the start of the motor connection debouncer
+  // The debouncer makes the code run every 500ms instead of every 20ms
   private final Debouncer motorConnectedDebounce = new Debouncer(0.5);
 
+  /*
+   * Creates an instance of the motor with proper settings, PID constants, and instance variables
+   */
   public HangIOTalonFX() {
     hangMotor = new TalonFX(HangConstants.motorId);
     hangMotor.setPosition(0);
@@ -65,6 +69,9 @@ public class HangIOTalonFX implements HangIO {
         new SimpleMotorFeedforward(HangConstants.kS, HangConstants.kV, HangConstants.kA);
   }
 
+  /*
+   * Sets all inputs to the corresponding data measured by the sensors
+   */
   public void updateInputs(HangIOInputs inputs) {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
@@ -78,6 +85,9 @@ public class HangIOTalonFX implements HangIO {
   }
 
   @Override
+  /*
+   * Runs the motor at a certain velocity through applying a voltage using FeedForward
+   */
   public void runVelocity(LinearVelocity velocity) {
     hangConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     hangConfig.MotionMagic.MotionMagicAcceleration = 9999;
@@ -90,6 +100,9 @@ public class HangIOTalonFX implements HangIO {
   }
 
   @Override
+  /*
+   * Attempts to apply a voltage to the motor
+   */
   public void runCharacterization(double voltage) {
     hangMotor.setControl(new VoltageOut(voltage));
   }
