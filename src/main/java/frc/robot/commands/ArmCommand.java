@@ -74,7 +74,7 @@ public class ArmCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(targetPos[1] - Elevator.getInstance().getExtention()) < 2;
+    return Math.abs(targetPos[1] - Elevator.getInstance().getExtension()) < 2;
   }
 
   public void setHeight(ScoringLevel level) {
@@ -82,9 +82,9 @@ public class ArmCommand extends Command {
 
     // Current joint pose (rotations + meters)
     var current = new ArmKinematics.JointPose(
-        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-        Meters.of(Elevator.getInstance().getExtention()), // L
-        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
+        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()), // Theta
+        Meters.of(Elevator.getInstance().getExtension()), // L
+        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition())); // Beta
 
     var target = new ArmKinematics.Target(
         Meters.of(getTargetPos(level)[0]), // X
@@ -98,9 +98,6 @@ public class ArmCommand extends Command {
 
   public boolean facingForward() {
     Pose2d pose = Drive.getInstance().getPose();
-    Translation2d translation = pose.getTranslation();
-    // Construct unitVector for use later
-    Translation2d unitVector = translation.plus(new Translation2d(0, 1).rotateBy(pose.getRotation()));
     Translation2d robotTranslation = Drive.getInstance().getPose()
         .getTranslation()
         .plus(
@@ -111,22 +108,16 @@ public class ArmCommand extends Command {
     double reefCenterX = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
         ? FieldConstants.BLUE_REEF_CENTER_X
         : FieldConstants.RED_REEF_CENTER_X;
-    // Find vector from robot to reef, if anything is wrong its this or the atan
-    // statement
-    Translation2d vectorReef = new Translation2d(robotTranslation.getX() - reefCenterX,
-        robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
-    // Find theta using atan2, if anything is wrong its this or the vector reef
-    // construction
-    double theta = Math.atan2(unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(),
-        unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
-    if (-1 * Math.PI <= theta && theta <= 0) {
-      return true;
-    } else {
-      return false;
-    }
+    // Find vector from robot to reef for finding angle
+    Translation2d vectorReef = new Translation2d(reefCenterX - robotTranslation.getX(),
+      FieldConstants.REEF_CENTER_Y - robotTranslation.getY());
+    // Find theta by subtracting angle to reef from robot angle
+    double theta = Math.abs(vectorReef.getAngle().minus(pose.getRotation()).getRadians());
+    return theta >= 0 && theta <= Math.PI;
   }
 
   public double[] getTargetPos(ScoringLevel level) {
+    // TODO: Add real values
     switch (level) {
       case SOURCE_CORAL:
         outtakePosition = false;

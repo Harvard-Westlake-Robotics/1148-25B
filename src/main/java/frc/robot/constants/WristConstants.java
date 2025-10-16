@@ -1,10 +1,12 @@
 package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 
 public class WristConstants {
   // Motor constants
@@ -37,11 +39,12 @@ public class WristConstants {
   public final Angle angleOffset;
   public final Angle wristMinAngle;
   public final Angle wristMaxAngle;
+  public final Distance wristLength;
 
   public WristConstants(int motorId, int motorId2, int motorId3, InvertedValue motorInverted, int statorLimit,
       int supplyLimit, double kP, double kI, double kD, double kS, double kV, double kG, double kA,
       double motionMagicAcceleration, double motionMagicCruiseVelocity, double motionMagicJerk, double wristVelocity,
-      double motorToWristRotations, Angle angleOffset, Angle wristMinAngle, Angle wristMaxAngle) {
+      double motorToWristRotations, Angle angleOffset, Angle wristMinAngle, Angle wristMaxAngle, Distance wristLength) {
     this.motorId = motorId;
     this.motorId2 = motorId2;
     this.motorId3 = motorId3;
@@ -63,6 +66,7 @@ public class WristConstants {
     this.angleOffset = angleOffset;
     this.wristMinAngle = wristMinAngle;
     this.wristMaxAngle = wristMaxAngle;
+    this.wristLength = wristLength;
   }
 
   // TODO: Fix later with real values
@@ -87,7 +91,8 @@ public class WristConstants {
       1.0, // 4.846
       Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
       Angle.ofBaseUnits(0, Rotations), // Resting on base
-      Angle.ofBaseUnits(0.569, Rotations)); // 205 deg
+      Angle.ofBaseUnits(0.569, Rotations), // 205 deg
+      Meters.of(0));
 
   // TODO: Fix later with real values
   public static final WristConstants IntakeWrist = new WristConstants(
@@ -111,5 +116,6 @@ public class WristConstants {
       1.0,
       Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
       Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
-      Angle.ofBaseUnits(1.0 / 3.0, Rotations)); // +120°
+      Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
+      Meters.of(0.10));
 }

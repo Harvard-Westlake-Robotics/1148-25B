@@ -202,7 +202,7 @@ public class AutoScoreCommand extends Command {
         ArmKinematics.getCurrentPose(
                 new ArmKinematics.JointPose(
                     Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-                    Meters.of(Elevator.getInstance().getExtention()), // L
+                    Meters.of(Elevator.getInstance().getExtension()), // L
                     Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition())))
             .y()
             .magnitude();

@@ -48,6 +48,7 @@ public class AlgaeIntakeCommand extends Command {
   public void stop() {
     if (AlgaeIntake.getInstance().hasAlgae()) {
       this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+      // TODO: Why is this here?
       AlgaeIntake.getInstance().runVoltage(1.5);
       algaeLastStop = true;
     } else {

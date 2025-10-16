@@ -200,9 +200,6 @@ public final class ArmKinematics {
     if (clampedLen) sb.append(" length clamped;");
     if (clampedShoulder) sb.append(" shoulder clamped;");
     if (clampedWrist) sb.append(" wrist clamped (a adjusted);");
-
-    if (clampedLen && clampedShoulder && clampedWrist)
-      sb = new StringBuilder("Illegal Immigrants Found, deploying ICE");
     System.out.println(sb.toString());
 
     return new Solution(
