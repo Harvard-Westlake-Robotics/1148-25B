@@ -61,6 +61,7 @@ public class HangIOTalonFX implements HangIO {
     motorAppliedVolts = hangMotor.getMotorVoltage();
     motorCurrent = hangMotor.getStatorCurrent();
 
+    // TODO: Again why is this necessary?
     hangFeedforward =
         new SimpleMotorFeedforward(HangConstants.kS, HangConstants.kV, HangConstants.kA);
   }

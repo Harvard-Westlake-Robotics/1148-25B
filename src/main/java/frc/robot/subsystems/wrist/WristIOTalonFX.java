@@ -1,7 +1,6 @@
 package frc.robot.subsystems.wrist;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -54,16 +53,10 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     wristConfig.CurrentLimits.SupplyCurrentLimit = wristConstants.supplyLimit;
     this.wristConfig.MotionMagic.MotionMagicAcceleration =
-        this.wristConstants.ANGLE_MAX_ACCELERATION;
-    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.wristConstants.ANGLE_MAX_VELOCITY;
-    this.wristConfig.MotionMagic.MotionMagicJerk = this.wristConstants.ANGLE_MAX_JERK;
+        this.wristConstants.motionMagicAcceleration;
+    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.wristConstants.motionMagicCruiseVelocity;
+    this.wristConfig.MotionMagic.MotionMagicJerk = this.wristConstants.motionMagicJerk;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
-    this.wristMotor
-        .getConfigurator()
-        .apply(
-            new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(wristConstants.ANGLE_MAX_VELOCITY)
-                .withMotionMagicAcceleration(wristConstants.ANGLE_MAX_ACCELERATION));
     wristMotor.setControl(wristController);
 
     motorPosition = wristMotor.getPosition();
@@ -71,6 +64,7 @@ public class WristIOTalonFX implements WristIO {
     motorAppliedVolts = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
 
+    // TODO: Same as before
     wristFeedforward =
         new ArmFeedforward(
             wristConstants.kS, wristConstants.kG, wristConstants.kV, wristConstants.kA);

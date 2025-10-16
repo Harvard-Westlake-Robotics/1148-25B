@@ -6,10 +6,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Hang extends SubsystemBase {
-  private HangIO io;
+  private final HangIO io;
   private static Hang instance = null;
-  private HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
-  private String key;
+  private final HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
   private boolean hasBar = false;
   public Servo servo = new Servo(0);
 
@@ -29,13 +28,13 @@ public class Hang extends SubsystemBase {
   }
 
   public Hang() {
-    this.key = "RealOutputs/Hang";
     io = new HangIOTalonFX();
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
+    // TODO: What is "RealOutputs"?
+    Logger.processInputs("RealOutputs/Hang", inputs);
     hasBar = inputs.motorAppliedVolts > 1.0 && inputs.motorVelocityMPS < 0.2;
   }
 

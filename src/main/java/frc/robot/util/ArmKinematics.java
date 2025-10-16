@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -73,18 +74,18 @@ public final class ArmKinematics {
 
     boolean withinY = wy >= -1e-12; // restrict to half-plane the shoulder can reach
     boolean withinLen =
-        Lraw >= ElevatorConstants.ARM_MIN_LEN.in(Meters) - 1e-12
-            && Lraw <= ElevatorConstants.ARM_MAX_LEN.in(Meters) + 1e-12;
+        Lraw >= ElevatorConstants.armMinLength.in(Meters) - 1e-12
+            && Lraw <= ElevatorConstants.armMaxLength.in(Meters) + 1e-12;
     boolean withinTheta =
-        thetaRaw >= WristConstants.ShoulderWrist.WRIST_MIN_DEG.getRotations() - 1e-12
-            && thetaRaw <= WristConstants.ShoulderWrist.WRIST_MAX_DEG.getRotations() + 1e-12;
+        thetaRaw >= WristConstants.ShoulderWrist.wristMinAngle.in(Rotations) - 1e-12
+            && thetaRaw <= WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations) + 1e-12;
 
     if (withinY && withinLen && withinTheta) {
       // β from α, θ
       double betaRaw = 0.25 - thetaRaw - desiredAlpha;
       boolean withinWrist =
-          betaRaw >= WristConstants.IntakeWrist.WRIST_MIN_DEG.getRotations() - 1e-12
-              && betaRaw <= WristConstants.IntakeWrist.WRIST_MAX_DEG.getRotations() + 1e-12;
+          betaRaw >= WristConstants.IntakeWrist.wristMinAngle.in(Rotations) - 1e-12
+              && betaRaw <= WristConstants.IntakeWrist.wristMaxAngle.in(Rotations) + 1e-12;
       if (withinWrist) {
         // Exact target
         return new Solution(
@@ -92,8 +93,8 @@ public final class ArmKinematics {
             Meters.of(
                 clamp(
                     Lraw,
-                    ElevatorConstants.ARM_MIN_LEN.in(Meters),
-                    ElevatorConstants.ARM_MAX_LEN.in(Meters))),
+                    ElevatorConstants.armMinLength.in(Meters),
+                    ElevatorConstants.armMaxLength.in(Meters))),
             Rotation2d.fromRotations(betaRaw),
             true,
             false,
@@ -104,8 +105,8 @@ public final class ArmKinematics {
 
       // Wrist out of range: adjust α minimally to satisfy wrist limits, then
       // recompute (θ,L) to keep (x,y).
-      double alphaMin = 0.25 - thetaRaw - WristConstants.IntakeWrist.WRIST_MAX_DEG.getRotations();
-      double alphaMax = 0.25 - thetaRaw - WristConstants.IntakeWrist.WRIST_MIN_DEG.getRotations();
+      double alphaMin = 0.25 - thetaRaw - WristConstants.IntakeWrist.wristMaxAngle.in(Rotations);
+      double alphaMax = 0.25 - thetaRaw - WristConstants.IntakeWrist.wristMinAngle.in(Rotations);
       double alphaFeasible = clampPeriodic(desiredAlpha, alphaMin, alphaMax, currentAlpha);
 
       // Recompute wrist pivot with α_feasible to preserve (x,y)
@@ -118,11 +119,11 @@ public final class ArmKinematics {
       double theta2 = Units.radiansToRotations(Math.atan2(wx2, wy2));
       boolean okY2 = wy2 >= -1e-12;
       boolean okLen2 =
-          L2 >= ElevatorConstants.ARM_MIN_LEN.in(Meters) - 1e-12
-              && L2 <= ElevatorConstants.ARM_MAX_LEN.in(Meters) + 1e-12;
+          L2 >= ElevatorConstants.armMinLength.in(Meters) - 1e-12
+              && L2 <= ElevatorConstants.armMaxLength.in(Meters) + 1e-12;
       boolean okTh2 =
-          theta2 >= WristConstants.ShoulderWrist.WRIST_MIN_DEG.getRotations() - 1e-12
-              && theta2 <= WristConstants.ShoulderWrist.WRIST_MAX_DEG.getRotations() + 1e-12;
+          theta2 >= WristConstants.ShoulderWrist.wristMinAngle.in(Rotations) - 1e-12
+              && theta2 <= WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations) + 1e-12;
 
       if (okY2 && okLen2 && okTh2) {
         double beta2 = 0.25 - theta2 - alphaFeasible; // guaranteed wrist-legal by construction
@@ -156,20 +157,20 @@ public final class ArmKinematics {
     double rr = Math.hypot(px, py);
     if (rr < 1e-9) {
       // Degenerate: place at min length on +x axis
-      px = ElevatorConstants.ARM_MIN_LEN.in(Meters);
+      px = ElevatorConstants.armMinLength.in(Meters);
       py = 0.0;
-      rr = ElevatorConstants.ARM_MIN_LEN.in(Meters);
+      rr = ElevatorConstants.armMinLength.in(Meters);
       clampedLen = true;
       clampedShoulder = true;
     }
 
     double scale = 1.0;
-    if (rr < ElevatorConstants.ARM_MIN_LEN.in(Meters)) {
-      scale = ElevatorConstants.ARM_MIN_LEN.in(Meters) / rr;
+    if (rr < ElevatorConstants.armMinLength.in(Meters)) {
+      scale = ElevatorConstants.armMinLength.in(Meters) / rr;
       clampedLen = true;
     }
-    if (rr > ElevatorConstants.ARM_MAX_LEN.in(Meters)) {
-      scale = ElevatorConstants.ARM_MAX_LEN.in(Meters) / rr;
+    if (rr > ElevatorConstants.armMaxLength.in(Meters)) {
+      scale = ElevatorConstants.armMaxLength.in(Meters) / rr;
       clampedLen = true;
     }
     px *= scale;
@@ -177,19 +178,19 @@ public final class ArmKinematics {
 
     double Lp = Math.hypot(px, py);
     double thetaProj = Units.radiansToRotations(Math.atan2(px, py));
-    if (thetaProj < WristConstants.ShoulderWrist.WRIST_MIN_DEG.getRotations()) {
-      thetaProj = WristConstants.ShoulderWrist.WRIST_MIN_DEG.getRotations();
+    if (thetaProj < WristConstants.ShoulderWrist.wristMinAngle.in(Rotations)) {
+      thetaProj = WristConstants.ShoulderWrist.wristMinAngle.in(Rotations);
       clampedShoulder = true;
     }
-    if (thetaProj > WristConstants.ShoulderWrist.WRIST_MAX_DEG.getRotations()) {
-      thetaProj = WristConstants.ShoulderWrist.WRIST_MAX_DEG.getRotations();
+    if (thetaProj > WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations)) {
+      thetaProj = WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations);
       clampedShoulder = true;
     }
 
     // 3) Choose α' (near desired) to keep β within limits at θ_proj
     double desiredAlphaNear = nearestEquivalentRot(desiredAlpha, currentAlpha);
-    double alphaMin = 0.25 - thetaProj - WristConstants.IntakeWrist.WRIST_MAX_DEG.getRotations();
-    double alphaMax = 0.25 - thetaProj - WristConstants.IntakeWrist.WRIST_MIN_DEG.getRotations();
+    double alphaMin = 0.25 - thetaProj - WristConstants.IntakeWrist.wristMaxAngle.in(Rotations);
+    double alphaMax = 0.25 - thetaProj - WristConstants.IntakeWrist.wristMinAngle.in(Rotations);
     double alphaFeasible = clampPeriodic(desiredAlphaNear, alphaMin, alphaMax, currentAlpha);
     boolean clampedWrist = !approxEqual(alphaFeasible, desiredAlphaNear);
     double betaFeasible = 0.25 - thetaProj - alphaFeasible;

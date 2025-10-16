@@ -93,6 +93,8 @@ public class IntakeIOTalonFX implements IntakeIO {
       this.input3 = null;
       this.input4 = null;
     }
+
+    // TODO: Again why is this necessary?
     intakeFeedforward =
         new SimpleMotorFeedforward(intakeConstants.kS, intakeConstants.kV, intakeConstants.kA);
   }
@@ -117,6 +119,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void runVelocity(LinearVelocity velocity) {
+    // TODO: What is this? Why doesn't it change back?
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     intakeConfig.MotionMagic.MotionMagicAcceleration = 9999;
     intakeMotor.getConfigurator().apply(intakeConfig);

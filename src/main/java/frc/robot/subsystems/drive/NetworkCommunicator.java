@@ -27,7 +27,6 @@ public class NetworkCommunicator {
   private IntegerSubscriber teleopSubHeight;
   private BooleanPublisher isAutoBooleanPublisher;
   private HashMap<String, PathPlannerPath> paths;
-  private boolean isAuto;
 
   public TeleopCommand teleopCommand;
 
@@ -70,7 +69,6 @@ public class NetworkCommunicator {
     ntInst = NetworkTableInstance.getDefault();
 
     NetworkTable table = ntInst.getTable("uidata");
-    isAuto = true;
 
     // Communication with touchscreen
     autoSub = table.getStringArrayTopic("autocommands").subscribe(new String[0]);
@@ -104,7 +102,6 @@ public class NetworkCommunicator {
   }
 
   public void setIsAuto(boolean isAuto) {
-    this.isAuto = isAuto;
     isAutoBooleanPublisher.set(isAuto);
   }
 
