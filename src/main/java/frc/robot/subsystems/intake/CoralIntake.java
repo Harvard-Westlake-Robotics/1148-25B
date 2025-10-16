@@ -18,7 +18,6 @@ public class CoralIntake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final IntakeIOInputsAutoLogged inputs2 = new IntakeIOInputsAutoLogged();
   private IntakeConstants constants;
-  private String key;
   private static CoralIntake instance;
   // Whether we have the coral straight in the intake
   private boolean hasCoralHotdog;
@@ -43,7 +42,7 @@ public class CoralIntake extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Coral Intake/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
             new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 

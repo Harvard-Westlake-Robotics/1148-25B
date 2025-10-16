@@ -24,8 +24,8 @@ import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrist.ArmWrist;
-import frc.robot.subsystems.wrist.IntakeWrist;
+import frc.robot.subsystems.wrists.Wrist;
+import frc.robot.subsystems.wrists.Pivot;
 import frc.robot.util.ArmKinematics;
 import org.littletonrobotics.junction.Logger;
 
@@ -201,9 +201,9 @@ public class AutoScoreCommand extends Command {
     double currentHeight =
         ArmKinematics.getCurrentPose(
                 new ArmKinematics.JointPose(
-                    Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+                    Rotation2d.fromRotations(Pivot.getInstance().getWristPosition()),
                     Meters.of(Elevator.getInstance().getExtension()), // L
-                    Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition())))
+                    Rotation2d.fromRotations(Wrist.getInstance().getWristPosition())))
             .y()
             .magnitude();
 

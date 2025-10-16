@@ -6,12 +6,14 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.HangConstants;
 import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.wrists.Pivot;
 
 public class HangCommand extends Command {
   private LinearVelocity velocity;
 
   public HangCommand() {
     addRequirements(Hang.getInstance());
+    addRequirements(Pivot.getInstance());
   }
 
   @Override

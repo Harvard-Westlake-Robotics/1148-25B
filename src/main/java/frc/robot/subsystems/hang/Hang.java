@@ -7,10 +7,11 @@ import org.littletonrobotics.junction.Logger;
 
 public class Hang extends SubsystemBase {
   private final HangIO io;
-  private static Hang instance = null;
   private final HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
+  private final String key = "RealOutputs/Hang";
   private boolean hasBar = false;
   public Servo servo = new Servo(0);
+  private static Hang instance = null;
 
   public static Hang getInstance() {
     if (instance == null) {
@@ -22,19 +23,18 @@ public class Hang extends SubsystemBase {
   public Boolean getHasBar() {
     return hasBar;
   }
+  public Hang() {
+    io = new HangIOTalonFX();
+  }
 
   public void setHasBar(Boolean hasBar) {
     this.hasBar = hasBar;
   }
 
-  public Hang() {
-    io = new HangIOTalonFX();
-  }
 
   public void periodic() {
     io.updateInputs(inputs);
-    // TODO: What is "RealOutputs"?
-    Logger.processInputs("RealOutputs/Hang", inputs);
+    Logger.processInputs(key, inputs);
     hasBar = inputs.motorAppliedVolts > 1.0 && inputs.motorVelocityMPS < 0.2;
   }
 

@@ -70,7 +70,7 @@ public class WristConstants {
   }
 
   // TODO: Fix later with real values
-  public static final WristConstants ShoulderWrist = new WristConstants(
+  public static final WristConstants Pivot = new WristConstants(
       18,
       19,
       20,
@@ -95,7 +95,7 @@ public class WristConstants {
       Meters.of(0));
 
   // TODO: Fix later with real values
-  public static final WristConstants IntakeWrist = new WristConstants(
+  public static final WristConstants Wrist = new WristConstants(
       0,
       0,
       0,

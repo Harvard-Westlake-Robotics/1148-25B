@@ -1,33 +1,32 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.wrists;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.WristConstants;
+import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
+
 import org.littletonrobotics.junction.Logger;
 
-public class ArmWrist extends SubsystemBase {
+public class Wrist extends SubsystemBase {
   private final WristIOTalonFX io1;
   private final WristIOTalonFX io2;
-  private final WristIOTalonFX io3;
   private final WristIOInputsAutoLogged inputs1 = new WristIOInputsAutoLogged();
   private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
-  private final WristIOInputsAutoLogged inputs3 = new WristIOInputsAutoLogged();
-  private WristConstants constants;
-  private String key;
-  private static ArmWrist instance;
 
-  public static ArmWrist getInstance() {
+  private final WristConstants constants;
+  private final String key = "RealOutputs/Wrist";
+  private static Wrist instance;
+
+  public static Wrist getInstance() {
     if (instance == null) {
-      instance = new ArmWrist();
+      instance = new Wrist();
     }
     return instance;
   }
 
-  public ArmWrist() {
-    this.constants = WristConstants.ShoulderWrist;
-    this.key = "RealOutputs/Arm Wrist";
+  public Wrist() {
+    this.constants = WristConstants.Wrist;
     io1 = new WristIOTalonFX(constants, 1);
     io2 = new WristIOTalonFX(constants, 2);
-    io3 = new WristIOTalonFX(constants, 3);
   }
 
   public WristConstants getConstants() {
@@ -39,20 +38,16 @@ public class ArmWrist extends SubsystemBase {
     Logger.processInputs(key + "/Motor 1", inputs1);
     io2.updateInputs(inputs2);
     Logger.processInputs(key + "/Motor 2", inputs2);
-    io3.updateInputs(inputs3);
-    Logger.processInputs(key + "/Motor 3", inputs3);
   }
 
   public void goToAngle(double angle) {
     this.io1.setAngle(angle);
     this.io2.setAngle(angle);
-    this.io3.setAngle(angle);
   }
 
   public void runVoltage(double volts) {
     io1.runCharacterization(volts);
     io2.runCharacterization(volts);
-    io3.runCharacterization(volts);
   }
 
   public double getWristPosition() {
