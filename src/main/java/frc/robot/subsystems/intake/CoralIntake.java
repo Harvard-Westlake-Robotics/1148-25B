@@ -20,11 +20,9 @@ public class CoralIntake extends SubsystemBase {
   private IntakeConstants constants;
   private String key;
   private static CoralIntake instance;
-  // hasCoralStraight is a boolean on whether we have the coral straight in the
-  // intake or not
+  // Whether we have the coral straight in the intake
   private boolean hasCoralHotdog;
-  // hasCoralBurger is a boolean on whether we have the coral burger style in the
-  // intake
+  // Whether we have the coral burger style in the intake
   private boolean hasCoralBurger;
   SysIdRoutine sysId;
 
@@ -37,7 +35,6 @@ public class CoralIntake extends SubsystemBase {
 
   public CoralIntake() {
     this.constants = IntakeConstants.CoralIntake;
-    this.key = "Coral Intake";
     io = new IntakeIOTalonFX(constants, 1);
     io2 = new IntakeIOTalonFX(constants, 2);
     sysId =
@@ -46,7 +43,7 @@ public class CoralIntake extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Coral Intake/SysIdState", state.toString())),
             new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
@@ -61,8 +58,8 @@ public class CoralIntake extends SubsystemBase {
     Logger.recordOutput("Sensor 4", getSensor4());
     io.updateInputs(inputs);
     io2.updateInputs(inputs2);
-    Logger.processInputs(key + "/Motor1", inputs);
-    Logger.processInputs(key + "/Motor2", inputs2);
+    Logger.processInputs("Coral Intake/Motor1", inputs);
+    Logger.processInputs("Coral Intake/Motor2", inputs2);
     if (getSensor4() && getSensor2()) {
       hasCoralHotdog = true;
     } else {

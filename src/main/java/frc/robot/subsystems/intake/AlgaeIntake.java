@@ -16,7 +16,6 @@ public class AlgaeIntake extends SubsystemBase {
   private IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private IntakeConstants constants;
-  private String key;
   private static AlgaeIntake instance;
   private Boolean hasAlgae = false;
   SysIdRoutine sysId;
@@ -34,7 +33,6 @@ public class AlgaeIntake extends SubsystemBase {
 
   public AlgaeIntake() {
     this.constants = IntakeConstants.AlgaeIntake;
-    this.key = "Algae Intake";
     io = new IntakeIOTalonFX(constants, 1);
     sysId =
         new SysIdRoutine(
@@ -42,7 +40,7 @@ public class AlgaeIntake extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Algae Intake/SysIdState", state.toString())),
             new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
@@ -52,7 +50,7 @@ public class AlgaeIntake extends SubsystemBase {
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
+    Logger.processInputs("Algae Intake", inputs);
     hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
   }
 
