@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.RobotContainer.Mode;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.IntakeConstants;
@@ -35,19 +36,24 @@ public class ControlMap {
         .back()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        Drive.getInstance()
-                            .setPose(
-                                new Pose2d(
-                                    Drive.getInstance().getPose().getTranslation(),
-                                    new Rotation2d())),
+              RobotContainer.currentMode == Mode.SIM
+                ? () ->
+                  // simulation
+                  Drive.getInstance().setPose(RobotContainer.driveSimulation.getSimulatedDriveTrainPose())
+                : () ->
+                  // real/test
+                  Drive.getInstance()
+                      .setPose(
+                          new Pose2d(
+                              Drive.getInstance().getPose().getTranslation(),
+                              new Rotation2d())),
                     Drive.getInstance())
                 .ignoringDisable(true));
 
     // Intake commands
 
-    // Coral Intake
-    // Coral intake is intaking automatically when elevator at coral source
+    // Coral intake commands
+    // Coral intake is intaking automatically when elevator is at coral source (ground)
     driver
         .R1()
         .whileTrue(

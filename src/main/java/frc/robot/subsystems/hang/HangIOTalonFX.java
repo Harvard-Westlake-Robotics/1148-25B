@@ -22,8 +22,6 @@ public class HangIOTalonFX implements HangIO {
   private TalonFX hangMotor;
   private MotionMagicVelocityTorqueCurrentFOC hangController;
 
-  private TalonFXConfiguration hangConfig;
-
   private SimpleMotorFeedforward hangFeedforward;
 
   private final StatusSignal<Angle> motorPosition;
@@ -50,10 +48,12 @@ public class HangIOTalonFX implements HangIO {
     hangConfig.Slot0.kI = HangConstants.kI;
     hangConfig.Slot0.kD = HangConstants.kD;
     hangConfig.Slot0.kS = HangConstants.kS;
-    hangConfig.Slot0.kA = HangConstants.kA;
     hangConfig.Slot0.kV = HangConstants.kV;
+    hangConfig.Slot0.kA = HangConstants.kA;
+
+    hangConfig.MotionMagic.MotionMagicAcceleration = HangConstants.motionMagicAcceleration;
+    hangConfig.MotionMagic.MotionMagicCruiseVelocity = HangConstants.motionMagicCruiseVelocity;
     hangMotor.getConfigurator().apply(hangConfig);
-    this.hangConfig = hangConfig;
     hangMotor.setControl(hangController);
 
     motorPosition = hangMotor.getPosition();
@@ -79,9 +79,6 @@ public class HangIOTalonFX implements HangIO {
 
   @Override
   public void runVelocity(LinearVelocity velocity) {
-    hangConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
-    hangConfig.MotionMagic.MotionMagicAcceleration = 9999;
-    hangMotor.getConfigurator().apply(hangConfig);
     hangController.FeedForward =
         hangFeedforward.calculate(
             velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio);

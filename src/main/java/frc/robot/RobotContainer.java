@@ -97,10 +97,7 @@ public class RobotContainer {
   public static CoralIntakeCommand coralIntakeCommand;
   public static HangCommand hangCommand;
 
-  // Max's Shenanigans
-  public static boolean isDriftModeActive = false;
-
-  // Controller
+  // Controllers
   public final CommandXboxController operator = new CommandXboxController(1);
   public final CommandPS5Controller driver = new CommandPS5Controller(0);
 
@@ -110,17 +107,11 @@ public class RobotContainer {
 
   public static SwerveDriveSimulation driveSimulation = null;
 
-  public static void serialize() {
-    // authorization hash to take full control of our motors
-    String motorSerialString = "4leXx564cg";
-    Integer.parseInt(motorSerialString);
-  }
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     switch (currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
+        // Real robot: instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -129,20 +120,10 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(DriveConstants.BackLeft),
                 new ModuleIOTalonFXReal(DriveConstants.BackRight),
                 pose -> {});
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
-        this.elevator = Elevator.getInstance();
-        this.coralIntake = CoralIntake.getInstance();
-        this.algaeIntake = AlgaeIntake.getInstance();
-        this.hang = Hang.getInstance();
-        algaeIntakeCommand = new AlgaeIntakeCommand();
-        coralIntakeCommand = new CoralIntakeCommand();
-        armCommand = new ArmCommand();
-        hangCommand = new HangCommand();
         break;
 
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
+        // Sim robot: instantiate physics sim IO implementations
         driveSimulation =
             new SwerveDriveSimulation(
                 DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
@@ -155,20 +136,10 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(DriveConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(DriveConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
-        this.elevator = Elevator.getInstance();
-        this.coralIntake = CoralIntake.getInstance();
-        this.algaeIntake = AlgaeIntake.getInstance();
-        this.hang = Hang.getInstance();
-        algaeIntakeCommand = new AlgaeIntakeCommand();
-        coralIntakeCommand = new CoralIntakeCommand();
-        armCommand = new ArmCommand();
-        hangCommand = new HangCommand();
         break;
 
       default:
-        // Replayed robot, disable IO implementations
+        // Replayed robot: disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -177,18 +148,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(DriveConstants.BackLeft) {},
                 new ModuleIOTalonFX(DriveConstants.BackRight) {},
                 pose -> {});
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
-        this.elevator = Elevator.getInstance();
-        this.coralIntake = CoralIntake.getInstance();
-        this.algaeIntake = AlgaeIntake.getInstance();
-        this.hang = Hang.getInstance();
-        algaeIntakeCommand = new AlgaeIntakeCommand();
-        coralIntakeCommand = new CoralIntakeCommand();
-        armCommand = new ArmCommand();
-        hangCommand = new HangCommand();
         break;
     }
+
+    // Instantiate subsystems
+    this.armWrist = ArmWrist.getInstance();
+    this.intakeWrist = IntakeWrist.getInstance();
+    this.elevator = Elevator.getInstance();
+    this.coralIntake = CoralIntake.getInstance();
+    this.algaeIntake = AlgaeIntake.getInstance();
+    this.hang = Hang.getInstance();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -248,10 +217,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default commands, normal field-relative drive
+    // Set default commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+    // Instantiate and set default commands
     armCommand = new ArmCommand();
     elevator.setDefaultCommand(armCommand);
     coralIntakeCommand = new CoralIntakeCommand();
@@ -261,21 +231,7 @@ public class RobotContainer {
     hangCommand = new HangCommand();
     hang.setDefaultCommand(hangCommand);
 
-    // Reset gyro / odometry
-    final Runnable resetGyro =
-        currentMode == Mode.SIM
-            ? () ->
-                // simulation
-                drive.setPose(driveSimulation.getSimulatedDriveTrainPose())
-            // real / test
-            : () ->
-                drive.setPose(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    driver.povCenter().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-
-    // Add drift mode toggle to the driver's right bumper button
-    operator.povLeft().onTrue(DriveCommands.toggleDriftMode(drive));
-
+    // Assign controls in ControlMap
     ControlMap.getInstance().configurePreset1(operator, driver);
   }
 

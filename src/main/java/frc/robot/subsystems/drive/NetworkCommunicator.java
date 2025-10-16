@@ -29,6 +29,8 @@ public class NetworkCommunicator {
   private HashMap<String, PathPlannerPath> paths;
   private boolean isAuto;
 
+  public TeleopCommand teleopCommand;
+
   private NetworkCommunicator() {}
 
   public static NetworkCommunicator getInstance() {
@@ -70,6 +72,7 @@ public class NetworkCommunicator {
     NetworkTable table = ntInst.getTable("uidata");
     isAuto = true;
 
+    // Communication with touchscreen
     autoSub = table.getStringArrayTopic("autocommands").subscribe(new String[0]);
     teleopSubBranch = table.getIntegerTopic("teleopbranch").subscribe(1);
     teleopSubStation = table.getIntegerTopic("teleopstation").subscribe(1);
@@ -106,6 +109,7 @@ public class NetworkCommunicator {
   }
 
   public PathPlannerPath getSelectedReefPath() {
+    // Convert from branch number to letter
     return paths.get("" + (char) (getTeleopBranch() + 'A'));
   }
 
@@ -121,8 +125,6 @@ public class NetworkCommunicator {
     } else return ScoringLevel.NEUTRAL;
   }
 
-  public TeleopCommand teleopCommand;
-
   public TeleopCommand getTeleopCommand() {
     if (teleopCommand == null) {
       teleopCommand = new TeleopCommand();
@@ -132,7 +134,7 @@ public class NetworkCommunicator {
 
   public Command getCustomAuto() {
     String[] autoCommands = getAutoCommands();
-    // Deafult command if nothing is selected -> go to neutral position
+    // Default command if nothing is selected -> go to neutral position
     if (autoCommands.length == 0) {
       return new PathPlannerAuto(Commands.none());
     } else {

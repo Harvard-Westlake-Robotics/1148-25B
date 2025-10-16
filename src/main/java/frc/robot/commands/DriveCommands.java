@@ -291,25 +291,6 @@ public class DriveCommands {
                     })));
   }
 
-  /**
-   * Toggles drift mode and applies appropriate motor configurations.
-   *
-   * @param drive The drive subsystem
-   * @return A command that toggles drift mode
-   */
-  public static Command toggleDriftMode(Drive drive) {
-    return Commands.runOnce(
-        () -> {
-          // Toggle drift mode state
-          RobotContainer.isDriftModeActive = !RobotContainer.isDriftModeActive;
-
-          // Update motor configurations for drift mode
-          for (int i = 0; i < 4; i++) {
-            drive.updateModuleConfiguration(i);
-          }
-        });
-  }
-
   private static class WheelRadiusCharacterizationState {
     double[] positions = new double[4];
     Rotation2d lastAngle = new Rotation2d();

@@ -36,6 +36,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final Debouncer motor2ConnectedDebounce = new Debouncer(0.5);
 
   public ElevatorIOTalonFX() {
+    // TODO: why are these on the drive canbus?
     elevator1 = new TalonFX(ElevatorConstants.elevator1ID, "drive");
     elevator2 = new TalonFX(ElevatorConstants.elevator2ID, "drive");
     elevator1.setPosition(25);
@@ -47,13 +48,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevator1Config.MotorOutput.Inverted = ElevatorConstants.elevator1Inverted;
     elevator2Config.MotorOutput.Inverted = ElevatorConstants.elevator2Inverted;
 
-    elevator1Config.MotionMagic.MotionMagicAcceleration = 390;
-    elevator1Config.MotionMagic.MotionMagicCruiseVelocity = 250;
-    elevator1Config.MotionMagic.MotionMagicJerk = 990;
+    elevator1Config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
+    elevator1Config.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.motionMagicCruiseVelocity;
+    elevator1Config.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
 
-    elevator2Config.MotionMagic.MotionMagicAcceleration = 390;
-    elevator2Config.MotionMagic.MotionMagicCruiseVelocity = 250;
-    elevator2Config.MotionMagic.MotionMagicJerk = 990;
+    elevator2Config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
+    elevator2Config.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.motionMagicCruiseVelocity;
+    elevator2Config.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
 
     elevator1Config.Slot0.kP = ElevatorConstants.kP;
     elevator1Config.Slot0.kI = ElevatorConstants.kI;
@@ -70,13 +71,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevator2Config.Slot0.kV = ElevatorConstants.kV;
 
     elevator1Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    elevator1Config.CurrentLimits.StatorCurrentLimit = 120;
+    elevator1Config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
     elevator1Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    elevator1Config.CurrentLimits.SupplyCurrentLimit = 50;
+    elevator1Config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
     elevator2Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    elevator2Config.CurrentLimits.StatorCurrentLimit = 120;
+    elevator2Config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
     elevator2Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    elevator2Config.CurrentLimits.SupplyCurrentLimit = 50;
+    elevator2Config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
     elevator1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     elevator1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         ElevatorConstants.elevatorForwardSoftLimitRotations;
@@ -104,6 +105,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motor2AppliedVolts = elevator2.getMotorVoltage();
     motor2Current = elevator2.getStatorCurrent();
 
+    // TODO: Why is this needed instead of motion magic? Also why is kA set earlier instead of kS, kG, and kV?
     elevatorFeedforward =
         new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
   }
@@ -132,8 +134,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setHeightClosedLoop(double meters) {
-    elevatorController.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
-    elevator2Controller.Position = meters; // / ElevatorConstants.rotationsToMetersRatio;
+    elevatorController.Position = meters;
+    elevator2Controller.Position = meters;
     elevatorController.FeedForward = elevatorFeedforward.calculate(0);
     elevator2Controller.FeedForward = elevatorFeedforward.calculate(0);
     elevator1.setControl(elevatorController);

@@ -8,6 +8,7 @@ import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.intake.AlgaeIntake;
 
 public class AlgaeIntakeCommand extends Command {
+  // Run velocity
   private LinearVelocity velocity;
   private boolean algaeLastStop;
 

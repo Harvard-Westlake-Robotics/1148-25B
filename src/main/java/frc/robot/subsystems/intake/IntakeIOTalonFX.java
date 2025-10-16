@@ -53,22 +53,22 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     intakeConfig.MotorOutput.Inverted = intakeConstants.motorInverted;
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    intakeConfig.MotionMagic.MotionMagicAcceleration = intakeConstants.ANGLE_MAX_ACCELERATION;
-    intakeConfig.MotionMagic.MotionMagicCruiseVelocity = intakeConstants.ANGLE_MAX_VELOCITY;
+    intakeConfig.MotionMagic.MotionMagicAcceleration = intakeConstants.motionMagicAcceleration;
+    intakeConfig.MotionMagic.MotionMagicCruiseVelocity = intakeConstants.motionMagicCruiseVelocity;
 
     intakeConfig.Slot0.kP = intakeConstants.kP;
     intakeConfig.Slot0.kI = intakeConstants.kI;
     intakeConfig.Slot0.kD = intakeConstants.kD;
     intakeConfig.Slot0.kS = intakeConstants.kS;
-    intakeConfig.Slot0.kA = intakeConstants.kA;
     intakeConfig.Slot0.kV = intakeConstants.kV;
+    intakeConfig.Slot0.kA = intakeConstants.kA;
     intakeConfig.Slot1.kP = intakeConstants.positionkP;
-    intakeConfig.Slot1.kD = intakeConstants.positionkP;
+    intakeConfig.Slot1.kD = intakeConstants.positionkD;
 
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    intakeConfig.CurrentLimits.StatorCurrentLimit = 120;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = intakeConstants.statorLimit;
     intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    intakeConfig.CurrentLimits.SupplyCurrentLimit = 50;
+    intakeConfig.CurrentLimits.SupplyCurrentLimit = intakeConstants.supplyLimit;
     intakeMotor.getConfigurator().apply(intakeConfig);
     this.intakeConfig = intakeConfig;
     intakeMotor.setControl(intakeController);

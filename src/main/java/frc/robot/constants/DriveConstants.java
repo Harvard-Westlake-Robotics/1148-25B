@@ -84,6 +84,8 @@ public class DriveConstants {
   public static double PP_TRANSLATION_I = 0.00;
   public static double PP_TRANSLATION_D = 0.0;
 
+  // Limelight Standard Deviation Coefficients
+
   public static double xyStdDevCoeff = 6.85;
   public static double rStdDevCoeff = 6.85;
 
@@ -197,18 +199,6 @@ public class DriveConstants {
     sdMultiplier = multiplier;
   }
 
-  // ================================= Drift Mode =================================
-
-  public static final double DRIFT_FRONT_ANGLE_DEGREES = -5.0; // 0 degrees = straight ahead
-  public static final double DRIFT_REAR_ANGLE_DEGREES = 5.0; // Slight angle for rear wheels
-  public static final double DRIFT_FRONT_SPEED_MULTIPLIER = 0.55; // Reversed at 85% power
-  public static final double DRIFT_REAR_SPEED_MULTIPLIER = 0.95; // 50% power for rear
-  public static final double DRIFT_OUTER_WHEEL_MULTIPLIER =
-      1.1; // 30% more power for outer wheels in turns
-  public static final double DRIFT_INNER_WHEEL_MULTIPLIER = 0.9; // 30% less power for inner wheels
-  public static final double DRIFT_ROTATION_THRESHOLD =
-      0.15; // Lower threshold for applying differential
-
   // ================================= Robot Software Configs =================================
 
   public static final Slot0Configs steerGains =
@@ -244,15 +234,15 @@ public class DriveConstants {
                   .withStatorCurrentLimitEnable(true)
                   .withStatorCurrentLimit(kSlipCurrent))
           .withMotorOutput(
+            // TODO: Remove this? Or change to brake?
               new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast)); // REMOVE LATER
   public static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
           .withCurrentLimits(
               new CurrentLimitsConfigs()
                   // Swerve azimuth does not require much torque output, so we can set a
-                  // relatively
-                  // low
-                  // stator current limit to help avoid brownouts without impacting performance.
+                  // relatively low stator current limit to help avoid brownouts without
+                  // impacting performance.
                   .withStatorCurrentLimit(Amps.of(60))
                   .withStatorCurrentLimitEnable(true))
           .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
@@ -264,6 +254,7 @@ public class DriveConstants {
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
+  // TODO: Why is there a placeholder filepath?
   public static final CANBus kCANBus = new CANBus("drive", "./logs/example.hoot");
 
   public static final SwerveDrivetrainConstants DrivetrainConstants =

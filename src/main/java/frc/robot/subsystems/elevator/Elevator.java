@@ -11,10 +11,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-  private ElevatorIO io;
+  private final ElevatorIO io;
   private static Elevator instance = null;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-  private String key;
   private DigitalInput dio = new DigitalInput(5);
   SysIdRoutine sysId;
 
@@ -27,20 +26,20 @@ public class Elevator extends SubsystemBase {
 
   private Elevator() {
     io = new ElevatorIOTalonFX();
-    this.key = "Elevator";
-    sysId =
-        new SysIdRoutine(
-            new Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId = new SysIdRoutine(
+        new Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput("Elevator/SysIdState", state.toString())),
+        new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
+    Logger.processInputs("Elevator", inputs);
+
+    // TODO: What does this do?
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
       io.zeroMotors();
     }
@@ -50,7 +49,7 @@ public class Elevator extends SubsystemBase {
     io.setHeightClosedLoop(height);
   }
 
-  public double getExtention() {
+  public double getExtension() {
     return inputs.elevator1PositionMeters;
   }
 
