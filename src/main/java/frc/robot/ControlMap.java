@@ -28,9 +28,9 @@ public class ControlMap {
   private ControlMap() {}
 
   public void configurePreset1(CommandXboxController operator, CommandPS5Controller driver) {
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when both center buttons are pressed
     operator
-        .back()
+        .povCenter()
         .onTrue(
             Commands.runOnce(
               RobotContainer.currentMode == Mode.SIM

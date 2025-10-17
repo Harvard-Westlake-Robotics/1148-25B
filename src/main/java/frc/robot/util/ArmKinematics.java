@@ -77,15 +77,15 @@ public final class ArmKinematics {
         Lraw >= ElevatorConstants.armMinLength.in(Meters) - 1e-12
             && Lraw <= ElevatorConstants.armMaxLength.in(Meters) + 1e-12;
     boolean withinTheta =
-        thetaRaw >= WristConstants.ShoulderWrist.wristMinAngle.in(Rotations) - 1e-12
-            && thetaRaw <= WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations) + 1e-12;
+        thetaRaw >= WristConstants.Pivot.wristMinAngle.in(Rotations) - 1e-12
+            && thetaRaw <= WristConstants.Pivot.wristMaxAngle.in(Rotations) + 1e-12;
 
     if (withinY && withinLen && withinTheta) {
       // β from α, θ
       double betaRaw = 0.25 - thetaRaw - desiredAlpha;
       boolean withinWrist =
-          betaRaw >= WristConstants.IntakeWrist.wristMinAngle.in(Rotations) - 1e-12
-              && betaRaw <= WristConstants.IntakeWrist.wristMaxAngle.in(Rotations) + 1e-12;
+          betaRaw >= WristConstants.Wrist.wristMinAngle.in(Rotations) - 1e-12
+              && betaRaw <= WristConstants.Wrist.wristMaxAngle.in(Rotations) + 1e-12;
       if (withinWrist) {
         // Exact target
         return new Solution(
@@ -105,8 +105,8 @@ public final class ArmKinematics {
 
       // Wrist out of range: adjust α minimally to satisfy wrist limits, then
       // recompute (θ,L) to keep (x,y).
-      double alphaMin = 0.25 - thetaRaw - WristConstants.IntakeWrist.wristMaxAngle.in(Rotations);
-      double alphaMax = 0.25 - thetaRaw - WristConstants.IntakeWrist.wristMinAngle.in(Rotations);
+      double alphaMin = 0.25 - thetaRaw - WristConstants.Wrist.wristMaxAngle.in(Rotations);
+      double alphaMax = 0.25 - thetaRaw - WristConstants.Wrist.wristMinAngle.in(Rotations);
       double alphaFeasible = clampPeriodic(desiredAlpha, alphaMin, alphaMax, currentAlpha);
 
       // Recompute wrist pivot with α_feasible to preserve (x,y)
@@ -122,8 +122,8 @@ public final class ArmKinematics {
           L2 >= ElevatorConstants.armMinLength.in(Meters) - 1e-12
               && L2 <= ElevatorConstants.armMaxLength.in(Meters) + 1e-12;
       boolean okTh2 =
-          theta2 >= WristConstants.ShoulderWrist.wristMinAngle.in(Rotations) - 1e-12
-              && theta2 <= WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations) + 1e-12;
+          theta2 >= WristConstants.Pivot.wristMinAngle.in(Rotations) - 1e-12
+              && theta2 <= WristConstants.Pivot.wristMaxAngle.in(Rotations) + 1e-12;
 
       if (okY2 && okLen2 && okTh2) {
         double beta2 = 0.25 - theta2 - alphaFeasible; // guaranteed wrist-legal by construction
@@ -178,19 +178,19 @@ public final class ArmKinematics {
 
     double Lp = Math.hypot(px, py);
     double thetaProj = Units.radiansToRotations(Math.atan2(px, py));
-    if (thetaProj < WristConstants.ShoulderWrist.wristMinAngle.in(Rotations)) {
-      thetaProj = WristConstants.ShoulderWrist.wristMinAngle.in(Rotations);
+    if (thetaProj < WristConstants.Pivot.wristMinAngle.in(Rotations)) {
+      thetaProj = WristConstants.Pivot.wristMinAngle.in(Rotations);
       clampedShoulder = true;
     }
-    if (thetaProj > WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations)) {
-      thetaProj = WristConstants.ShoulderWrist.wristMaxAngle.in(Rotations);
+    if (thetaProj > WristConstants.Pivot.wristMaxAngle.in(Rotations)) {
+      thetaProj = WristConstants.Pivot.wristMaxAngle.in(Rotations);
       clampedShoulder = true;
     }
 
     // 3) Choose α' (near desired) to keep β within limits at θ_proj
     double desiredAlphaNear = nearestEquivalentRot(desiredAlpha, currentAlpha);
-    double alphaMin = 0.25 - thetaProj - WristConstants.IntakeWrist.wristMaxAngle.in(Rotations);
-    double alphaMax = 0.25 - thetaProj - WristConstants.IntakeWrist.wristMinAngle.in(Rotations);
+    double alphaMin = 0.25 - thetaProj - WristConstants.Wrist.wristMaxAngle.in(Rotations);
+    double alphaMax = 0.25 - thetaProj - WristConstants.Wrist.wristMinAngle.in(Rotations);
     double alphaFeasible = clampPeriodic(desiredAlphaNear, alphaMin, alphaMax, currentAlpha);
     boolean clampedWrist = !approxEqual(alphaFeasible, desiredAlphaNear);
     double betaFeasible = 0.25 - thetaProj - alphaFeasible;

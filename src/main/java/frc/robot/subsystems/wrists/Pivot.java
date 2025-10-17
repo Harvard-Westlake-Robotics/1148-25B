@@ -44,17 +44,17 @@ public class Pivot extends SubsystemBase {
     io3.updateInputs(inputs3);
     Logger.processInputs(key + "/Motor 3", inputs3);
   }
-
-  public void goToAngle(double angle) {
-    this.io1.setAngle(angle);
-    this.io2.setAngle(angle);
-    this.io3.setAngle(angle);
-  }
-
-  public void runVoltage(double volts) {
+  
+  public void runCharacterization(double volts) {
     io1.runCharacterization(volts);
     io2.runCharacterization(volts);
     io3.runCharacterization(volts);
+  }
+
+  public void goToPosition(double position) {
+    this.io1.goToPosition(position);
+    this.io2.goToPosition(position);
+    this.io3.goToPosition(position);
   }
 
   public double getWristPosition() {

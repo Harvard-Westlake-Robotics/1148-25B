@@ -6,7 +6,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -22,8 +21,6 @@ public class WristIOTalonFX implements WristIO {
   private WristConstants wristConstants;
 
   private TalonFXConfiguration wristConfig;
-
-  private ArmFeedforward wristFeedforward;
 
   private final StatusSignal<Angle> motorPosition;
   private final StatusSignal<AngularVelocity> motorVelocity;
@@ -48,6 +45,7 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.Slot0.kS = wristConstants.kS;
     wristConfig.Slot0.kG = wristConstants.kG;
     wristConfig.Slot0.kV = wristConstants.kV;
+    wristConfig.Slot0.kA = wristConstants.kA;
     wristConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     wristConfig.CurrentLimits.StatorCurrentLimit = wristConstants.statorLimit;
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -63,16 +61,12 @@ public class WristIOTalonFX implements WristIO {
     motorVelocity = wristMotor.getVelocity();
     motorAppliedVolts = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
-
-    // TODO: Same as before
-    wristFeedforward =
-        new ArmFeedforward(
-            wristConstants.kS, wristConstants.kG, wristConstants.kV, wristConstants.kA);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
+    
     inputs.wristMotorConnected = motorConnectedDebounce.calculate(wristMotor.isConnected());
     inputs.wristPositionRot =
         motorPosition.getValueAsDouble() * (1 / wristConstants.motorToWristRotations);
@@ -84,18 +78,16 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void runCharacterization(double voltage) {
-    wristController.FeedForward = wristFeedforward.calculate(wristController.Position, voltage);
     wristMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
-  public void setAngle(double angle) {
-    wristController.Position = angle / wristConstants.motorToWristRotations;
-    wristMotor.setControl(wristController);
+  public void goToPosition(double position) {
+    wristMotor.setControl(wristController.withPosition(position / wristConstants.motorToWristRotations));
   }
 
   @Override
-  public void zeroPosition(double rotations) {
-    wristMotor.setPosition(rotations);
+  public void setPosition(double position) {
+    wristMotor.setPosition(position);
   }
 }

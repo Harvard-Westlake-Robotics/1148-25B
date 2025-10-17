@@ -12,8 +12,10 @@ import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
-  private static Elevator instance = null;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+
+  private final String key = "Elevator";
+  private static Elevator instance = null;
   private DigitalInput dio = new DigitalInput(5);
   SysIdRoutine sysId;
 
@@ -31,13 +33,13 @@ public class Elevator extends SubsystemBase {
             null,
             null,
             null,
-            (state) -> Logger.recordOutput("Elevator/SysIdState", state.toString())),
+            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
         new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs(key, inputs);
 
     // TODO: What does this do?
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {

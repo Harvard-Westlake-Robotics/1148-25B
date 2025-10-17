@@ -13,10 +13,13 @@ import frc.robot.constants.IntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntake extends SubsystemBase {
-  private IntakeIO io;
+  private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+
   private IntakeConstants constants;
+  private final String key = "AlgaeIntake";
   private static AlgaeIntake instance;
+  
   private Boolean hasAlgae = false;
   SysIdRoutine sysId;
 
@@ -40,7 +43,7 @@ public class AlgaeIntake extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Algae Intake/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
             new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
@@ -50,7 +53,7 @@ public class AlgaeIntake extends SubsystemBase {
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Algae Intake", inputs);
+    Logger.processInputs(key, inputs);
     hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
   }
 

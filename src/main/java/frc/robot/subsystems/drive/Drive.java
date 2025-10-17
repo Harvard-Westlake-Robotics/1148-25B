@@ -150,7 +150,7 @@ public class Drive extends SubsystemBase {
   // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
 
-  private final Consumer<Pose2d> resetSimulationPoseCallBack;
+  private final Consumer<Pose2d> resetSimulationPoseCallback;
 
   public Drive(
       GyroIO gyroIO,
@@ -158,9 +158,9 @@ public class Drive extends SubsystemBase {
       ModuleIOTalonFX frModuleIO,
       ModuleIOTalonFX blModuleIO,
       ModuleIOTalonFX brModuleIO,
-      Consumer<Pose2d> resetSimulationPoseCallBack) {
+      Consumer<Pose2d> resetSimulationPoseCallback) {
     this.gyroIO = gyroIO;
-    this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
+    this.resetSimulationPoseCallback = resetSimulationPoseCallback;
     modules[0] = new Module(flModuleIO, 0, DriveConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, DriveConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, DriveConstants.BackLeft);
@@ -211,9 +211,9 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
-    setPose(new Pose2d());
 
-    Drive.instance = this;
+    // Set simulation pose
+    setPose(new Pose2d());
 
     // Setup NetworkTables communication
     NetworkCommunicator.getInstance().init();
@@ -280,19 +280,19 @@ public class Drive extends SubsystemBase {
 
       AprilTagResult result_a = limelight_a.getEstimate().orElse(null);
       if (result_a != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultA", result_a.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultA", result_a.pose);
       }
       AprilTagResult result_b = limelight_b.getEstimate().orElse(null);
       if (result_b != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultB", result_b.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultB", result_b.pose);
       }
       AprilTagResult result_c = limelight_c.getEstimate().orElse(null);
       if (result_c != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultC", result_c.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultC", result_c.pose);
       }
       AprilTagResult result_d = limelight_d.getEstimate().orElse(null);
       if (result_d != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultD", result_d.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultD", result_d.pose);
       }
 
       if (result_a != null && shouldAcceptPose(result_a) && limeLightsActive) {
@@ -472,7 +472,7 @@ public class Drive extends SubsystemBase {
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    resetSimulationPoseCallBack.accept(pose);
+    resetSimulationPoseCallback.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 

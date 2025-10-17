@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -16,12 +15,10 @@ public interface IntakeIO {
 
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
-
-  public default void runVelocity(AngularVelocity velocity) {}
+  
+  public default void runCharacterization(double volts) {}
 
   public default void runVelocity(LinearVelocity velocity) {}
-
-  public default void runCharacterization(double volts) {}
 
   public Boolean getSensor1();
 

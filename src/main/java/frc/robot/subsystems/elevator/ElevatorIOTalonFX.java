@@ -3,8 +3,8 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -14,12 +14,10 @@ import frc.robot.constants.ElevatorConstants;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   // Motors and elevator controllers
-  private TalonFX elevator1;
-  private TalonFX elevator2;
-  private MotionMagicVoltage elevatorController;
-  private MotionMagicVoltage elevator2Controller;
-
-  private ElevatorFeedforward elevatorFeedforward;
+  private final TalonFX elevator1;
+  private final TalonFX elevator2;
+  private final MotionMagicVoltage elevatorController;
+  private final MotionMagicVoltage elevator2Controller;
 
   private final StatusSignal<Angle> motor1Position;
   private final StatusSignal<AngularVelocity> motor1Velocity;
@@ -32,8 +30,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Current> motor2Current;
 
   // Connection debouncers
-  private final Debouncer motor1ConnectedDebounce = new Debouncer(0.5);
-  private final Debouncer motor2ConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer motor1ConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.5);
 
   public ElevatorIOTalonFX() {
     // TODO: why are these on the drive canbus?
@@ -59,16 +57,18 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevator1Config.Slot0.kP = ElevatorConstants.kP;
     elevator1Config.Slot0.kI = ElevatorConstants.kI;
     elevator1Config.Slot0.kD = ElevatorConstants.kD;
+    elevator1Config.Slot0.kS = ElevatorConstants.kS;
     elevator1Config.Slot0.kG = ElevatorConstants.kG;
-    elevator1Config.Slot0.kA = ElevatorConstants.kA;
     elevator1Config.Slot0.kV = ElevatorConstants.kV;
+    elevator1Config.Slot0.kA = ElevatorConstants.kA;
 
     elevator2Config.Slot0.kP = ElevatorConstants.kP;
     elevator2Config.Slot0.kI = ElevatorConstants.kI;
     elevator2Config.Slot0.kD = ElevatorConstants.kD;
+    elevator2Config.Slot0.kS = ElevatorConstants.kS;
     elevator2Config.Slot0.kG = ElevatorConstants.kG;
-    elevator2Config.Slot0.kA = ElevatorConstants.kA;
     elevator2Config.Slot0.kV = ElevatorConstants.kV;
+    elevator2Config.Slot0.kA = ElevatorConstants.kA;
 
     elevator1Config.CurrentLimits.StatorCurrentLimitEnable = true;
     elevator1Config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
@@ -104,10 +104,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motor2Velocity = elevator2.getVelocity();
     motor2AppliedVolts = elevator2.getMotorVoltage();
     motor2Current = elevator2.getStatorCurrent();
-
-    // TODO: Why is this needed instead of motion magic? Also why is kA set earlier instead of kS, kG, and kV?
-    elevatorFeedforward =
-        new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
   }
 
   @Override
@@ -115,7 +111,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     StatusSignal.refreshAll(motor1Position, motor1Velocity, motor1AppliedVolts, motor1Current);
     StatusSignal.refreshAll(motor2Position, motor2Velocity, motor2AppliedVolts, motor2Current);
 
-    inputs.elevator1Connected = motor1ConnectedDebounce.calculate(elevator1.isConnected());
+    inputs.elevator1Connected = motor1ConnectedDebouncer.calculate(elevator1.isConnected());
     inputs.elevator1PositionMeters =
         motor1Position.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
     inputs.elevator1VelocityMPS =
@@ -123,7 +119,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.elevator1AppliedVolts = motor1AppliedVolts.getValueAsDouble();
     inputs.elevator1CurrentAmps = motor1Current.getValueAsDouble();
 
-    inputs.elevator2Connected = motor2ConnectedDebounce.calculate(elevator2.isConnected());
+    inputs.elevator2Connected = motor2ConnectedDebouncer.calculate(elevator2.isConnected());
     inputs.elevator2PositionMeters =
         motor2Position.getValueAsDouble() * (1 / ElevatorConstants.rotationsToMetersRatio);
     inputs.elevator2VelocityMPS =
@@ -133,23 +129,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void setHeightClosedLoop(double meters) {
-    elevatorController.Position = meters;
-    elevator2Controller.Position = meters;
-    elevatorController.FeedForward = elevatorFeedforward.calculate(0);
-    elevator2Controller.FeedForward = elevatorFeedforward.calculate(0);
-    elevator1.setControl(elevatorController);
-    elevator2.setControl(elevator2Controller);
+  public void goToPosition(double position) {
+    elevator1.setControl(elevatorController.withPosition(position));
+    elevator2.setControl(elevator2Controller.withPosition(position));
   }
 
   public void runCharacterization(double voltage) {
-    elevator1.setVoltage(voltage);
-    elevator2.setVoltage(voltage);
+    elevator1.setControl(new VoltageOut(voltage));
+    elevator2.setControl(new VoltageOut(voltage));
   }
 
-  public void zeroMotors() {
-    elevator1.setPosition(0);
-    elevator2.setPosition(0);
+  @Override
+  public void setPosition(double position) {
+    elevator1.setPosition(position);
+    elevator2.setPosition(position);
   }
 
   public double getTarget() {

@@ -22,9 +22,9 @@ public interface ElevatorIO {
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
   /** Run the drive motor at the specified velocity. */
-  public default void setHeightClosedLoop(double velocityRadPerSec) {}
+  public default void goToPosition(double position) {}
 
-  public default void zeroMotors() {}
+  public default void tareMotors(double position) {}
 
   public default void runCharacterization(double voltage) {}
 

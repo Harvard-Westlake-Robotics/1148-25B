@@ -9,7 +9,6 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,10 +18,8 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.HangConstants;
 
 public class HangIOTalonFX implements HangIO {
-  private TalonFX hangMotor;
-  private MotionMagicVelocityTorqueCurrentFOC hangController;
-
-  private SimpleMotorFeedforward hangFeedforward;
+  private final TalonFX hangMotor;
+  private final MotionMagicVelocityTorqueCurrentFOC hangController;
 
   private final StatusSignal<Angle> motorPosition;
   private final StatusSignal<AngularVelocity> motorVelocity;
@@ -60,10 +57,6 @@ public class HangIOTalonFX implements HangIO {
     motorVelocity = hangMotor.getVelocity();
     motorAppliedVolts = hangMotor.getMotorVoltage();
     motorCurrent = hangMotor.getStatorCurrent();
-
-    // TODO: Again why is this necessary?
-    hangFeedforward =
-        new SimpleMotorFeedforward(HangConstants.kS, HangConstants.kV, HangConstants.kA);
   }
 
   public void updateInputs(HangIOInputs inputs) {
@@ -71,24 +64,20 @@ public class HangIOTalonFX implements HangIO {
 
     inputs.motorConnected = motorConnectedDebounce.calculate(hangMotor.isConnected());
     inputs.motorPositionMeters =
-        motorPosition.getValueAsDouble() * (1 / HangConstants.rotationsToMetersRatio);
+        motorPosition.getValueAsDouble() / HangConstants.rotationsToMetersRatio;
     inputs.motorVelocityMPS =
-        motorVelocity.getValueAsDouble() * (1 / HangConstants.rotationsToMetersRatio);
+        motorVelocity.getValueAsDouble() / HangConstants.rotationsToMetersRatio;
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.motorCurrent = motorCurrent.getValueAsDouble();
-  }
-
-  @Override
-  public void runVelocity(LinearVelocity velocity) {
-    hangController.FeedForward =
-        hangFeedforward.calculate(
-            velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio);
-    hangController.Velocity = velocity.in(MetersPerSecond) / HangConstants.rotationsToMetersRatio;
-    hangMotor.setControl(hangController);
+    inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
   }
 
   @Override
   public void runCharacterization(double voltage) {
     hangMotor.setControl(new VoltageOut(voltage));
+  }
+
+  @Override
+  public void runVelocity(LinearVelocity velocity) {
+    hangMotor.setControl(hangController.withVelocity(velocity.in(MetersPerSecond) * HangConstants.rotationsToMetersRatio));
   }
 }

@@ -8,11 +8,22 @@ import org.littletonrobotics.junction.Logger;
 public class Hang extends SubsystemBase {
   private final HangIO io;
   private final HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
+
   private final String key = "RealOutputs/Hang";
-  private boolean hasBar = false;
-  public Servo servo = new Servo(0);
   private static Hang instance = null;
 
+  private boolean hasBar = false;
+  // TODO: Make private and encapsulate
+  public Servo servo = new Servo(0);
+
+  public Boolean hasBar() {
+    return hasBar;
+  }
+  
+  public void setHasBar(Boolean hasBar) {
+    this.hasBar = hasBar;
+  }
+  
   public static Hang getInstance() {
     if (instance == null) {
       instance = new Hang();
@@ -20,17 +31,9 @@ public class Hang extends SubsystemBase {
     return instance;
   }
 
-  public Boolean getHasBar() {
-    return hasBar;
-  }
   public Hang() {
     io = new HangIOTalonFX();
   }
-
-  public void setHasBar(Boolean hasBar) {
-    this.hasBar = hasBar;
-  }
-
 
   public void periodic() {
     io.updateInputs(inputs);

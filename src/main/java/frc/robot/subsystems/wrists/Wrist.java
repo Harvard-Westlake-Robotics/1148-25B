@@ -39,15 +39,15 @@ public class Wrist extends SubsystemBase {
     io2.updateInputs(inputs2);
     Logger.processInputs(key + "/Motor 2", inputs2);
   }
-
-  public void goToAngle(double angle) {
-    this.io1.setAngle(angle);
-    this.io2.setAngle(angle);
-  }
-
-  public void runVoltage(double volts) {
+  
+  public void runCharacterization(double volts) {
     io1.runCharacterization(volts);
     io2.runCharacterization(volts);
+  }
+
+  public void goToPosition(double position) {
+    this.io1.goToPosition(position);
+    this.io2.goToPosition(position);
   }
 
   public double getWristPosition() {

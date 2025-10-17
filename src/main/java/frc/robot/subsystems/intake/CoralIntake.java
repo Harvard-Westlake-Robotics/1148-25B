@@ -13,11 +13,13 @@ import frc.robot.constants.IntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class CoralIntake extends SubsystemBase {
-  private IntakeIOTalonFX io;
-  private IntakeIOTalonFX io2;
+  private final IntakeIOTalonFX io;
+  private final IntakeIOTalonFX io2;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final IntakeIOInputsAutoLogged inputs2 = new IntakeIOInputsAutoLogged();
-  private IntakeConstants constants;
+
+  private final IntakeConstants constants;
+  private final String key = "CoralIntake";
   private static CoralIntake instance;
   // Whether we have the coral straight in the intake
   private boolean hasCoralHotdog;
@@ -57,8 +59,8 @@ public class CoralIntake extends SubsystemBase {
     Logger.recordOutput("Sensor 4", getSensor4());
     io.updateInputs(inputs);
     io2.updateInputs(inputs2);
-    Logger.processInputs("Coral Intake/Motor1", inputs);
-    Logger.processInputs("Coral Intake/Motor2", inputs2);
+    Logger.processInputs(key + "/Motor1", inputs);
+    Logger.processInputs(key + "/Motor2", inputs2);
     if (getSensor4() && getSensor2()) {
       hasCoralHotdog = true;
     } else {
