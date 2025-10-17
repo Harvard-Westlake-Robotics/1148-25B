@@ -58,8 +58,7 @@ public class ArmCommand extends Command {
   }
 
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -69,8 +68,7 @@ public class ArmCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
@@ -81,44 +79,56 @@ public class ArmCommand extends Command {
     ArmCommand.level = level;
 
     // Current joint pose (rotations + meters)
-    var current = new ArmKinematics.JointPose(
-        Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
-        Meters.of(Elevator.getInstance().getExtention()), // L
-        Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
+    var current =
+        new ArmKinematics.JointPose(
+            Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+            Meters.of(Elevator.getInstance().getExtention()), // L
+            Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
 
-    var target = new ArmKinematics.Target(
-        Meters.of(getTargetPos(level)[0]), // X
-        Meters.of(getTargetPos(level)[1]), // Y
-        Rotation2d.fromRotations(getTargetPos(level)[2])); // Intake angle
+    var target =
+        new ArmKinematics.Target(
+            Meters.of(getTargetPos(level)[0]), // X
+            Meters.of(getTargetPos(level)[1]), // Y
+            Rotation2d.fromRotations(getTargetPos(level)[2])); // Intake angle
 
     var sol = ArmKinematics.solve(current, target);
 
-    targetPos = new double[] { sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations() };
+    targetPos =
+        new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
   }
 
   public boolean facingForward() {
     Pose2d pose = Drive.getInstance().getPose();
     Translation2d translation = pose.getTranslation();
     // Construct unitVector for use later
-    Translation2d unitVector = translation.plus(new Translation2d(0, 1).rotateBy(pose.getRotation()));
-    Translation2d robotTranslation = Drive.getInstance().getPose()
-        .getTranslation()
-        .plus(
-            new Translation2d(
-                FieldConstants.ROBOT_REEF_OFFSET_METERS, Drive.getInstance().getPose().getRotation()));
+    Translation2d unitVector =
+        translation.plus(new Translation2d(0, 1).rotateBy(pose.getRotation()));
+    Translation2d robotTranslation =
+        Drive.getInstance()
+            .getPose()
+            .getTranslation()
+            .plus(
+                new Translation2d(
+                    FieldConstants.ROBOT_REEF_OFFSET_METERS,
+                    Drive.getInstance().getPose().getRotation()));
 
     // Determine reef center based on alliance
-    double reefCenterX = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? FieldConstants.BLUE_REEF_CENTER_X
-        : FieldConstants.RED_REEF_CENTER_X;
+    double reefCenterX =
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? FieldConstants.BLUE_REEF_CENTER_X
+            : FieldConstants.RED_REEF_CENTER_X;
     // Find vector from robot to reef, if anything is wrong its this or the atan
     // statement
-    Translation2d vectorReef = new Translation2d(robotTranslation.getX() - reefCenterX,
-        robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
+    Translation2d vectorReef =
+        new Translation2d(
+            robotTranslation.getX() - reefCenterX,
+            robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
     // Find theta using atan2, if anything is wrong its this or the vector reef
     // construction
-    double theta = Math.atan2(unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(),
-        unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
+    double theta =
+        Math.atan2(
+            unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(),
+            unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
     if (-1 * Math.PI <= theta && theta <= 0) {
       return true;
     } else {
@@ -130,84 +140,84 @@ public class ArmCommand extends Command {
     switch (level) {
       case SOURCE_CORAL:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case GROUND_CORAL:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case GROUND_ALGAE:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case L1:
         outtakePosition = true;
         // Might want to make the boolean false here depending on if L1 outtakes
         // differently
         // If front of robot is looking at reef:
         if (facingForward()) {
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else {
           // if back of robot is looking at reef
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         }
       case L2:
         outtakePosition = true;
         // If front of robot is looking at reef:
         if (facingForward()) {
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else {
           // if back of robot is looking at reef
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         }
       case L3:
         outtakePosition = true;
         // If front of robot is looking at reef:
         if (facingForward()) {
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else {
           // if back of robot is looking at reef
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         }
       case L4:
         outtakePosition = true;
         // If front of robot is looking at reef:
         if (facingForward()) {
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else {
           // if back of robot is looking at reef
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         }
       case TOP_REMOVE:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case BOTTOM_REMOVE:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case NET:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case PROCESSOR:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case HANG:
         outtakePosition = false;
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
       case NEUTRAL:
         outtakePosition = false;
         // Different position based on what is happening
         if (CoralIntake.getInstance().hasCoralHotDog()) {
           // "Keeps it slightly up, ready to go up and score"
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else if (CoralIntake.getInstance().hasCoralBurger()) {
           // "L1 scoring position"
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else if (AlgaeIntake.getInstance().hasAlgae()) {
           // "Keeps elevator straight up but contracted, like lolipop
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         } else { // Nothing in intake
           // Elevator fully down and intake stowed in.
-          return new double[] { 0, 0, 0 };
+          return new double[] {0, 0, 0};
         }
       default:
-        return new double[] { 0, 0, 0 };
+        return new double[] {0, 0, 0};
     }
   }
 }

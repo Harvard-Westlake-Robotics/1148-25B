@@ -78,9 +78,9 @@ public class WristConstants {
   // TODO: Fix later with real values
   public static final WristConstants ShoulderWrist =
       new WristConstants(
-          18,
-          19,
-          20,
+          25,
+          26,
+          27,
           InvertedValue.CounterClockwise_Positive,
           100000,
           5,

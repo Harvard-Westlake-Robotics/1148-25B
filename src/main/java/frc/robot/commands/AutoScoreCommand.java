@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.CoralIntake;

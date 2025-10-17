@@ -43,6 +43,7 @@ public class CoralIntakeCommand extends Command {
     this.intakingHotdog = true;
     this.outtaking = false;
     this.running = false;
+    this.manual = false;
     velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
   }
 

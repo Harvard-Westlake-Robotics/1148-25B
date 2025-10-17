@@ -67,7 +67,7 @@ public class AlgaeIntake extends SubsystemBase {
   public void setVelocityMPS(double velocity) {
     LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
     setVelocity(v);
-  } 
+  }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
