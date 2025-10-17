@@ -77,15 +77,15 @@ public final class ArmKinematics {
         Lraw >= ElevatorConstants.ARM_MIN_LEN.in(Meters) - 1e-12
             && Lraw <= ElevatorConstants.ARM_MAX_LEN.in(Meters) + 1e-12;
     boolean withinTheta =
-        thetaRaw >= rot(WristConstants.ShoulderWrist.WRIST_MIN_DEG) - 1e-12
-            && thetaRaw <= rot(WristConstants.ShoulderWrist.WRIST_MAX_DEG) + 1e-12;
+        thetaRaw >= rot(WristConstants.Pivot.WRIST_MIN_DEG) - 1e-12
+            && thetaRaw <= rot(WristConstants.Pivot.WRIST_MAX_DEG) + 1e-12;
 
     if (withinY && withinLen && withinTheta) {
       // β from α, θ
       double betaRaw = 0.25 - thetaRaw - desiredAlpha;
       boolean withinWrist =
-          betaRaw >= rot(WristConstants.IntakeWrist.WRIST_MIN_DEG) - 1e-12
-              && betaRaw <= rot(WristConstants.IntakeWrist.WRIST_MAX_DEG) + 1e-12;
+          betaRaw >= rot(WristConstants.Wrist.WRIST_MIN_DEG) - 1e-12
+              && betaRaw <= rot(WristConstants.Wrist.WRIST_MAX_DEG) + 1e-12;
       if (withinWrist) {
         // Exact target
         return new Solution(
@@ -105,8 +105,8 @@ public final class ArmKinematics {
 
       // Wrist out of range: adjust α minimally to satisfy wrist limits, then
       // recompute (θ,L) to keep (x,y).
-      double alphaMin = 0.25 - thetaRaw - rot(WristConstants.IntakeWrist.WRIST_MAX_DEG);
-      double alphaMax = 0.25 - thetaRaw - rot(WristConstants.IntakeWrist.WRIST_MIN_DEG);
+      double alphaMin = 0.25 - thetaRaw - rot(WristConstants.Wrist.WRIST_MAX_DEG);
+      double alphaMax = 0.25 - thetaRaw - rot(WristConstants.Wrist.WRIST_MIN_DEG);
       double alphaFeasible = clampPeriodic(desiredAlpha, alphaMin, alphaMax, currentAlpha);
 
       // Recompute wrist pivot with α_feasible to preserve (x,y)
@@ -122,8 +122,8 @@ public final class ArmKinematics {
           L2 >= ElevatorConstants.ARM_MIN_LEN.in(Meters) - 1e-12
               && L2 <= ElevatorConstants.ARM_MAX_LEN.in(Meters) + 1e-12;
       boolean okTh2 =
-          theta2 >= rot(WristConstants.ShoulderWrist.WRIST_MIN_DEG) - 1e-12
-              && theta2 <= rot(WristConstants.ShoulderWrist.WRIST_MAX_DEG) + 1e-12;
+          theta2 >= rot(WristConstants.Pivot.WRIST_MIN_DEG) - 1e-12
+              && theta2 <= rot(WristConstants.Pivot.WRIST_MAX_DEG) + 1e-12;
 
       if (okY2 && okLen2 && okTh2) {
         double beta2 = 0.25 - theta2 - alphaFeasible; // guaranteed wrist-legal by construction
@@ -178,19 +178,19 @@ public final class ArmKinematics {
 
     double Lp = hypot(px, py);
     double thetaProj = rad2rot(angleFromVertical(px, py));
-    if (thetaProj < rot(WristConstants.ShoulderWrist.WRIST_MIN_DEG)) {
-      thetaProj = rot(WristConstants.ShoulderWrist.WRIST_MIN_DEG);
+    if (thetaProj < rot(WristConstants.Pivot.WRIST_MIN_DEG)) {
+      thetaProj = rot(WristConstants.Pivot.WRIST_MIN_DEG);
       clampedShoulder = true;
     }
-    if (thetaProj > rot(WristConstants.ShoulderWrist.WRIST_MAX_DEG)) {
-      thetaProj = rot(WristConstants.ShoulderWrist.WRIST_MAX_DEG);
+    if (thetaProj > rot(WristConstants.Pivot.WRIST_MAX_DEG)) {
+      thetaProj = rot(WristConstants.Pivot.WRIST_MAX_DEG);
       clampedShoulder = true;
     }
 
     // 3) Choose α' (near desired) to keep β within limits at θ_proj
     double desiredAlphaNear = nearestEquivalentRot(desiredAlpha, currentAlpha);
-    double alphaMin = 0.25 - thetaProj - rot(WristConstants.IntakeWrist.WRIST_MAX_DEG);
-    double alphaMax = 0.25 - thetaProj - rot(WristConstants.IntakeWrist.WRIST_MIN_DEG);
+    double alphaMin = 0.25 - thetaProj - rot(WristConstants.Wrist.WRIST_MAX_DEG);
+    double alphaMax = 0.25 - thetaProj - rot(WristConstants.Wrist.WRIST_MIN_DEG);
     double alphaFeasible = clampPeriodic(desiredAlphaNear, alphaMin, alphaMax, currentAlpha);
     boolean clampedWrist = !approxEqual(alphaFeasible, desiredAlphaNear);
     double betaFeasible = 0.25 - thetaProj - alphaFeasible;

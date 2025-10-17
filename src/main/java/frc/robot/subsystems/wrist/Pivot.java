@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
-public class ArmWrist extends SubsystemBase {
+public class Pivot extends SubsystemBase {
   private final WristIOTalonFX io1;
   private final WristIOTalonFX io2;
   private final WristIOTalonFX io3;
@@ -13,17 +13,17 @@ public class ArmWrist extends SubsystemBase {
   private final WristIOInputsAutoLogged inputs3 = new WristIOInputsAutoLogged();
   private WristConstants constants;
   private String key;
-  private static ArmWrist instance;
+  private static Pivot instance;
 
-  public static ArmWrist getInstance() {
+  public static Pivot getInstance() {
     if (instance == null) {
-      instance = new ArmWrist();
+      instance = new Pivot();
     }
     return instance;
   }
 
-  public ArmWrist() {
-    this.constants = WristConstants.ShoulderWrist;
+  public Pivot() {
+    this.constants = WristConstants.Pivot;
     this.key = "RealOutputs/Arm Wrist";
     io1 = new WristIOTalonFX(constants, 1);
     io2 = new WristIOTalonFX(constants, 2);

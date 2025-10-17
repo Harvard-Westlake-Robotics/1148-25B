@@ -13,8 +13,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrist.ArmWrist;
-import frc.robot.subsystems.wrist.IntakeWrist;
+import frc.robot.subsystems.wrist.Pivot;
+import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.util.ArmKinematics;
 
 public class ArmCommand extends Command {
@@ -51,7 +51,7 @@ public class ArmCommand extends Command {
   public static ScoringLevel level;
 
   public ArmCommand() {
-    this.addRequirements(Elevator.getInstance(), ArmWrist.getInstance(), IntakeWrist.getInstance());
+    this.addRequirements(Elevator.getInstance(), Pivot.getInstance(), Wrist.getInstance());
     level = ScoringLevel.NEUTRAL;
     outtakePosition = false;
     setHeight(level);
@@ -62,9 +62,9 @@ public class ArmCommand extends Command {
 
   @Override
   public void execute() {
-    ArmWrist.getInstance().goToAngle(targetPos[0]);
+    Pivot.getInstance().goToAngle(targetPos[0]);
     Elevator.getInstance().goToHeight(targetPos[1]);
-    IntakeWrist.getInstance().goToAngle(targetPos[2]);
+    Wrist.getInstance().goToAngle(targetPos[2]);
   }
 
   @Override
@@ -81,9 +81,9 @@ public class ArmCommand extends Command {
     // Current joint pose (rotations + meters)
     var current =
         new ArmKinematics.JointPose(
-            Rotation2d.fromRotations(ArmWrist.getInstance().getWristPosition()),
+            Rotation2d.fromRotations(Pivot.getInstance().getWristPosition()),
             Meters.of(Elevator.getInstance().getExtention()), // L
-            Rotation2d.fromRotations(IntakeWrist.getInstance().getWristPosition()));
+            Rotation2d.fromRotations(Wrist.getInstance().getWristPosition()));
 
     var target =
         new ArmKinematics.Target(

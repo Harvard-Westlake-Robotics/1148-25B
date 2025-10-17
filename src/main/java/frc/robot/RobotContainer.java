@@ -44,8 +44,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hang.Hang;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrist.ArmWrist;
-import frc.robot.subsystems.wrist.IntakeWrist;
+import frc.robot.subsystems.wrist.Pivot;
+import frc.robot.subsystems.wrist.Wrist;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -84,8 +84,8 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
-  private final ArmWrist armWrist;
-  private final IntakeWrist intakeWrist;
+  private final Pivot armWrist;
+  private final Wrist intakeWrist;
   private final Elevator elevator;
   private final CoralIntake coralIntake;
   private final AlgaeIntake algaeIntake;
@@ -129,8 +129,8 @@ public class RobotContainer {
                 new ModuleIOTalonFXReal(DriveConstants.BackLeft),
                 new ModuleIOTalonFXReal(DriveConstants.BackRight),
                 pose -> {});
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
+        this.armWrist = Pivot.getInstance();
+        this.intakeWrist = Wrist.getInstance();
         this.elevator = Elevator.getInstance();
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();
@@ -155,8 +155,8 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(DriveConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(DriveConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
+        this.armWrist = Pivot.getInstance();
+        this.intakeWrist = Wrist.getInstance();
         this.elevator = Elevator.getInstance();
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();
@@ -177,8 +177,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(DriveConstants.BackLeft) {},
                 new ModuleIOTalonFX(DriveConstants.BackRight) {},
                 pose -> {});
-        this.armWrist = ArmWrist.getInstance();
-        this.intakeWrist = IntakeWrist.getInstance();
+        this.armWrist = Pivot.getInstance();
+        this.intakeWrist = Wrist.getInstance();
         this.elevator = Elevator.getInstance();
         this.coralIntake = CoralIntake.getInstance();
         this.algaeIntake = AlgaeIntake.getInstance();

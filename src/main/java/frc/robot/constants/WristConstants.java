@@ -76,7 +76,7 @@ public class WristConstants {
   }
 
   // TODO: Fix later with real values
-  public static final WristConstants ShoulderWrist =
+  public static final WristConstants Pivot =
       new WristConstants(
           25,
           26,
@@ -101,7 +101,7 @@ public class WristConstants {
           Rotation2d.fromRotations(0.569)); // 205 deg
 
   // TODO: Fix later with real values
-  public static final WristConstants IntakeWrist =
+  public static final WristConstants Wrist =
       new WristConstants(
           0,
           0,
