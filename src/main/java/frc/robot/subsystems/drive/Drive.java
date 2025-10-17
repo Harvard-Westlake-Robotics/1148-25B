@@ -73,7 +73,6 @@ public class Drive extends SubsystemBase {
                   new ModuleIOTalonFXReal(DriveConstants.BackRight),
                   pose -> {});
           break;
-
         case SIM:
           instance =
               new Drive(
@@ -214,6 +213,9 @@ public class Drive extends SubsystemBase {
 
     // Set simulation pose
     setPose(new Pose2d());
+
+    // Prevents double initialization since this constructor is called directly in RobotContainer
+    Drive.instance = this;
 
     // Setup NetworkTables communication
     NetworkCommunicator.getInstance().init();

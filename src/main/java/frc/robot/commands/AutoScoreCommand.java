@@ -20,12 +20,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrists.Wrist;
 import frc.robot.subsystems.wrists.Pivot;
+import frc.robot.subsystems.wrists.Wrist;
 import frc.robot.util.ArmKinematics;
 import org.littletonrobotics.junction.Logger;
 
@@ -139,7 +138,7 @@ public class AutoScoreCommand extends Command {
 
     // Set initial positions and velocities
     RobotContainer.coralIntakeCommand.manual = true;
-    CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
 
@@ -201,9 +200,9 @@ public class AutoScoreCommand extends Command {
     double currentHeight =
         ArmKinematics.getCurrentPose(
                 new ArmKinematics.JointPose(
-                    Rotation2d.fromRotations(Pivot.getInstance().getWristPosition()),
+                    Rotation2d.fromRotations(Pivot.getInstance().getAngle()),
                     Meters.of(Elevator.getInstance().getExtension()), // L
-                    Rotation2d.fromRotations(Wrist.getInstance().getWristPosition())))
+                    Rotation2d.fromRotations(Wrist.getInstance().getAngle())))
             .y()
             .magnitude();
 
@@ -212,12 +211,12 @@ public class AutoScoreCommand extends Command {
     if (Math.abs(targetHeight - currentHeight) < ARM_Y_TOLERANCE || currentHeight > targetHeight) {
       if (tickCounter >= SCORING_DELAY_TICKS) {
         CoralIntake.getInstance()
-            .setVelocity(LinearVelocity.ofBaseUnits(SCORING_VELOCITY, MetersPerSecond));
+            .runVelocity(LinearVelocity.ofBaseUnits(SCORING_VELOCITY, MetersPerSecond));
       } else {
         tickCounter++;
       }
     } else {
-      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     }
   }
 
@@ -225,9 +224,9 @@ public class AutoScoreCommand extends Command {
   public void end(boolean interrupted) {
     // Reset robot state
     if (CoralIntake.getInstance().hasCoralHotDog() || CoralIntake.getInstance().hasCoralBurger()) {
-      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
     } else {
-      CoralIntake.getInstance().setVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
     }
     RobotContainer.coralIntakeCommand.manual = false;
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);

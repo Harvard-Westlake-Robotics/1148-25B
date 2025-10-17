@@ -28,13 +28,14 @@ public class Elevator extends SubsystemBase {
 
   private Elevator() {
     io = new ElevatorIOTalonFX();
-    sysId = new SysIdRoutine(
-        new Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-        new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId =
+        new SysIdRoutine(
+            new Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
+            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
@@ -43,20 +44,20 @@ public class Elevator extends SubsystemBase {
 
     // TODO: What does this do?
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
-      io.zeroMotors();
+      io.tareHeight(0);
     }
-  }
-
-  public void goToHeight(double height) {
-    io.setHeightClosedLoop(height);
-  }
-
-  public double getExtension() {
-    return inputs.elevator1PositionMeters;
   }
 
   public void runCharacterization(double voltage) {
     io.runCharacterization(voltage);
+  }
+
+  public void goToHeightClosedLoop(double height) {
+    io.goToHeightClosedLoop(height);
+  }
+
+  public double getExtension() {
+    return inputs.elevator1PositionMeters;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

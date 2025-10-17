@@ -6,7 +6,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -15,11 +17,12 @@ import frc.robot.constants.WristConstants;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
-  private TalonFX wristMotor;
-  private MotionMagicVoltage wristController;
+  private final TalonFX wristMotor;
+  private final MotionMagicVoltage wristController;
 
-  private WristConstants wristConstants;
+  private final ArmFeedforward wristFeedForward;
 
+  private WristConstants constants;
   private TalonFXConfiguration wristConfig;
 
   private final StatusSignal<Angle> motorPosition;
@@ -28,32 +31,28 @@ public class WristIOTalonFX implements WristIO {
   private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
-  private final Debouncer motorConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
-  public WristIOTalonFX(WristConstants wristConstants, int motorNum) {
-    this.wristConstants = wristConstants;
-    wristMotor = new TalonFX(wristConstants.motorId + motorNum - 1);
-    wristMotor.setPosition(wristConstants.angleOffset);
+  public WristIOTalonFX(WristConstants constants, int motorNum) {
+    this.constants = constants;
+    wristMotor = new TalonFX(constants.motorId + motorNum - 1);
+    wristMotor.setPosition(constants.angleOffset);
     this.wristController = new MotionMagicVoltage(0).withEnableFOC(true);
     wristConfig = new TalonFXConfiguration();
-    wristConfig.MotorOutput.Inverted = wristConstants.motorInverted;
+    wristConfig.MotorOutput.Inverted = constants.motorInverted;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    wristConfig.Slot0.kP = wristConstants.kP;
-    wristConfig.Slot0.kI = wristConstants.kI;
-    wristConfig.Slot0.kD = wristConstants.kD;
-    wristConfig.Slot0.kS = wristConstants.kS;
-    wristConfig.Slot0.kG = wristConstants.kG;
-    wristConfig.Slot0.kV = wristConstants.kV;
-    wristConfig.Slot0.kA = wristConstants.kA;
+    wristConfig.Slot0.kP = constants.kP;
+    wristConfig.Slot0.kI = constants.kI;
+    wristConfig.Slot0.kD = constants.kD;
     wristConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    wristConfig.CurrentLimits.StatorCurrentLimit = wristConstants.statorLimit;
+    wristConfig.CurrentLimits.StatorCurrentLimit = constants.statorLimit;
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    wristConfig.CurrentLimits.SupplyCurrentLimit = wristConstants.supplyLimit;
-    this.wristConfig.MotionMagic.MotionMagicAcceleration =
-        this.wristConstants.motionMagicAcceleration;
-    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.wristConstants.motionMagicCruiseVelocity;
-    this.wristConfig.MotionMagic.MotionMagicJerk = this.wristConstants.motionMagicJerk;
+    wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
+    this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
+    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
+        this.constants.motionMagicCruiseVelocity;
+    this.wristConfig.MotionMagic.MotionMagicJerk = this.constants.motionMagicJerk;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
     wristMotor.setControl(wristController);
 
@@ -61,17 +60,18 @@ public class WristIOTalonFX implements WristIO {
     motorVelocity = wristMotor.getVelocity();
     motorAppliedVolts = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
+
+    // TODO: Add angle-specific kG changing
+    wristFeedForward = new ArmFeedforward(constants.kS, constants.kG, constants.kV, constants.kA);
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
-    
-    inputs.wristMotorConnected = motorConnectedDebounce.calculate(wristMotor.isConnected());
-    inputs.wristPositionRot =
-        motorPosition.getValueAsDouble() * (1 / wristConstants.motorToWristRotations);
-    inputs.wristVelocityMPS =
-        motorVelocity.getValueAsDouble() * (1 / wristConstants.motorToWristRotations);
+
+    inputs.wristMotorConnected = motorConnectedDebouncer.calculate(wristMotor.isConnected());
+    inputs.wristPositionRot = motorPosition.getValueAsDouble() / constants.motorToWristRotations;
+    inputs.wristVelocityRPS = motorVelocity.getValueAsDouble() / constants.motorToWristRotations;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -82,12 +82,15 @@ public class WristIOTalonFX implements WristIO {
   }
 
   @Override
-  public void goToPosition(double position) {
-    wristMotor.setControl(wristController.withPosition(position / wristConstants.motorToWristRotations));
+  public void goToAngleClosedLoop(double angle) {
+    wristMotor.setControl(
+        wristController
+            .withPosition(angle * constants.motorToWristRotations)
+            .withFeedForward(wristFeedForward.calculate(Units.rotationsToRadians(angle), 0)));
   }
 
   @Override
-  public void setPosition(double position) {
-    wristMotor.setPosition(position);
+  public void tareAngle(double angle) {
+    wristMotor.setPosition(angle * constants.motorToWristRotations);
   }
 }

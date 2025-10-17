@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -21,11 +20,20 @@ public class CoralIntake extends SubsystemBase {
   private final IntakeConstants constants;
   private final String key = "CoralIntake";
   private static CoralIntake instance;
+
+  SysIdRoutine sysId;
   // Whether we have the coral straight in the intake
   private boolean hasCoralHotdog;
   // Whether we have the coral burger style in the intake
   private boolean hasCoralBurger;
-  SysIdRoutine sysId;
+
+  public Boolean hasCoralHotDog() {
+    return hasCoralHotdog;
+  }
+
+  public boolean hasCoralBurger() {
+    return hasCoralBurger;
+  }
 
   public static CoralIntake getInstance() {
     if (instance == null) {
@@ -45,22 +53,18 @@ public class CoralIntake extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
-  }
-
-  public IntakeConstants getConstants() {
-    return constants;
+            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public void periodic() {
-    Logger.recordOutput("Sensor 1", getSensor1());
-    Logger.recordOutput("Sensor 2", getSensor2());
-    Logger.recordOutput("Sensor 3", getSensor3());
-    Logger.recordOutput("Sensor 4", getSensor4());
     io.updateInputs(inputs);
     io2.updateInputs(inputs2);
     Logger.processInputs(key + "/Motor1", inputs);
     Logger.processInputs(key + "/Motor2", inputs2);
+    Logger.recordOutput("Sensor1", getSensor1());
+    Logger.recordOutput("Sensor2", getSensor2());
+    Logger.recordOutput("Sensor3", getSensor3());
+    Logger.recordOutput("Sensor4", getSensor4());
     if (getSensor4() && getSensor2()) {
       hasCoralHotdog = true;
     } else {
@@ -73,46 +77,31 @@ public class CoralIntake extends SubsystemBase {
     }
   }
 
-  public void setVelocity(LinearVelocity velocity) {
+  public void runCharacterization(double voltage) {
+    io.runCharacterization(voltage);
+    io2.runCharacterization(-voltage);
+  }
+
+  public void runVelocity(LinearVelocity velocity) {
     io.runVelocity(velocity);
     io2.runVelocity(velocity.times(-1));
   }
 
-  // Sets motors to the same direction
-  public void setVelocityShift(LinearVelocity velocity) {
+  // Runs motors in the same direction
+  public void runVelocityShift(LinearVelocity velocity) {
     io.runVelocity(velocity);
     io2.runVelocity(velocity);
-  }
-
-  public void setVelocityMPS(double velocity) {
-    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
-    setVelocity(v);
-  }
-
-  public void setVelocityShiftMPS(double velocity) {
-    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
-    setVelocityShift(v);
-  }
-
-  public void runVoltage(double volts) {
-    io.runCharacterization(volts);
-    io2.runCharacterization(-volts);
-  }
-
-  public void setVoltageShift(double volts) {
-    io.runCharacterization(volts);
-    io2.runCharacterization(volts);
   }
 
   // Shifts the motors by setting them to spin in the same direction
   // Boolean direction -> true is go right, false is go left
   // might not work yet because we're unsure how the shifting will actually need
   // to work
-  public void shift(boolean direction, double velocity) {
+  public void shift(boolean direction, LinearVelocity velocity) {
     if (direction) {
-      setVelocityShiftMPS(velocity);
+      runVelocityShift(velocity);
     } else {
-      setVelocityShiftMPS(velocity * -1);
+      runVelocityShift(velocity.times(-1));
     }
   }
 
@@ -132,21 +121,15 @@ public class CoralIntake extends SubsystemBase {
     return io.getSensor4();
   }
 
-  public Boolean hasCoralHotDog() {
-    return hasCoralHotdog;
-  }
-
-  public boolean hasCoralBurger() {
-    return hasCoralBurger;
-  }
-
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));
+    return run(() -> runCharacterization(0.0))
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 }

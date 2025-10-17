@@ -63,6 +63,7 @@ public class Robot extends LoggedRobot {
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
+        setSimulatedField();
         break;
 
       case REPLAY:
@@ -165,7 +166,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     NetworkCommunicator.getInstance().setIsAuto(false);
-    
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

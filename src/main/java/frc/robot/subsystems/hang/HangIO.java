@@ -14,8 +14,8 @@ public interface HangIO {
   }
 
   public default void updateInputs(HangIOInputs inputs) {}
-  
-  public default void runCharacterization(double volts) {}
+
+  public default void runCharacterization(double voltage) {}
 
   public default void runVelocity(LinearVelocity velocity) {}
 }

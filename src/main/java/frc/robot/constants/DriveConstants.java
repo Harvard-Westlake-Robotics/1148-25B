@@ -234,7 +234,7 @@ public class DriveConstants {
                   .withStatorCurrentLimitEnable(true)
                   .withStatorCurrentLimit(kSlipCurrent))
           .withMotorOutput(
-            // TODO: Remove this? Or change to brake?
+              // TODO: Remove this? Or change to brake?
               new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast)); // REMOVE LATER
   public static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()

@@ -41,10 +41,29 @@ public class WristConstants {
   public final Angle wristMaxAngle;
   public final Distance wristLength;
 
-  public WristConstants(int motorId, int motorId2, int motorId3, InvertedValue motorInverted, int statorLimit,
-      int supplyLimit, double kP, double kI, double kD, double kS, double kV, double kG, double kA,
-      double motionMagicAcceleration, double motionMagicCruiseVelocity, double motionMagicJerk, double wristVelocity,
-      double motorToWristRotations, Angle angleOffset, Angle wristMinAngle, Angle wristMaxAngle, Distance wristLength) {
+  public WristConstants(
+      int motorId,
+      int motorId2,
+      int motorId3,
+      InvertedValue motorInverted,
+      int statorLimit,
+      int supplyLimit,
+      double kP,
+      double kI,
+      double kD,
+      double kS,
+      double kV,
+      double kG,
+      double kA,
+      double motionMagicAcceleration,
+      double motionMagicCruiseVelocity,
+      double motionMagicJerk,
+      double wristVelocity,
+      double motorToWristRotations,
+      Angle angleOffset,
+      Angle wristMinAngle,
+      Angle wristMaxAngle,
+      Distance wristLength) {
     this.motorId = motorId;
     this.motorId2 = motorId2;
     this.motorId3 = motorId3;
@@ -70,52 +89,54 @@ public class WristConstants {
   }
 
   // TODO: Fix later with real values
-  public static final WristConstants Pivot = new WristConstants(
-      18,
-      19,
-      20,
-      InvertedValue.CounterClockwise_Positive,
-      40,
-      80,
-      5,
-      0.0,
-      0.0,
-      0.000,
-      0.0,
-      0.0,
-      0.0,
-      1000.0,
-      1000.0,
-      1000.0,
-      100000,
-      1.0, // 4.846
-      Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-      Angle.ofBaseUnits(0, Rotations), // Resting on base
-      Angle.ofBaseUnits(0.569, Rotations), // 205 deg
-      Meters.of(0));
+  public static final WristConstants Pivot =
+      new WristConstants(
+          18,
+          19,
+          20,
+          InvertedValue.CounterClockwise_Positive,
+          40,
+          80,
+          5,
+          0.0,
+          0.0,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          100000,
+          1.0, // 4.846
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          Angle.ofBaseUnits(0, Rotations), // Resting on base
+          Angle.ofBaseUnits(0.569, Rotations), // 205 deg
+          Meters.of(0));
 
   // TODO: Fix later with real values
-  public static final WristConstants Wrist = new WristConstants(
-      0,
-      0,
-      0,
-      InvertedValue.CounterClockwise_Positive,
-      40,
-      80,
-      5,
-      0.0,
-      0.0,
-      0.000,
-      0.0,
-      0.0,
-      0.0,
-      1000.0,
-      1000.0,
-      1000.0,
-      10,
-      1.0,
-      Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-      Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
-      Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
-      Meters.of(0.10));
+  public static final WristConstants Wrist =
+      new WristConstants(
+          0,
+          0,
+          0,
+          InvertedValue.CounterClockwise_Positive,
+          40,
+          80,
+          5,
+          0.0,
+          0.0,
+          0.000,
+          0.0,
+          0.0,
+          0.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          10,
+          1.0,
+          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
+          Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
+          Meters.of(0.10));
 }

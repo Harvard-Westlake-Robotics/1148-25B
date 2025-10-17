@@ -13,12 +13,11 @@ import frc.robot.constants.WristConstants;
  * Inverse kinematics for a telescoping single-link arm with a wrist. All angles are Rotation2d (use
  * .fromRotations / .getRotations). Distances are WPILib Distance measures (meters).
  *
- * Conventions: 
- * - θ (shoulder): 0 = vertical up, + toward +x (rotations from vertical).
- * - β (wrist RELATIVE TO ARM): 0 = vertical when arm vertical (rotations).
- * - α (outtake, GLOBAL): rotations above horizontal (0 = level, + up).
+ * <p>Conventions: - θ (shoulder): 0 = vertical up, + toward +x (rotations from vertical). - β
+ * (wrist RELATIVE TO ARM): 0 = vertical when arm vertical (rotations). - α (outtake, GLOBAL):
+ * rotations above horizontal (0 = level, + up).
  *
- * Relationship: α = 0.25 - θ - β ⇒ β = 0.25 - θ - α (all in rotations).
+ * <p>Relationship: α = 0.25 - θ - β ⇒ β = 0.25 - θ - α (all in rotations).
  */
 public final class ArmKinematics {
 

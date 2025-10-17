@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -19,9 +18,9 @@ public class AlgaeIntake extends SubsystemBase {
   private IntakeConstants constants;
   private final String key = "AlgaeIntake";
   private static AlgaeIntake instance;
-  
-  private Boolean hasAlgae = false;
+
   SysIdRoutine sysId;
+  private Boolean hasAlgae = false;
 
   public Boolean hasAlgae() {
     return hasAlgae;
@@ -44,7 +43,7 @@ public class AlgaeIntake extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {
@@ -57,26 +56,23 @@ public class AlgaeIntake extends SubsystemBase {
     hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
   }
 
-  public void setVelocity(LinearVelocity velocity) {
+  public void runCharacterization(double voltage) {
+    io.runCharacterization(voltage);
+  }
+
+  public void runVelocity(LinearVelocity velocity) {
     io.runVelocity(velocity);
   }
 
-  public void runVoltage(double volts) {
-    io.runCharacterization(volts);
-  }
-
-  public void setVelocityMPS(double velocity) {
-    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
-    setVelocity(v);
-  } 
-
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));
+    return run(() -> runCharacterization(0.0))
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 }

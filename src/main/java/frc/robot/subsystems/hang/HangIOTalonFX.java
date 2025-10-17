@@ -27,7 +27,7 @@ public class HangIOTalonFX implements HangIO {
   private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
-  private final Debouncer motorConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
   public HangIOTalonFX() {
     hangMotor = new TalonFX(HangConstants.motorId);
@@ -59,10 +59,11 @@ public class HangIOTalonFX implements HangIO {
     motorCurrent = hangMotor.getStatorCurrent();
   }
 
+  @Override
   public void updateInputs(HangIOInputs inputs) {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
-    inputs.motorConnected = motorConnectedDebounce.calculate(hangMotor.isConnected());
+    inputs.motorConnected = motorConnectedDebouncer.calculate(hangMotor.isConnected());
     inputs.motorPositionMeters =
         motorPosition.getValueAsDouble() / HangConstants.rotationsToMetersRatio;
     inputs.motorVelocityMPS =
@@ -78,6 +79,8 @@ public class HangIOTalonFX implements HangIO {
 
   @Override
   public void runVelocity(LinearVelocity velocity) {
-    hangMotor.setControl(hangController.withVelocity(velocity.in(MetersPerSecond) * HangConstants.rotationsToMetersRatio));
+    hangMotor.setControl(
+        hangController.withVelocity(
+            velocity.in(MetersPerSecond) * HangConstants.rotationsToMetersRatio));
   }
 }

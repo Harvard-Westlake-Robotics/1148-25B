@@ -44,9 +44,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hang.Hang;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrists.Wrist;
 import frc.robot.subsystems.wrists.Pivot;
-
+import frc.robot.subsystems.wrists.Wrist;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
