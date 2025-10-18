@@ -17,7 +17,7 @@ public interface WristIO {
 
   public default void runCharacterization(double voltage) {}
 
-  public default void goToAngleClosedLoop(double angle) {}
+  public default void goToAngleClosedLoop(double angle, double offsetAngle) {}
 
   public default void tareAngle(double angle) {}
 }
