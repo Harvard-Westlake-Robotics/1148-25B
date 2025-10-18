@@ -18,8 +18,6 @@ import static frc.robot.util.PhoenixUtil.*;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -42,7 +40,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.RobotContainer;
 import frc.robot.constants.DriveConstants;
 import java.util.Queue;
 
@@ -53,11 +50,6 @@ import java.util.Queue;
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
 public class ModuleIOTalonFX implements ModuleIO {
-  // Constants for drift mode
-  protected static final double DRIFT_CURRENT_LIMIT_STATOR =
-      240; // Higher current limit for more torque during drift
-  protected static final double DRIFT_CURRENT_LIMIT_SUPPLY = 100; // Supply current limit
-
   protected final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       constants;
@@ -125,6 +117,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     driveConfig.MotionMagic.MotionMagicJerk = 9999;
     configureDriveMotor(driveConfig);
+    // TODO: Why is this here?
     tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
@@ -177,38 +170,21 @@ public class ModuleIOTalonFX implements ModuleIO {
   }
 
   /**
-   * Configures the drive motor with appropriate settings for normal operation or drift mode.
+   * Configures the drive motor with appropriate settings.
    *
    * @param driveConfig The drive motor configuration to modify
    */
   private void configureDriveMotor(TalonFXConfiguration driveConfig) {
-    // Choose neutral mode based on drift mode and module position
-    NeutralModeValue neutralMode;
-    if (RobotContainer.isDriftModeActive) {
-      // In drift mode: front = brake, rear = coast
-      neutralMode = isFrontModule ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    } else {
-      // Normal operation: all modules brake
-      neutralMode = NeutralModeValue.Brake;
-    }
-
-    driveConfig.MotorOutput.NeutralMode = neutralMode;
+    // Set neutral mode to brake
+    driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
 
-    // Configure current limits, higher in drift mode for more torque
-    if (RobotContainer.isDriftModeActive) {
-      driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = DRIFT_CURRENT_LIMIT_STATOR;
-      driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -DRIFT_CURRENT_LIMIT_STATOR;
-      driveConfig.CurrentLimits.StatorCurrentLimit = DRIFT_CURRENT_LIMIT_STATOR;
-      driveConfig.CurrentLimits.SupplyCurrentLimit = DRIFT_CURRENT_LIMIT_SUPPLY;
-      driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    } else {
-      driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent;
-      driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -constants.SlipCurrent;
-      driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
-      driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    }
+    // Configure current limits
+    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent;
+    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -constants.SlipCurrent;
+    driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
+    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     driveConfig.MotorOutput.Inverted =
         constants.DriveMotorInverted
@@ -222,11 +198,8 @@ public class ModuleIOTalonFX implements ModuleIO {
    * @param turnConfig The turn motor configuration to modify
    */
   private void configureTurnMotor(TalonFXConfiguration turnConfig) {
-    // Configure neutral mode based on drift mode
-    turnConfig.MotorOutput.NeutralMode =
-        RobotContainer.isDriftModeActive
-            ? NeutralModeValue.Brake // More resistance in drift mode
-            : NeutralModeValue.Coast; // Normal operation
+    // Set neutral mode to coast
+    turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     turnConfig.Slot0 = constants.SteerMotorGains;
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
@@ -240,15 +213,10 @@ public class ModuleIOTalonFX implements ModuleIO {
         };
     turnConfig.Feedback.RotorToSensorRatio = constants.SteerMotorGearRatio;
 
+    // TODO: What does this do?
     // Adjust motion magic parameters for drift mode
     double cruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
     double acceleration = cruiseVelocity / 0.100;
-
-    if (RobotContainer.isDriftModeActive) {
-      // Faster rotation response in drift mode
-      cruiseVelocity *= 1.5;
-      acceleration *= 2.0;
-    }
 
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = cruiseVelocity;
     turnConfig.MotionMagic.MotionMagicAcceleration = acceleration;
@@ -338,45 +306,5 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
               rotation.getRotations());
         });
-  }
-
-  /**
-   * Updates the motor configuration when drift mode changes. This method should be called whenever
-   * RobotContainer.isDriftModeActive changes.
-   */
-  public void updateDriftModeConfiguration() {
-    // Update drive motor configuration
-    var driveConfig = new MotorOutputConfigs();
-    driveTalon.getConfigurator().refresh(driveConfig);
-
-    // Set neutral mode based on drift mode and module position
-    if (RobotContainer.isDriftModeActive) {
-      driveConfig.NeutralMode = isFrontModule ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    } else {
-      driveConfig.NeutralMode = NeutralModeValue.Brake;
-    }
-    driveTalon.getConfigurator().apply(driveConfig);
-
-    // Update current limits
-    var currentLimits = new CurrentLimitsConfigs();
-    driveTalon.getConfigurator().refresh(currentLimits);
-
-    if (RobotContainer.isDriftModeActive) {
-      currentLimits.StatorCurrentLimit = DRIFT_CURRENT_LIMIT_STATOR;
-      currentLimits.SupplyCurrentLimit = DRIFT_CURRENT_LIMIT_SUPPLY;
-      currentLimits.SupplyCurrentLimitEnable = true;
-    } else {
-      currentLimits.StatorCurrentLimit = constants.SlipCurrent;
-      currentLimits.StatorCurrentLimitEnable = true;
-    }
-    driveTalon.getConfigurator().apply(currentLimits);
-
-    // Update turn motor configuration
-    var turnOutputConfig = new MotorOutputConfigs();
-    turnTalon.getConfigurator().refresh(turnOutputConfig);
-
-    turnOutputConfig.NeutralMode =
-        RobotContainer.isDriftModeActive ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    turnTalon.getConfigurator().apply(turnOutputConfig);
   }
 }

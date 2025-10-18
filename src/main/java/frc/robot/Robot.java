@@ -18,9 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DriveConstants;
@@ -45,14 +43,6 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   public static RobotContainer robotContainer;
 
-  private static final String VERSION_KEY = "CodeVersion";
-  private static final String MATCH_COUNT_KEY = "MatchCount";
-
-  // Current version of the code
-  private static final int CURRENT_VERSION = 0; // Increment this when uploading new code
-
-  private static final int MATCH_THRESHOLD = Integer.MAX_VALUE;
-
   public void setSimulatedField() {
     SimulatedArena.overrideInstance(new Arena2025Reefscape());
     SimulatedArena.getInstance(); // Required to initialize MapleSim
@@ -62,24 +52,6 @@ public class Robot extends LoggedRobot {
   }
 
   public Robot() {
-    // Record metadata
-    // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    // Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    // Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    // Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    // switch (BuildConstants.DIRTY) {
-    // case 0:
-    // Logger.recordMetadata("GitDirty", "All changes committed");
-    // break;
-    // case 1:
-    // Logger.recordMetadata("GitDirty", "Uncomitted changes");
-    // break;
-    // default:
-    // Logger.recordMetadata("GitDirty", "Unknown");
-    // break;
-    // }
-
     // Set up data receivers & replay source
     switch (RobotContainer.currentMode) {
       case REAL:
@@ -91,6 +63,7 @@ public class Robot extends LoggedRobot {
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
+        setSimulatedField();
         break;
 
       case REPLAY:
@@ -193,32 +166,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     NetworkCommunicator.getInstance().setIsAuto(false);
-    int storedVersion = Preferences.getInt(VERSION_KEY, -1); // Default -1 if not set
-    int matchCount = Preferences.getInt(MATCH_COUNT_KEY, 0);
 
-    // Check if the current code version is different from the stored version
-    if (CURRENT_VERSION != storedVersion) {
-      // New code has been uploaded
-      matchCount = 0; // Reset match count
-      Preferences.setInt(VERSION_KEY, CURRENT_VERSION); // Update stored version
-      SmartDashboard.putString("Status", "New code detected. Match count reset.");
-    } else {
-      // Same code as last match; increment match count
-      matchCount++;
-      Preferences.setInt(MATCH_COUNT_KEY, matchCount); // Update match count
-      SmartDashboard.putNumber("Match Count", matchCount);
-
-      // Check if match count has reached the threshold
-      if (matchCount >= MATCH_THRESHOLD) {
-        RobotContainer.serialize(); // Run the serialize function
-
-        // Optionally, reset the match count after serialization
-        matchCount = 0;
-        Preferences.setInt(MATCH_COUNT_KEY, matchCount);
-      } else {
-        SmartDashboard.putString("Status", "Match count: " + matchCount);
-      }
-    }
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

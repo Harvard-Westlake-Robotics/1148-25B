@@ -73,7 +73,6 @@ public class Drive extends SubsystemBase {
                   new ModuleIOTalonFXReal(DriveConstants.BackRight),
                   pose -> {});
           break;
-
         case SIM:
           instance =
               new Drive(
@@ -150,9 +149,7 @@ public class Drive extends SubsystemBase {
   // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
 
-  private static final double ELEVATOR_ANGLE_DEGREES = 40.0;
-
-  private final Consumer<Pose2d> resetSimulationPoseCallBack;
+  private final Consumer<Pose2d> resetSimulationPoseCallback;
 
   public Drive(
       GyroIO gyroIO,
@@ -160,9 +157,9 @@ public class Drive extends SubsystemBase {
       ModuleIOTalonFX frModuleIO,
       ModuleIOTalonFX blModuleIO,
       ModuleIOTalonFX brModuleIO,
-      Consumer<Pose2d> resetSimulationPoseCallBack) {
+      Consumer<Pose2d> resetSimulationPoseCallback) {
     this.gyroIO = gyroIO;
-    this.resetSimulationPoseCallBack = resetSimulationPoseCallBack;
+    this.resetSimulationPoseCallback = resetSimulationPoseCallback;
     modules[0] = new Module(flModuleIO, 0, DriveConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, DriveConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, DriveConstants.BackLeft);
@@ -213,8 +210,11 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    // Set simulation pose
     setPose(new Pose2d());
 
+    // Prevents double initialization since this constructor is called directly in RobotContainer
     Drive.instance = this;
 
     // Setup NetworkTables communication
@@ -238,9 +238,6 @@ public class Drive extends SubsystemBase {
       for (var module : modules) {
         module.stop();
       }
-      // for (LimeLightCam limelight : limelights) {
-      // limelight.setIMUMode(1);
-      // }
     }
 
     // Log empty setpoint states when disabled
@@ -285,22 +282,22 @@ public class Drive extends SubsystemBase {
 
       AprilTagResult result_a = limelight_a.getEstimate().orElse(null);
       if (result_a != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultA", result_a.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultA", result_a.pose);
       }
       AprilTagResult result_b = limelight_b.getEstimate().orElse(null);
       if (result_b != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultB", result_b.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultB", result_b.pose);
       }
       AprilTagResult result_c = limelight_c.getEstimate().orElse(null);
       if (result_c != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultC", result_c.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultC", result_c.pose);
       }
       AprilTagResult result_d = limelight_d.getEstimate().orElse(null);
       if (result_d != null) {
-        Logger.recordOutput("RealOutputs/apriltagResultD", result_d.pose);
+        Logger.recordOutput("RealOutputs/Drive/apriltagResultD", result_d.pose);
       }
 
-      if (result_a != null && !shouldRejectPose(result_a) && limeLightsActive) {
+      if (result_a != null && shouldAcceptPose(result_a) && limeLightsActive) {
         addVisionMeasurement(
             result_a.pose,
             result_a.time,
@@ -308,36 +305,36 @@ public class Drive extends SubsystemBase {
                 DriveConstants.xyStdDev(result_a),
                 DriveConstants.xyStdDev(result_a),
                 DriveConstants.rStdDev(result_a)));
+      }
 
-        if (result_b != null && !shouldRejectPose(result_b) && limeLightsActive) {
-          addVisionMeasurement(
-              result_b.pose,
-              result_b.time,
-              VecBuilder.fill(
-                  DriveConstants.xyStdDev(result_b),
-                  DriveConstants.xyStdDev(result_b),
-                  DriveConstants.rStdDev(result_b)));
-        }
+      if (result_b != null && shouldAcceptPose(result_b) && limeLightsActive) {
+        addVisionMeasurement(
+            result_b.pose,
+            result_b.time,
+            VecBuilder.fill(
+                DriveConstants.xyStdDev(result_b),
+                DriveConstants.xyStdDev(result_b),
+                DriveConstants.rStdDev(result_b)));
+      }
 
-        if (result_c != null && !shouldRejectPose(result_c) && limeLightsActive) {
-          addVisionMeasurement(
-              result_c.pose,
-              result_c.time,
-              VecBuilder.fill(
-                  DriveConstants.xyStdDev(result_c),
-                  DriveConstants.xyStdDev(result_c),
-                  DriveConstants.rStdDev(result_c)));
-        }
+      if (result_c != null && shouldAcceptPose(result_c) && limeLightsActive) {
+        addVisionMeasurement(
+            result_c.pose,
+            result_c.time,
+            VecBuilder.fill(
+                DriveConstants.xyStdDev(result_c),
+                DriveConstants.xyStdDev(result_c),
+                DriveConstants.rStdDev(result_c)));
+      }
 
-        if (result_d != null && !shouldRejectPose(result_d) && limeLightsActive) {
-          addVisionMeasurement(
-              result_d.pose,
-              result_d.time,
-              VecBuilder.fill(
-                  DriveConstants.xyStdDev(result_d),
-                  DriveConstants.xyStdDev(result_d),
-                  DriveConstants.rStdDev(result_d)));
-        }
+      if (result_d != null && shouldAcceptPose(result_d) && limeLightsActive) {
+        addVisionMeasurement(
+            result_d.pose,
+            result_d.time,
+            VecBuilder.fill(
+                DriveConstants.xyStdDev(result_d),
+                DriveConstants.xyStdDev(result_d),
+                DriveConstants.rStdDev(result_d)));
       }
 
       // Update gyro alert
@@ -352,9 +349,6 @@ public class Drive extends SubsystemBase {
    * @param speeds Chassis speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
-    // Capture rotation input for drift mode
-    double rotationInput = speeds.omegaRadiansPerSecond / getMaxAngularSpeedRadPerSec();
-
     // Convert to discrete time for better accuracy
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, DISCRETIZATION_TIME_SECONDS);
 
@@ -368,15 +362,9 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
-    // Apply drift mode or regular optimization
-    if (RobotContainer.isDriftModeActive) {
-      // Apply drift mode adjustments
-      applyDriftModeAdjustments(setpointStates, rotationInput);
-    } else {
-      // Apply regular optimization to prevent module flipping
-      for (int i = 0; i < 4; i++) {
-        setpointStates[i] = optimizeSwerveModuleState(modules[i].getAngle(), setpointStates[i]);
-      }
+    // Apply optimization to prevent module flipping
+    for (int i = 0; i < 4; i++) {
+      setpointStates[i].optimize(modules[i].getAngle());
     }
 
     // Send setpoints to modules
@@ -386,51 +374,6 @@ public class Drive extends SubsystemBase {
 
     // Log optimized setpoints
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
-  }
-
-  /**
-   * Custom optimization method to prevent modules from flipping 180 degrees. This ensures smoother
-   * direction changes, especially important for drift mode.
-   *
-   * @param currentAngle The current module angle
-   * @param desiredState The desired module state
-   * @return An optimized module state that avoids flipping
-   */
-  private SwerveModuleState optimizeSwerveModuleState(
-      Rotation2d currentAngle, SwerveModuleState desiredState) {
-    // Handle zero velocity case - maintain current angle to prevent unnecessary
-    // movement
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
-      return new SwerveModuleState(0, currentAngle);
-    }
-
-    double targetAngle = desiredState.angle.getDegrees();
-    double currentAngleDegrees = currentAngle.getDegrees();
-
-    // Normalize angles to range (-180, 180]
-    targetAngle = targetAngle % 360;
-    if (targetAngle > 180) targetAngle -= 360;
-    if (targetAngle <= -180) targetAngle += 360;
-
-    currentAngleDegrees = currentAngleDegrees % 360;
-    if (currentAngleDegrees > 180) currentAngleDegrees -= 360;
-    if (currentAngleDegrees <= -180) currentAngleDegrees += 360;
-
-    // Calculate angle difference (shortest path)
-    double deltaAngle = targetAngle - currentAngleDegrees;
-    if (deltaAngle > 180) deltaAngle -= 360;
-    if (deltaAngle < -180) deltaAngle += 360;
-
-    // If change would be greater than 90 degrees, flip direction and angle
-    if (Math.abs(deltaAngle) > 90) {
-      return new SwerveModuleState(
-          -desiredState.speedMetersPerSecond,
-          Rotation2d.fromDegrees(targetAngle + (deltaAngle > 90 ? -180 : 180)));
-    }
-
-    // Otherwise, use the desired state but target the exact angle
-    return new SwerveModuleState(
-        desiredState.speedMetersPerSecond, Rotation2d.fromDegrees(targetAngle));
   }
 
   /**
@@ -531,7 +474,7 @@ public class Drive extends SubsystemBase {
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    resetSimulationPoseCallBack.accept(pose);
+    resetSimulationPoseCallback.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
@@ -576,44 +519,29 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Determines if a vision pose should be rejected based on various criteria.
+   * Determines if a vision pose should be accepted based on various criteria.
    *
    * @param latestResult The AprilTag detection result
-   * @return True if the pose should be rejected, false otherwise
+   * @return True if the pose should be accepted, false otherwise
    */
-  public boolean shouldRejectPose(AprilTagResult latestResult) {
+  public boolean shouldAcceptPose(AprilTagResult latestResult) {
     // Always accept poses when disabled
     if (DriverStation.isDisabled()) {
-      return false;
+      return true;
     }
 
     // Reject if rotating too quickly
     if (Units.radiansToDegrees(gyroInputs.yawVelocityRadPerSec) >= MAX_YAW_RATE_DEGREES_PER_SEC) {
-      return true;
+      return false;
     }
 
     // Reject if outside field bounds
     if (isOutsideFieldBounds(latestResult.pose)) {
-      return true;
+      return false;
     }
 
-    // // Reject if moving too fast
-    // if (isMovingTooFast()) {
-    // return true;
-    // }
-
-    // // Reject if pose correction is too large
-    // if (isPoseCorrectionTooLarge(latestResult)) {
-    // return true;
-    // }
-
-    // // Reject based on tag characteristics
-    // if (isTagDetectionUnreliable(latestResult)) {
-    // return true;
-    // }
-
     // Accept the pose
-    return false;
+    return true;
   }
 
   /** Checks if a pose is outside the field boundaries. */
@@ -624,186 +552,5 @@ public class Drive extends SubsystemBase {
         || pose.getY() < -FieldConstants.FIELD_BORDER_MARGIN_METERS
         || pose.getY()
             > FieldConstants.FIELD_HEIGHT_METERS + FieldConstants.FIELD_BORDER_MARGIN_METERS;
-  }
-
-  /**
-   * Converts wheel rotations to meters.
-   *
-   * @param wheelRotations The number of wheel rotations
-   * @return The equivalent distance in meters
-   */
-  public static double rotationsToMeters(double wheelRotations) {
-    return wheelRotations * DriveConstants.FrontLeft.WheelRadius * 2 * Math.PI;
-  }
-
-  /**
-   * Calculates the distance from the reef edge.
-   *
-   * @return The distance in meters
-   */
-  public double distanceFromReefEdge() {
-    // Calculate translation with robot offset
-    Translation2d robotTranslation =
-        getPose()
-            .getTranslation()
-            .plus(
-                new Translation2d(
-                    FieldConstants.ROBOT_REEF_OFFSET_METERS, getPose().getRotation()));
-
-    // Determine reef center based on alliance
-    double reefCenterX =
-        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-            ? FieldConstants.BLUE_REEF_CENTER_X
-            : FieldConstants.RED_REEF_CENTER_X;
-
-    // Calculate distance to reef center and subtract reef radius
-    double distToReefCenter =
-        robotTranslation.getDistance(new Translation2d(reefCenterX, FieldConstants.REEF_CENTER_Y));
-
-    return distToReefCenter - FieldConstants.REEF_CENTER_RADIUS;
-  }
-
-  /**
-   * Calculates the elevator height based on the distance from the reef edge.
-   *
-   * @return The height in meters
-   */
-  public double getElevatorHeight() {
-    // Use trigonometry to calculate height based on distance
-    return distanceFromReefEdge() * (1 / Rotation2d.fromDegrees(ELEVATOR_ANGLE_DEGREES).getTan());
-  }
-
-  /**
-   * Applies drift mode adjustments to setpoint states for realistic drifting behavior. Configures
-   * wheel angles and speeds based on physics principles of drifting vehicles.
-   *
-   * @param setpointStates The module states to modify
-   * @param rotationInput The current rotation input (-1 to 1)
-   */
-  private void applyDriftModeAdjustments(SwerveModuleState[] setpointStates, double rotationInput) {
-    if (!RobotContainer.isDriftModeActive) {
-      return;
-    }
-
-    // Adjust based on rotation input (turning left/right)
-    boolean turningLeft = rotationInput > DriveConstants.DRIFT_ROTATION_THRESHOLD;
-    boolean turningRight = rotationInput < -DriveConstants.DRIFT_ROTATION_THRESHOLD;
-    boolean hardTurn = Math.abs(rotationInput) > 0.7;
-
-    // Determine front/rear module indices
-    int frontLeft = 0;
-    int frontRight = 1;
-    int rearLeft = 2;
-    int rearRight = 3;
-
-    // Calculate dynamic angles based on turn intensity
-    double frontAngleOffset = hardTurn ? 0.0 : 0.0;
-    double rearAngleBase = DriveConstants.DRIFT_REAR_ANGLE_DEGREES;
-
-    // Front wheels - Dynamic steering angle based on turn direction
-    if (turningLeft) {
-      // When turning left: point left wheel more inward, right wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    } else if (turningRight) {
-      // When turning right: point right wheel more inward, left wheel less
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    } else {
-      // Going straight: normal angles
-      setpointStates[frontLeft].angle =
-          Rotation2d.fromDegrees(setpointStates[frontLeft].angle.getDegrees());
-      setpointStates[frontRight].angle =
-          Rotation2d.fromDegrees(setpointStates[frontRight].angle.getDegrees());
-    }
-
-    // Rear wheels - Point slightly outward for stability, with dynamic adjustment
-    // for turning
-    if (turningLeft) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 1.2); // Exaggerate inside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 0.8); // Reduce outside rear
-    } else if (turningRight) {
-      setpointStates[rearLeft].angle =
-          Rotation2d.fromDegrees(-rearAngleBase * 0.8); // Reduce outside rear
-      setpointStates[rearRight].angle =
-          Rotation2d.fromDegrees(rearAngleBase * 1.2); // Exaggerate inside rear
-    } else {
-      // Balanced for straight driving
-      setpointStates[rearLeft].angle = Rotation2d.fromDegrees(-rearAngleBase);
-      setpointStates[rearRight].angle = Rotation2d.fromDegrees(rearAngleBase);
-    }
-
-    // Apply power distribution
-    // Front wheels - always reversed for drift (pulling back)
-    double frontSpeedBase = DriveConstants.DRIFT_FRONT_SPEED_MULTIPLIER;
-    if (turningLeft) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
-    } else if (turningRight) {
-      setpointStates[frontLeft].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
-      setpointStates[frontRight].speedMetersPerSecond *=
-          frontSpeedBase * DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
-    } else {
-      setpointStates[frontLeft].speedMetersPerSecond *= frontSpeedBase;
-      setpointStates[frontRight].speedMetersPerSecond *= frontSpeedBase;
-    }
-
-    // Rear wheels - reduced power (pushing forward)
-    double rearSpeedBase = DriveConstants.DRIFT_REAR_SPEED_MULTIPLIER;
-    // Apply more pronounced differential in hard turns
-    double innerMultiplier =
-        hardTurn
-            ? DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER * 0.8
-            : DriveConstants.DRIFT_INNER_WHEEL_MULTIPLIER;
-    double outerMultiplier =
-        hardTurn
-            ? DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER * 1.2
-            : DriveConstants.DRIFT_OUTER_WHEEL_MULTIPLIER;
-  }
-
-  /**
-   * Updates a module's motor configurations when drift mode is toggled.
-   *
-   * @param moduleIndex The index of the module to update (0-3)
-   */
-  public void updateModuleConfiguration(int moduleIndex) {
-    if (moduleIndex >= 0 && moduleIndex < modules.length) {
-      // Access the module's ModuleIO
-      if (modules[moduleIndex].getIO() instanceof ModuleIOTalonFX moduleTalon) {
-        // Update the motor configurations
-        moduleTalon.updateDriftModeConfiguration();
-      }
-    }
-  }
-}
-
-/** Custom exception class for specific error handling. */
-class InvalidRobotNameException extends RuntimeException {
-  String[] invalidStrings = {
-    "Elevator", "WristCommand", "ControllerLogging", "LocalADStarAK", "PLog", "IntakeIOTalonFX",
-  };
-
-  /** Constructs a new exception with custom stack trace. */
-  public InvalidRobotNameException(String message) {
-    super(message);
-    // Select a random string from the array
-    String invalidString = invalidStrings[(int) (Math.random() * invalidStrings.length)];
-
-    // Create a fake stack trace with the random string
-    StackTraceElement[] stack =
-        new StackTraceElement[] {
-          new StackTraceElement(
-              invalidString, "[null]", invalidString + ".java", (int) (Math.random() * 10000))
-        };
-    this.setStackTrace(stack);
   }
 }

@@ -21,12 +21,11 @@ public interface ElevatorIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
-  /** Run the drive motor at the specified velocity. */
-  public default void setHeightClosedLoop(double velocityRadPerSec) {}
-
-  public default void zeroMotors() {}
-
   public default void runCharacterization(double voltage) {}
+
+  public default void goToHeightClosedLoop(double height) {}
+
+  public default void tareHeight(double height) {}
 
   public default double getTarget() {
     return 0.0;

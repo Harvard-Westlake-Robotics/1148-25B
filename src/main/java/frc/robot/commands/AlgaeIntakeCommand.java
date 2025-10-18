@@ -8,6 +8,7 @@ import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.intake.AlgaeIntake;
 
 public class AlgaeIntakeCommand extends Command {
+  // Run velocity
   private LinearVelocity velocity;
   private boolean algaeLastStop;
 
@@ -23,7 +24,7 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
   public void execute() {
-    AlgaeIntake.getInstance().setVelocity(velocity);
+    AlgaeIntake.getInstance().runVelocity(velocity);
   }
 
   @Override
@@ -36,28 +37,26 @@ public class AlgaeIntakeCommand extends Command {
 
   public void intake() {
     if (!algaeLastStop) {
-      this.velocity =
-          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.intakeVelocity, MetersPerSecond);
+      this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
     } else {
-      this.velocity =
-          LinearVelocity.ofBaseUnits(IntakeConstants.AlgaeIntake.outtakeVelocity, MetersPerSecond);
+      this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
     }
   }
 
   public void stop() {
     if (AlgaeIntake.getInstance().hasAlgae()) {
       this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
-      AlgaeIntake.getInstance().runVoltage(1.5);
+      // TODO: Why is this here?
+      AlgaeIntake.getInstance().runCharacterization(1.5);
       algaeLastStop = true;
     } else {
       this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
-      AlgaeIntake.getInstance().runVoltage(0);
+      AlgaeIntake.getInstance().runCharacterization(0);
       algaeLastStop = false;
     }
   }
 
-  public void setVelocity(double velocity) {
-    LinearVelocity v = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
-    this.velocity = v;
+  public void runVelocity(double velocity) {
+    this.velocity = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
   }
 }

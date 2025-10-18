@@ -13,8 +13,8 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.wrist.Pivot;
-import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrists.Pivot;
+import frc.robot.subsystems.wrists.Wrist;
 import frc.robot.util.ArmKinematics;
 
 public class ArmCommand extends Command {
@@ -62,9 +62,9 @@ public class ArmCommand extends Command {
 
   @Override
   public void execute() {
-    Pivot.getInstance().goToAngle(targetPos[0]);
-    Elevator.getInstance().goToHeight(targetPos[1]);
-    Wrist.getInstance().goToAngle(targetPos[2]);
+    Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
+    Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
+    Wrist.getInstance().goToAngleClosedLoop(targetPos[2]);
   }
 
   @Override
@@ -72,7 +72,7 @@ public class ArmCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(targetPos[1] - Elevator.getInstance().getExtention()) < 2;
+    return Math.abs(targetPos[1] - Elevator.getInstance().getExtension()) < 2;
   }
 
   public void setHeight(ScoringLevel level) {
@@ -81,9 +81,9 @@ public class ArmCommand extends Command {
     // Current joint pose (rotations + meters)
     var current =
         new ArmKinematics.JointPose(
-            Rotation2d.fromRotations(Pivot.getInstance().getWristPosition()),
-            Meters.of(Elevator.getInstance().getExtention()), // L
-            Rotation2d.fromRotations(Wrist.getInstance().getWristPosition()));
+            Rotation2d.fromRotations(Pivot.getInstance().getAngle()), // Theta
+            Meters.of(Elevator.getInstance().getExtension()), // L
+            Rotation2d.fromRotations(Wrist.getInstance().getAngle())); // Beta
 
     var target =
         new ArmKinematics.Target(
@@ -99,10 +99,6 @@ public class ArmCommand extends Command {
 
   public boolean facingForward() {
     Pose2d pose = Drive.getInstance().getPose();
-    Translation2d translation = pose.getTranslation();
-    // Construct unitVector for use later
-    Translation2d unitVector =
-        translation.plus(new Translation2d(0, 1).rotateBy(pose.getRotation()));
     Translation2d robotTranslation =
         Drive.getInstance()
             .getPose()
@@ -117,26 +113,18 @@ public class ArmCommand extends Command {
         DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
             ? FieldConstants.BLUE_REEF_CENTER_X
             : FieldConstants.RED_REEF_CENTER_X;
-    // Find vector from robot to reef, if anything is wrong its this or the atan
-    // statement
+    // Find vector from robot to reef for finding angle
     Translation2d vectorReef =
         new Translation2d(
-            robotTranslation.getX() - reefCenterX,
-            robotTranslation.getY() - FieldConstants.REEF_CENTER_Y);
-    // Find theta using atan2, if anything is wrong its this or the vector reef
-    // construction
-    double theta =
-        Math.atan2(
-            unitVector.getX() * vectorReef.getY() - unitVector.getY() * vectorReef.getX(),
-            unitVector.getX() * unitVector.getX() + unitVector.getY() * unitVector.getY());
-    if (-1 * Math.PI <= theta && theta <= 0) {
-      return true;
-    } else {
-      return false;
-    }
+            reefCenterX - robotTranslation.getX(),
+            FieldConstants.REEF_CENTER_Y - robotTranslation.getY());
+    // Find theta by subtracting angle to reef from robot angle
+    double theta = Math.abs(vectorReef.getAngle().minus(pose.getRotation()).getRadians());
+    return theta >= 0 && theta <= Math.PI;
   }
 
   public double[] getTargetPos(ScoringLevel level) {
+    // TODO: Add real values
     switch (level) {
       case SOURCE_CORAL:
         outtakePosition = false;

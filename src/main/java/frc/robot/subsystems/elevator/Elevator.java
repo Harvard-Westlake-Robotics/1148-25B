@@ -11,10 +11,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-  private ElevatorIO io;
-  private static Elevator instance = null;
+  private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-  private String key;
+
+  private final String key = "Elevator";
+  private static Elevator instance = null;
   private DigitalInput dio = new DigitalInput(5);
   SysIdRoutine sysId;
 
@@ -27,7 +28,6 @@ public class Elevator extends SubsystemBase {
 
   private Elevator() {
     io = new ElevatorIOTalonFX();
-    this.key = "Elevator";
     sysId =
         new SysIdRoutine(
             new Config(
@@ -41,21 +41,23 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
+
+    // TODO: What does this do?
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
-      io.zeroMotors();
+      io.tareHeight(0);
     }
-  }
-
-  public void goToHeight(double height) {
-    io.setHeightClosedLoop(height);
-  }
-
-  public double getExtention() {
-    return inputs.elevator1PositionMeters;
   }
 
   public void runCharacterization(double voltage) {
     io.runCharacterization(voltage);
+  }
+
+  public void goToHeightClosedLoop(double height) {
+    io.goToHeightClosedLoop(height);
+  }
+
+  public double getExtension() {
+    return inputs.elevator1PositionMeters;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

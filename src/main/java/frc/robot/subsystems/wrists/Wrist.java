@@ -1,41 +1,42 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.wrists;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.IntakeConstants;
+import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
-public class AlgaeIntake extends SubsystemBase {
-  private final IntakeIO io;
-  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+public class Wrist extends SubsystemBase {
+  private final WristIOTalonFX io1;
+  private final WristIOTalonFX io2;
+  private final WristIOInputsAutoLogged inputs1 = new WristIOInputsAutoLogged();
+  private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
 
-  private IntakeConstants constants;
-  private final String key = "AlgaeIntake";
-  private static AlgaeIntake instance;
+  private final WristConstants constants;
+  private final String key = "RealOutputs/Wrist";
+  private static Wrist instance;
 
   SysIdRoutine sysId;
-  private Boolean hasAlgae = false;
 
-  public Boolean hasAlgae() {
-    return hasAlgae;
+  public double getAngle() {
+    return inputs1.wristPositionRot / constants.motorToWristRotations;
   }
 
-  public static AlgaeIntake getInstance() {
+  public static Wrist getInstance() {
     if (instance == null) {
-      instance = new AlgaeIntake();
+      instance = new Wrist();
     }
     return instance;
   }
 
-  public AlgaeIntake() {
-    this.constants = IntakeConstants.AlgaeIntake;
-    io = new IntakeIOTalonFX(constants, 1);
+  public Wrist() {
+    this.constants = WristConstants.Wrist;
+    io1 = new WristIOTalonFX(constants, 1);
+    io2 = new WristIOTalonFX(constants, 2);
     sysId =
         new SysIdRoutine(
             new Config(
@@ -46,22 +47,26 @@ public class AlgaeIntake extends SubsystemBase {
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
-  public IntakeConstants getConstants() {
-    return constants;
-  }
-
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
-    hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
+    io1.updateInputs(inputs1);
+    Logger.processInputs(key + "/Motor1", inputs1);
+    io2.updateInputs(inputs2);
+    Logger.processInputs(key + "/Motor2", inputs2);
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+    io1.runCharacterization(voltage);
+    io2.runCharacterization(voltage);
   }
 
-  public void runVelocity(LinearVelocity velocity) {
-    io.runVelocity(velocity);
+  public void goToAngleClosedLoop(double angle) {
+    io1.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
+    io2.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
+  }
+
+  public void tareAngle(double angle) {
+    io1.tareAngle(angle);
+    io2.tareAngle(angle);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

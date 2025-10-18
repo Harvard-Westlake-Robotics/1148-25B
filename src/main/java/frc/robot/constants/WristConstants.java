@@ -1,17 +1,23 @@
 package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.signals.InvertedValue;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 
 public class WristConstants {
+  // Motor constants
   public final int motorId;
   public final int motorId2;
   public final int motorId3;
   public final InvertedValue motorInverted;
-  public final double wristVelocity;
+  public final int statorLimit;
+  public final int supplyLimit;
+
+  // PID constants
   public double kP;
   public double kI;
   public double kD;
@@ -20,22 +26,28 @@ public class WristConstants {
   public double kG;
   public double kA;
 
-  public double ANGLE_MAX_ACCELERATION;
-  public double ANGLE_MAX_VELOCITY;
-  public double ANGLE_MAX_JERK;
-  public double motorToWristRotations;
-  public Angle angleOffset;
-  public int statorLimit;
-  public int supplyLimit;
-  public Rotation2d WRIST_MIN_DEG;
-  public Rotation2d WRIST_MAX_DEG;
+  // Motion magic constants
+  public final double motionMagicAcceleration;
+  public final double motionMagicCruiseVelocity;
+  public final double motionMagicJerk;
+
+  // Velocity constants
+  public final double wristVelocity;
+
+  // Physical constants
+  public final double motorToWristRotations;
+  public final Angle angleOffset;
+  public final Angle wristMinAngle;
+  public final Angle wristMaxAngle;
+  public final Distance wristLength;
 
   public WristConstants(
       int motorId,
       int motorId2,
       int motorId3,
       InvertedValue motorInverted,
-      double wristVelocity,
+      int statorLimit,
+      int supplyLimit,
       double kP,
       double kI,
       double kD,
@@ -43,20 +55,21 @@ public class WristConstants {
       double kV,
       double kG,
       double kA,
-      double ANGLE_MAX_ACCELERATION,
-      double ANGLE_MAX_VELOCITY,
-      double ANGLE_MAX_JERK,
+      double motionMagicAcceleration,
+      double motionMagicCruiseVelocity,
+      double motionMagicJerk,
+      double wristVelocity,
       double motorToWristRotations,
       Angle angleOffset,
-      int supplyLimit,
-      int statorLimit,
-      Rotation2d WRIST_MIN_DEG,
-      Rotation2d WRIST_MAX_DEG) {
+      Angle wristMinAngle,
+      Angle wristMaxAngle,
+      Distance wristLength) {
     this.motorId = motorId;
     this.motorId2 = motorId2;
     this.motorId3 = motorId3;
     this.motorInverted = motorInverted;
-    this.wristVelocity = wristVelocity;
+    this.statorLimit = statorLimit;
+    this.supplyLimit = supplyLimit;
     this.kP = kP;
     this.kI = kI;
     this.kD = kD;
@@ -64,15 +77,15 @@ public class WristConstants {
     this.kV = kV;
     this.kG = kG;
     this.kA = kA;
-    this.ANGLE_MAX_ACCELERATION = ANGLE_MAX_ACCELERATION;
-    this.ANGLE_MAX_VELOCITY = ANGLE_MAX_VELOCITY;
-    this.ANGLE_MAX_JERK = ANGLE_MAX_JERK;
+    this.motionMagicAcceleration = motionMagicAcceleration;
+    this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
+    this.motionMagicJerk = motionMagicJerk;
+    this.wristVelocity = wristVelocity;
     this.motorToWristRotations = motorToWristRotations;
     this.angleOffset = angleOffset;
-    this.supplyLimit = supplyLimit;
-    this.statorLimit = statorLimit;
-    this.WRIST_MIN_DEG = WRIST_MIN_DEG;
-    this.WRIST_MAX_DEG = WRIST_MAX_DEG;
+    this.wristMinAngle = wristMinAngle;
+    this.wristMaxAngle = wristMaxAngle;
+    this.wristLength = wristLength;
   }
 
   // TODO: Fix later with real values
@@ -82,7 +95,8 @@ public class WristConstants {
           26,
           27,
           InvertedValue.CounterClockwise_Positive,
-          100000,
+          40,
+          80,
           5,
           0.0,
           0.0,
@@ -93,12 +107,12 @@ public class WristConstants {
           1000.0,
           1000.0,
           1000.0,
+          100000,
           1.0, // 4.846
           Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-          40,
-          80,
-          Rotation2d.fromRotations(0), // Resting on base
-          Rotation2d.fromRotations(0.569)); // 205 deg
+          Angle.ofBaseUnits(0, Rotations), // Resting on base
+          Angle.ofBaseUnits(0.569, Rotations), // 205 deg
+          Meters.of(0));
 
   // TODO: Fix later with real values
   public static final WristConstants Wrist =
@@ -107,7 +121,8 @@ public class WristConstants {
           0,
           0,
           InvertedValue.CounterClockwise_Positive,
-          10,
+          40,
+          80,
           5,
           0.0,
           0.0,
@@ -118,10 +133,10 @@ public class WristConstants {
           1000.0,
           1000.0,
           1000.0,
+          10,
           1.0,
           Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-          40,
-          80,
-          Rotation2d.fromRotations(-1.0 / 3.0), // -120°
-          Rotation2d.fromRotations(1.0 / 3.0)); // +120°
+          Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
+          Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
+          Meters.of(0.10));
 }
