@@ -21,7 +21,7 @@ public class Hang extends SubsystemBase {
 
   private boolean hasBar = false;
   // TODO: Make private and encapsulate
-  public Servo servo = new Servo(0);
+  public Servo servo = new Servo(7);
 
   public Boolean hasBar() {
     return hasBar;

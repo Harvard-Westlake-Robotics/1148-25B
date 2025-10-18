@@ -74,10 +74,10 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorCurrent = intakeMotor.getStatorCurrent();
 
     if (motorNum == 1) {
-      this.input1 = constants.sensor1ID != -1 ? new CANrange(constants.sensor1ID, "drive") : null;
-      this.input2 = constants.sensor2ID != -1 ? new CANrange(constants.sensor2ID, "drive") : null;
-      this.input3 = constants.sensor3ID != -1 ? new CANrange(constants.sensor3ID, "drive") : null;
-      this.input4 = constants.sensor4ID != -1 ? new CANrange(constants.sensor4ID, "drive") : null;
+      this.input1 = constants.sensor1ID != -1 ? new CANrange(constants.sensor1ID) : null;
+      this.input2 = constants.sensor2ID != -1 ? new CANrange(constants.sensor2ID) : null;
+      this.input3 = constants.sensor3ID != -1 ? new CANrange(constants.sensor3ID) : null;
+      this.input4 = constants.sensor4ID != -1 ? new CANrange(constants.sensor4ID) : null;
     } else {
       this.input1 = null;
       this.input2 = null;

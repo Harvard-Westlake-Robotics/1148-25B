@@ -177,13 +177,12 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysID (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+    // autoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
     autoChooser.addOption(
         "Elevator SysId (Quasistatic Forward)",
         elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-
     autoChooser.addOption(
         "CoralIntake SysId (Quasistatic Forward)",
         coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -197,6 +196,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "AlgaeIntake SysId (Dynamic Forward)",
         algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Pivot SysID (Dynamic Forward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption()
 
     // Configure the button bindings
     configureButtonBindings();
@@ -220,10 +222,10 @@ public class RobotContainer {
     // Set default commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getR2Axis()));
     // Instantiate and set default commands
-    armCommand = new ArmCommand();
-    elevator.setDefaultCommand(armCommand);
+    // armCommand = new ArmCommand();
+    // elevator.setDefaultCommand(armCommand);
     coralIntakeCommand = new CoralIntakeCommand();
     coralIntake.setDefaultCommand(coralIntakeCommand);
     algaeIntakeCommand = new AlgaeIntakeCommand();

@@ -37,8 +37,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.5);
 
   public ElevatorIOTalonFX() {
-    elevator1 = new TalonFX(ElevatorConstants.elevator1ID, "drive");
-    elevator2 = new TalonFX(ElevatorConstants.elevator2ID, "drive");
+    elevator1 = new TalonFX(ElevatorConstants.elevator1ID);
+    elevator2 = new TalonFX(ElevatorConstants.elevator2ID);
     // TODO: Magic number?
     elevator1.setPosition(25);
     elevator2.setPosition(25);

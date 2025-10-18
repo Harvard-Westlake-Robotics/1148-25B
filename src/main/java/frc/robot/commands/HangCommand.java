@@ -6,28 +6,29 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.HangConstants;
 import frc.robot.subsystems.hang.Hang;
-import frc.robot.subsystems.wrists.Pivot;
+import frc.robot.subsystems.wrists.Wrist;
 
 public class HangCommand extends Command {
   private LinearVelocity velocity;
 
   public HangCommand() {
     addRequirements(Hang.getInstance());
-    addRequirements(Pivot.getInstance());
+    this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    // addRequirements(Pivot.getInstance());
   }
 
   @Override
   public void initialize() {
-    this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    // this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
   }
 
   @Override
   public void execute() {
     Hang.getInstance().runVelocity(velocity);
-    if (Hang.getInstance().hasBar()) {
-      Hang.getInstance().servo.setAngle(160);
-      stop();
-    }
+    // if (Hang.getInstance().hasBar()) {
+    //   Hang.getInstance().servo.setAngle(160);
+    //   stop();
+    // }
   }
 
   @Override
@@ -40,9 +41,19 @@ public class HangCommand extends Command {
 
   public void run() {
     this.velocity = LinearVelocity.ofBaseUnits(HangConstants.hangVelocity, MetersPerSecond);
+    // Hang.getInstance().servo.setAngle(100);
   }
 
   public void stop() {
     this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    // Hang.getInstance().servo.setAngle(15);
+  }
+
+  public void hang() {
+    Hang.getInstance().servo.setAngle(100);
+  }
+
+  public void flipOut() {
+    Wrist.getInstance().goToAngleClosedLoop2(-10);
   }
 }

@@ -12,9 +12,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends SubsystemBase {
   private final WristIOTalonFX io1;
-  private final WristIOTalonFX io2;
+  // private final WristIOTalonFX io2;
   private final WristIOInputsAutoLogged inputs1 = new WristIOInputsAutoLogged();
-  private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
+  // private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
 
   private final WristConstants constants;
   private final String key = "RealOutputs/Wrist";
@@ -35,8 +35,8 @@ public class Wrist extends SubsystemBase {
 
   public Wrist() {
     this.constants = WristConstants.Wrist;
-    io1 = new WristIOTalonFX(constants, 1);
-    io2 = new WristIOTalonFX(constants, 2);
+    io1 = new WristIOTalonFX(constants, 1, "rio");
+    // io2 = new WristIOTalonFX(constants, 2);
     sysId =
         new SysIdRoutine(
             new Config(
@@ -50,23 +50,29 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io1.updateInputs(inputs1);
     Logger.processInputs(key + "/Motor1", inputs1);
-    io2.updateInputs(inputs2);
-    Logger.processInputs(key + "/Motor2", inputs2);
+    // io2.updateInputs(inputs2);
+    // Logger.processInputs(key + "/Motor2", inputs2);
   }
 
   public void runCharacterization(double voltage) {
     io1.runCharacterization(voltage);
-    io2.runCharacterization(voltage);
+    // io2.runCharacterization(voltage);
   }
 
   public void goToAngleClosedLoop(double angle) {
     io1.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
-    io2.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
+    // io2.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
+  }
+
+  public void goToAngleClosedLoop2(double angle) {
+    System.out.println("Going to " + angle);
+    io1.goToAngleClosedLoop(angle, 0);
+    // io2.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
   }
 
   public void tareAngle(double angle) {
     io1.tareAngle(angle);
-    io2.tareAngle(angle);
+    // io2.tareAngle(angle);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

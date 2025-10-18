@@ -64,7 +64,7 @@ public class ArmCommand extends Command {
   public void execute() {
     Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
     Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
-    Wrist.getInstance().goToAngleClosedLoop(targetPos[2]);
+    Wrist.getInstance().goToAngleClosedLoop(targetPos[2] + targetPos[0]);
   }
 
   @Override
@@ -92,7 +92,8 @@ public class ArmCommand extends Command {
             Rotation2d.fromRotations(getTargetPos(level)[2])); // Intake angle
 
     var sol = ArmKinematics.solve(current, target);
-
+    System.out.println(sol.theta().getRotations());
+    System.out.println(sol.L().abs(Meters));
     targetPos =
         new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
   }
@@ -134,7 +135,7 @@ public class ArmCommand extends Command {
         return new double[] {0, 0, 0};
       case GROUND_ALGAE:
         outtakePosition = false;
-        return new double[] {0, 0, 0};
+        return new double[] {1, 1, 0};
       case L1:
         outtakePosition = true;
         // Might want to make the boolean false here depending on if L1 outtakes

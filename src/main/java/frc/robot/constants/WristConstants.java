@@ -13,6 +13,7 @@ public class WristConstants {
   public final int motorId;
   public final int motorId2;
   public final int motorId3;
+  public final int canid;
   public final InvertedValue motorInverted;
   public final int statorLimit;
   public final int supplyLimit;
@@ -45,6 +46,7 @@ public class WristConstants {
       int motorId,
       int motorId2,
       int motorId3,
+      int canId,
       InvertedValue motorInverted,
       int statorLimit,
       int supplyLimit,
@@ -67,6 +69,7 @@ public class WristConstants {
     this.motorId = motorId;
     this.motorId2 = motorId2;
     this.motorId3 = motorId3;
+    this.canid = canId;
     this.motorInverted = motorInverted;
     this.statorLimit = statorLimit;
     this.supplyLimit = supplyLimit;
@@ -94,10 +97,11 @@ public class WristConstants {
           25,
           26,
           27,
-          InvertedValue.CounterClockwise_Positive,
+          30,
+          InvertedValue.Clockwise_Positive,
           40,
           80,
-          5,
+          0.2,
           0.0,
           0.0,
           0.000,
@@ -117,6 +121,7 @@ public class WristConstants {
   // TODO: Fix later with real values
   public static final WristConstants Wrist =
       new WristConstants(
+          16,
           0,
           0,
           0,
@@ -135,7 +140,7 @@ public class WristConstants {
           1000.0,
           10,
           1.0,
-          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
+          Angle.ofBaseUnits(0, Rotations), // AngleOffset 11.98 - 1.906494
           Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
           Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
           Meters.of(0.10));

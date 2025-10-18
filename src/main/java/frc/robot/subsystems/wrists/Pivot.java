@@ -2,6 +2,7 @@ package frc.robot.subsystems.wrists;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -21,6 +22,7 @@ public class Pivot extends SubsystemBase {
   private final WristConstants constants;
   private final String key = "RealOutputs/Pivot";
   private static Pivot instance;
+  private final CANcoder cancoder;
 
   SysIdRoutine sysId;
 
@@ -37,9 +39,10 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     this.constants = WristConstants.Pivot;
-    io1 = new WristIOTalonFX(constants, 1);
-    io2 = new WristIOTalonFX(constants, 2);
-    io3 = new WristIOTalonFX(constants, 3);
+    io1 = new WristIOTalonFX(constants, 1, "drive");
+    io2 = new WristIOTalonFX(constants, 2, "drive");
+    io3 = new WristIOTalonFX(constants, 3, "drive");
+    cancoder = new CANcoder(WristConstants.Pivot.canid);
     sysId =
         new SysIdRoutine(
             new Config(

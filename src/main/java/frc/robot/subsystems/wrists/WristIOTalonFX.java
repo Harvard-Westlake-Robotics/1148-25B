@@ -1,5 +1,7 @@
 package frc.robot.subsystems.wrists;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -17,10 +19,10 @@ import frc.robot.constants.WristConstants;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
-  private final TalonFX wristMotor;
-  private final MotionMagicVoltage wristController;
+  private TalonFX wristMotor;
+  private MotionMagicVoltage wristController;
 
-  private final ArmFeedforward wristFeedForward;
+  private ArmFeedforward wristFeedForward;
 
   private WristConstants constants;
   private TalonFXConfiguration wristConfig;
@@ -33,10 +35,13 @@ public class WristIOTalonFX implements WristIO {
   // Connection debouncers
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
-  public WristIOTalonFX(WristConstants constants, int motorNum) {
+  public WristIOTalonFX(WristConstants constants, int motorNum, String canbus) {
     this.constants = constants;
-    wristMotor = new TalonFX(constants.motorId + motorNum - 1);
+    wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
+    // System.out.println(constants.angleOffset.baseUnitMagnitude());
+    System.out.println(Rotations.of(11.98));
     wristMotor.setPosition(constants.angleOffset);
+    // System.out.println(constants.angleOffset.in(Rotations));
     this.wristController = new MotionMagicVoltage(0).withEnableFOC(true);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
@@ -86,7 +91,8 @@ public class WristIOTalonFX implements WristIO {
     wristMotor.setControl(
         wristController
             .withPosition(angle * constants.motorToWristRotations)
-            .withFeedForward(wristFeedForward.calculate(Units.rotationsToRadians(angle + offsetAngle), 0)));
+            .withFeedForward(
+                wristFeedForward.calculate(Units.rotationsToRadians(angle + offsetAngle), 0)));
   }
 
   @Override
