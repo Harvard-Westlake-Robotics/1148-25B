@@ -116,7 +116,7 @@ public class WristConstants {
           InvertedValue.CounterClockwise_Positive,
           40,
           80,
-          5,
+          200,
           0.0,
           0.0,
           0.1,
@@ -129,6 +129,6 @@ public class WristConstants {
           36.73,
           Rotations.of(11.98),
           Degrees.of(-72.5),
-          Degrees.of(100),
+          Rotations.of(11.98),
           Meters.of(0.10));
 }

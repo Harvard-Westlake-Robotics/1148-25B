@@ -53,7 +53,7 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
     wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        constants.wristMaxAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
+        constants.wristMaxAngle.in(Rotations);
     wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
