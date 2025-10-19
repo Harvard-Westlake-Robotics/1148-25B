@@ -2,8 +2,6 @@ package frc.robot.subsystems.wrists;
 
 import static edu.wpi.first.units.Units.Rotations;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -15,6 +13,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.WristConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -36,7 +35,8 @@ public class WristIOTalonFX implements WristIO {
     this.constants = constants;
     wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
     wristMotor.setPosition(constants.angleOffset);
-    this.wristController = new MotionMagicVoltage(0).withEnableFOC(true).withPosition(constants.angleOffset);
+    this.wristController =
+        new MotionMagicVoltage(0).withEnableFOC(true).withPosition(constants.angleOffset);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
