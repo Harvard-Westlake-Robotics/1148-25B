@@ -1,9 +1,6 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -15,15 +12,14 @@ import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.wrists.Pivot;
 import frc.robot.subsystems.wrists.Wrist;
-import frc.robot.util.ArmKinematics;
 
 public class ArmCommand extends Command {
   // Tag ids corresponding to the reef ids
-  private static double[] targetPos;
+  private static double[] targetPose;
   public boolean outtakePosition;
 
-  public static double[] getTargetPos() {
-    return targetPos;
+  public static double[] getTargetPose() {
+    return targetPose;
   }
 
   /*
@@ -62,10 +58,9 @@ public class ArmCommand extends Command {
 
   @Override
   public void execute() {
-    Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
-    Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
-    // TODO: This should eventually use the different alpha axis (coral not wrist)
-    Wrist.getInstance().goToAngleClosedLoop(targetPos[2] + targetPos[0]);
+    Pivot.getInstance().goToAngleClosedLoop(targetPose[0]);
+    Elevator.getInstance().goToHeightClosedLoop(targetPose[1]);
+    Wrist.getInstance().goToAngleClosedLoop(targetPose[2] - targetPose[0]);
   }
 
   @Override
@@ -73,30 +68,11 @@ public class ArmCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(targetPos[1] - Elevator.getInstance().getExtension()) < 2;
+    return Math.abs(targetPose[1] - Elevator.getInstance().getExtension()) < 2;
   }
 
   public void setHeight(ScoringLevel level) {
-    ArmCommand.level = level;
-
-    // Current joint pose (rotations + meters)
-    var current =
-        new ArmKinematics.JointPose(
-            Rotation2d.fromRotations(Pivot.getInstance().getAngle()), // Theta
-            Meters.of(Elevator.getInstance().getExtension()), // L
-            Rotation2d.fromRotations(Wrist.getInstance().getAngle())); // Beta
-
-    var target =
-        new ArmKinematics.Target(
-            Meters.of(getTargetPos(level)[0]), // X
-            Meters.of(getTargetPos(level)[1]), // Y
-            Rotation2d.fromRotations(getTargetPos(level)[2])); // Intake angle
-
-    var sol = ArmKinematics.solve(current, target);
-    System.out.println(sol.theta().getRotations());
-    System.out.println(sol.L().abs(Meters));
-    targetPos =
-        new double[] {sol.theta().getRotations(), sol.L().abs(Meters), sol.beta().getRotations()};
+    targetPose = getTargetPose(level);
   }
 
   public boolean facingForward() {
@@ -125,7 +101,7 @@ public class ArmCommand extends Command {
     return theta >= 0 && theta <= Math.PI;
   }
 
-  public double[] getTargetPos(ScoringLevel level) {
+  public double[] getTargetPose(ScoringLevel level) {
     // TODO: Add real values
     switch (level) {
       case SOURCE_CORAL:

@@ -75,9 +75,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public void goToAngleClosedLoop(double angle) {
-    io1.goToAngleClosedLoop(angle, 0);
-    io2.goToAngleClosedLoop(angle, 0);
-    io3.goToAngleClosedLoop(angle, 0);
+    io1.goToAngleClosedLoop(angle);
+    io2.goToAngleClosedLoop(angle);
+    io3.goToAngleClosedLoop(angle);
   }
 
   public void tareAngle(double angle) {
