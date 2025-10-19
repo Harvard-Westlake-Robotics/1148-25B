@@ -177,28 +177,74 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysID (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
+
     autoChooser.addOption(
         "Elevator SysId (Quasistatic Forward)",
         elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
+        "Elevator SysId (Quasistatic Reverse)",
+        elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
         "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Elevator SysId (Dynamic Reverse)", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "Hang SysId (Quasistatic Forward)", hang.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Hang SysId (Quasistatic Reverse)", hang.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Hang SysId (Dynamic Forward)", hang.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Hang SysId (Dynamic Reverse)", hang.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
     autoChooser.addOption(
         "CoralIntake SysId (Quasistatic Forward)",
         coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
+        "CoralIntake SysId (Quasistatic Reverse)",
+        coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
         "CoralIntake SysId (Dynamic Forward)",
         coralIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "CoralIntake SysId (Dynamic Reverse)",
+        coralIntake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     autoChooser.addOption(
         "AlgaeIntake SysId (Quasistatic Forward)",
         algaeIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
+        "AlgaeIntake SysId (Quasistatic Reverse)",
+        algaeIntake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
         "AlgaeIntake SysId (Dynamic Forward)",
         algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
+        "AlgaeIntake SysId (Dynamic Reverse)",
+        algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "Pivot SysID (Quasistatic Forward)",
+        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Pivot SysID (Quasistatic Reverse)",
+        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
         "Pivot SysID (Dynamic Forward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption()
+    autoChooser.addOption(
+        "Pivot SysID (Dynamic Reverse)", pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "Wrist SysId (Quasistatic Forward)",
+        wrist.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Wrist SysId (Quasistatic Reverse)",
+        wrist.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Wrist SysId (Dynamic Forward)", wrist.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Wrist SysId (Dynamic Reverse)", wrist.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();

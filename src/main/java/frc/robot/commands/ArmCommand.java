@@ -64,6 +64,7 @@ public class ArmCommand extends Command {
   public void execute() {
     Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
     Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
+    // TODO: This should eventually use the different alpha axis (coral not wrist)
     Wrist.getInstance().goToAngleClosedLoop(targetPos[2] + targetPos[0]);
   }
 

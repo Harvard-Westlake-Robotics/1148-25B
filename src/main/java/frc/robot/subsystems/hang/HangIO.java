@@ -17,5 +17,5 @@ public interface HangIO {
 
   public default void runCharacterization(double voltage) {}
 
-  public default void runVelocity(LinearVelocity velocity) {}
+  public default void runVelocityClosedLoop(LinearVelocity velocity) {}
 }

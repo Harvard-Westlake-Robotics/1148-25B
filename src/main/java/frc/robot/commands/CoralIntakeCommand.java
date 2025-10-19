@@ -44,7 +44,7 @@ public class CoralIntakeCommand extends Command {
     this.outtaking = false;
     this.running = false;
     this.manual = false;
-    velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    velocity = MetersPerSecond.of(0);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class CoralIntakeCommand extends Command {
           outtake();
         }
       } else {
-        CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+        CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
       }
     } else {
       CoralIntake.getInstance().runVelocity(velocity);
@@ -116,7 +116,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
   }
 
   public void runIntake(boolean intakingStraight) {
@@ -132,7 +132,7 @@ public class CoralIntakeCommand extends Command {
 
   public void stopIntake() {
     running = false;
-    AlgaeIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    AlgaeIntake.getInstance().runVelocity(MetersPerSecond.of(0));
   }
 
   @Override

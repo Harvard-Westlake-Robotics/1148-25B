@@ -60,8 +60,8 @@ public class Hang extends SubsystemBase {
     io.runCharacterization(voltage);
   }
 
-  public void runVelocity(LinearVelocity velocity) {
-    io.runVelocity(velocity);
+  public void runVelocityClosedLoop(LinearVelocity velocity) {
+    io.runVelocityClosedLoop(velocity);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

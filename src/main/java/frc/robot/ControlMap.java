@@ -155,16 +155,6 @@ public class ControlMap {
     //         });
 
     // Elevator
-    operator
-        .a()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  Pivot.getInstance().goToAngleClosedLoop(-19);
-                  // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                  ;
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
     // operator
     //     .x()
     //     .whileTrue(
@@ -191,35 +181,35 @@ public class ControlMap {
     //               RobotContainer.algaeIntakeCommand.runVelocity(0);
     //               RobotContainer.coralIntakeCommand.stopIntake();
     //             }));
-    operator
-        .leftBumper()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L2);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
-    operator
-        .rightBumper()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L3);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
-    operator
-        .rightTrigger()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L4);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
-    operator
-        .povUp()
-        .whileTrue(
-            new InstantCommand(
-                () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
+    // operator
+    //     .leftBumper()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L2);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
+    // operator
+    //     .rightBumper()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L3);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
+    // operator
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L4);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
+    // operator
+    //     .povUp()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
     // driver
     //     .povDown()
     //     .whileTrue(
@@ -229,38 +219,6 @@ public class ControlMap {
     //               ;
     //               RobotContainer.coralIntakeCommand.stopIntake();
     //             }));
-    operator
-        .y()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  Pivot.getInstance().goToAngleClosedLoop(9);
-                }));
-    operator
-        .x()
-        .whileTrue(
-            new InstantCommand(() -> RobotContainer.hangCommand.hang())
-                .andThen(
-                    new InstantCommand(
-                        () -> {
-                          Pivot.getInstance().goToAngleClosedLoop(-17);
-                        })));
-    // RobotContainer.algaeIntakeCommand.runVelocity(0);
-    // RobotContainer.coralIntakeCommand.stopIntake();
-    // operator
-    //     .povRight()
-    //     .whileTrue(
-    //         new InstantCommand(() -> Pivot.getInstance().goToAngleClosedLoop(-15)));
-    // RobotContainer.algaeIntakeCommand.runVelocity(0);
-    // RobotContainer.coralIntakeCommand.stopIntake();
-    operator
-        .povRight()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.hangCommand.flipOut();
-                  System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAA");
-                }));
 
     // Hang
 
@@ -272,6 +230,19 @@ public class ControlMap {
                   RobotContainer.hangCommand.run();
                 }))
         .onFalse(new InstantCommand(() -> RobotContainer.hangCommand.stop()));
+
+    driver
+        .square()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  Pivot.getInstance().goToAngleClosedLoop(0);
+                }))
+        .whileFalse(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.hangCommand.lock();
+                }));
 
     // Commands not done: whatever the "rest position" thing is on
     // the document

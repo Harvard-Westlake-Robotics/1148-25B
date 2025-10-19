@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -11,8 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -138,7 +136,7 @@ public class AutoScoreCommand extends Command {
 
     // Set initial positions and velocities
     RobotContainer.coralIntakeCommand.manual = true;
-    CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
 
@@ -176,14 +174,11 @@ public class AutoScoreCommand extends Command {
       // Move to target position
       ChassisSpeeds speeds =
           new ChassisSpeeds(
-              LinearVelocity.ofBaseUnits(
-                  xController.calculate(currentPose.getX(), endPose.getX()), MetersPerSecond),
-              LinearVelocity.ofBaseUnits(
-                  yController.calculate(currentPose.getY(), endPose.getY()), MetersPerSecond),
-              AngularVelocity.ofBaseUnits(
+              MetersPerSecond.of(xController.calculate(currentPose.getX(), endPose.getX())),
+              MetersPerSecond.of(yController.calculate(currentPose.getY(), endPose.getY())),
+              RotationsPerSecond.of(
                   thetaController.calculate(
-                      currentPose.getRotation().getRadians(), endPose.getRotation().getRadians()),
-                  RadiansPerSecond));
+                      currentPose.getRotation().getRadians(), endPose.getRotation().getRadians())));
       Drive.getInstance()
           .runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -210,13 +205,12 @@ public class AutoScoreCommand extends Command {
 
     if (Math.abs(targetHeight - currentHeight) < ARM_Y_TOLERANCE || currentHeight > targetHeight) {
       if (tickCounter >= SCORING_DELAY_TICKS) {
-        CoralIntake.getInstance()
-            .runVelocity(LinearVelocity.ofBaseUnits(SCORING_VELOCITY, MetersPerSecond));
+        CoralIntake.getInstance().runVelocity(MetersPerSecond.of(SCORING_VELOCITY));
       } else {
         tickCounter++;
       }
     } else {
-      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
     }
   }
 
@@ -224,9 +218,9 @@ public class AutoScoreCommand extends Command {
   public void end(boolean interrupted) {
     // Reset robot state
     if (CoralIntake.getInstance().hasCoralHotDog() || CoralIntake.getInstance().hasCoralBurger()) {
-      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
     } else {
-      CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
+      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(4));
     }
     RobotContainer.coralIntakeCommand.manual = false;
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);

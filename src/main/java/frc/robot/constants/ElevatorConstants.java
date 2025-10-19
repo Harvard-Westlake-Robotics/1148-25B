@@ -1,20 +1,22 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Inches;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.units.measure.Distance;
 
 public class ElevatorConstants {
   // Motor constants
+  // TODO: ID these
   public static final int elevator1ID = 0;
   public static final int elevator2ID = 0;
   public static final InvertedValue elevator2Inverted = InvertedValue.Clockwise_Positive;
   public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
-  public static final int statorLimit = 120;
-  public static final int supplyLimit = 50;
+  public static final int statorLimit = 80;
+  public static final int supplyLimit = 40;
 
   // PID constants
+  // TODO: Tune
   public static double kP = 5.0;
   public static double kI = 0.0;
   public static double kD = 0.0;
@@ -24,15 +26,14 @@ public class ElevatorConstants {
   public static double kA = 0.0;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 390;
-  public static final double motionMagicCruiseVelocity = 250;
-  public static final double motionMagicJerk = 990;
+  public static final double motionMagicAcceleration = 1757; // 50m/s^2 in rot/s^2
+  public static final double motionMagicCruiseVelocity = 703; // 20m/s in rot/s
+  public static final double motionMagicJerk = 3515; // 100 m/s^3 in rot/s^3
 
   // Physical constants
-  public static final double elevatorForwardSoftLimitRotations = 55;
+  public static final double elevatorForwardSoftLimitRotations = 38;
   public static final double elevatorReverseSoftLimitRotations = 0.0;
-  public static final double rotationsToMetersRatio = (0.028448);
-  public static final double elevatorGroundOffsetMeters = 0.2125;
-  public static final Distance armMinLength = Meters.of(0.0);
-  public static final Distance armMaxLength = Meters.of(42.5);
+  public static final double rotationsPerMeterRatio = 35.1519; // 1 / (1.12 / 39.3701)
+  public static final Distance armMinLength = Inches.of(24.654);
+  public static final Distance armMaxLength = Inches.of(67.056);
 }

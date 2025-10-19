@@ -24,7 +24,8 @@ public final class ArmKinematics {
   // ---------------- Limits & constants ----------------
 
   // Wrist pivot -> intake center along α
-  public static final Distance WRIST_TO_CENTER = Meters.of(0.10);
+  // TODO: Change to coral-middle definition and to relative positions instead of absolute poses
+  public static final Distance WRIST_TO_CENTER = WristConstants.Wrist.wristLength;
 
   private ArmKinematics() {}
 

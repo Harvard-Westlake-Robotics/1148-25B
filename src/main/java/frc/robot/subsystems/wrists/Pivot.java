@@ -2,7 +2,6 @@ package frc.robot.subsystems.wrists;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -19,15 +18,17 @@ public class Pivot extends SubsystemBase {
   private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
   private final WristIOInputsAutoLogged inputs3 = new WristIOInputsAutoLogged();
 
+  private final EncoderIOCANcoder encoderIO;
+  private final EncoderIOInputsAutoLogged encoderInputs = new EncoderIOInputsAutoLogged();
+
   private final WristConstants constants;
   private final String key = "RealOutputs/Pivot";
   private static Pivot instance;
-  private final CANcoder cancoder;
 
   SysIdRoutine sysId;
 
   public double getAngle() {
-    return inputs1.wristPositionRot / constants.motorToWristRotations;
+    return encoderIO.getAngle();
   }
 
   public static Pivot getInstance() {
@@ -42,7 +43,7 @@ public class Pivot extends SubsystemBase {
     io1 = new WristIOTalonFX(constants, 1, "drive");
     io2 = new WristIOTalonFX(constants, 2, "drive");
     io3 = new WristIOTalonFX(constants, 3, "drive");
-    cancoder = new CANcoder(WristConstants.Pivot.canid);
+    encoderIO = new EncoderIOCANcoder();
     sysId =
         new SysIdRoutine(
             new Config(
@@ -60,6 +61,8 @@ public class Pivot extends SubsystemBase {
     Logger.processInputs(key + "/Motor2", inputs2);
     io3.updateInputs(inputs3);
     Logger.processInputs(key + "/Motor3", inputs3);
+    encoderIO.updateInputs(encoderInputs);
+    Logger.processInputs(key + "/Encoder", encoderInputs);
   }
 
   public void runCharacterization(double voltage) {

@@ -92,9 +92,9 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     inputs.intakeMotorConnected = motorConnectedDebouncer.calculate(intakeMotor.isConnected());
     inputs.intakeMotorPositionMeters =
-        motorPosition.getValueAsDouble() / constants.rotationsToMetersRatio;
+        motorPosition.getValueAsDouble() / constants.rotationsPerMeterRatio;
     inputs.intakeMotorVelocityMPS =
-        motorVelocity.getValueAsDouble() / constants.rotationsToMetersRatio;
+        motorVelocity.getValueAsDouble() / constants.rotationsPerMeterRatio;
     inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.intakeMotorCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -108,7 +108,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   public void runVelocity(LinearVelocity velocity) {
     intakeMotor.setControl(
         intakeController.withVelocity(
-            velocity.in(MetersPerSecond) * constants.rotationsToMetersRatio));
+            velocity.in(MetersPerSecond) * constants.rotationsPerMeterRatio));
   }
 
   public Boolean getSensor1() {

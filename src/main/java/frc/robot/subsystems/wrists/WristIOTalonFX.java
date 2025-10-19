@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -21,8 +20,6 @@ public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
   private TalonFX wristMotor;
   private MotionMagicVoltage wristController;
-
-  private ArmFeedforward wristFeedForward;
 
   private WristConstants constants;
   private TalonFXConfiguration wristConfig;
@@ -38,10 +35,7 @@ public class WristIOTalonFX implements WristIO {
   public WristIOTalonFX(WristConstants constants, int motorNum, String canbus) {
     this.constants = constants;
     wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
-    // System.out.println(constants.angleOffset.baseUnitMagnitude());
-    System.out.println(Rotations.of(11.98));
     wristMotor.setPosition(constants.angleOffset);
-    // System.out.println(constants.angleOffset.in(Rotations));
     this.wristController = new MotionMagicVoltage(0).withEnableFOC(true);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
@@ -50,10 +44,19 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.Slot0.kP = constants.kP;
     wristConfig.Slot0.kI = constants.kI;
     wristConfig.Slot0.kD = constants.kD;
+    wristConfig.Slot0.kS = constants.kS;
+    wristConfig.Slot0.kV = constants.kV;
+    wristConfig.Slot0.kA = constants.kA;
     wristConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     wristConfig.CurrentLimits.StatorCurrentLimit = constants.statorLimit;
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
+    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        constants.wristMaxAngle.in(Rotations);
+    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        constants.wristMinAngle.in(Rotations);
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
     this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
         this.constants.motionMagicCruiseVelocity;
@@ -65,9 +68,6 @@ public class WristIOTalonFX implements WristIO {
     motorVelocity = wristMotor.getVelocity();
     motorAppliedVolts = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
-
-    // TODO: Add angle-specific kG changing
-    wristFeedForward = new ArmFeedforward(constants.kS, constants.kG, constants.kV, constants.kA);
   }
 
   @Override
@@ -75,8 +75,10 @@ public class WristIOTalonFX implements WristIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.wristMotorConnected = motorConnectedDebouncer.calculate(wristMotor.isConnected());
-    inputs.wristPositionRot = motorPosition.getValueAsDouble() / constants.motorToWristRotations;
-    inputs.wristVelocityRPS = motorVelocity.getValueAsDouble() / constants.motorToWristRotations;
+    inputs.wristPositionRot =
+        motorPosition.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio;
+    inputs.wristVelocityRPS =
+        motorVelocity.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -90,13 +92,13 @@ public class WristIOTalonFX implements WristIO {
   public void goToAngleClosedLoop(double angle, double offsetAngle) {
     wristMotor.setControl(
         wristController
-            .withPosition(angle * constants.motorToWristRotations)
+            .withPosition(angle * constants.motorRotationsPerWristRotationRatio)
             .withFeedForward(
-                wristFeedForward.calculate(Units.rotationsToRadians(angle + offsetAngle), 0)));
+                Math.cos(Units.rotationsToRadians(angle + offsetAngle)) * constants.kG));
   }
 
   @Override
   public void tareAngle(double angle) {
-    wristMotor.setPosition(angle * constants.motorToWristRotations);
+    wristMotor.setPosition(angle * constants.motorRotationsPerWristRotationRatio);
   }
 }

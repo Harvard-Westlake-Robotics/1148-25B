@@ -65,9 +65,9 @@ public class HangIOTalonFX implements HangIO {
 
     inputs.motorConnected = motorConnectedDebouncer.calculate(hangMotor.isConnected());
     inputs.motorPositionMeters =
-        motorPosition.getValueAsDouble() / HangConstants.rotationsToMetersRatio;
+        motorPosition.getValueAsDouble() / HangConstants.rotationsPerMeterRatio;
     inputs.motorVelocityMPS =
-        motorVelocity.getValueAsDouble() / HangConstants.rotationsToMetersRatio;
+        motorVelocity.getValueAsDouble() / HangConstants.rotationsPerMeterRatio;
     inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -78,9 +78,9 @@ public class HangIOTalonFX implements HangIO {
   }
 
   @Override
-  public void runVelocity(LinearVelocity velocity) {
+  public void runVelocityClosedLoop(LinearVelocity velocity) {
     hangMotor.setControl(
         hangController.withVelocity(
-            velocity.in(MetersPerSecond) * HangConstants.rotationsToMetersRatio));
+            velocity.in(MetersPerSecond) * HangConstants.rotationsPerMeterRatio));
   }
 }

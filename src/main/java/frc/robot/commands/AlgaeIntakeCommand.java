@@ -19,7 +19,7 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    this.velocity = MetersPerSecond.of(0);
   }
 
   @Override
@@ -45,18 +45,18 @@ public class AlgaeIntakeCommand extends Command {
 
   public void stop() {
     if (AlgaeIntake.getInstance().hasAlgae()) {
-      this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+      this.velocity = MetersPerSecond.of(0);
       // TODO: Why is this here?
       AlgaeIntake.getInstance().runCharacterization(1.5);
       algaeLastStop = true;
     } else {
-      this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+      this.velocity = MetersPerSecond.of(0);
       AlgaeIntake.getInstance().runCharacterization(0);
       algaeLastStop = false;
     }
   }
 
   public void runVelocity(double velocity) {
-    this.velocity = LinearVelocity.ofBaseUnits(velocity, MetersPerSecond);
+    this.velocity = MetersPerSecond.of(velocity);
   }
 }
