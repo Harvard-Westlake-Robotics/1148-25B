@@ -54,7 +54,7 @@ public class HangCommand extends Command {
   }
 
   public void flipOut() {
-    Wrist.getInstance().goToAngleClosedLoop2(-14);
+    Wrist.getInstance().goToAngleClosedLoop2(-3);
   }
 
   public void flipIn() {

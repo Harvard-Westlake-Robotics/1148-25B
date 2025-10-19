@@ -198,9 +198,14 @@ public class RobotContainer {
         algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Pivot SysID (Dynamic Forward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption("Pivot SysID (Dynamic Backward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption("PivotSysId (Quasistatic Forward)", pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption("Pivot SysID (Quasistatic Backward)", pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Pivot SysID (Dynamic Backward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "PivotSysId (Quasistatic Forward)",
+        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Pivot SysID (Quasistatic Backward)",
+        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addOption()
 
     // Configure the button bindings

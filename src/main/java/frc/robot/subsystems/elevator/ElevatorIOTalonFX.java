@@ -39,9 +39,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public ElevatorIOTalonFX() {
     elevator1 = new TalonFX(ElevatorConstants.elevator1ID);
     elevator2 = new TalonFX(ElevatorConstants.elevator2ID);
-    // TODO: Magic number?
-    elevator1.setPosition(25);
-    elevator2.setPosition(25);
     elevatorController = new MotionMagicVoltage(0).withEnableFOC(true).withSlot(0);
     elevator2Controller = new MotionMagicVoltage(0).withEnableFOC(true).withSlot(0);
     TalonFXConfiguration elevator1Config = new TalonFXConfiguration();

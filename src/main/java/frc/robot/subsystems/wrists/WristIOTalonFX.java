@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.WristConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -79,6 +80,8 @@ public class WristIOTalonFX implements WristIO {
     inputs.wristVelocityRPS = motorVelocity.getValueAsDouble() / constants.motorToWristRotations;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
+
+    Logger.recordOutput("RealOutputs/Wrist/motionMagicState", wristController.toString());
   }
 
   @Override

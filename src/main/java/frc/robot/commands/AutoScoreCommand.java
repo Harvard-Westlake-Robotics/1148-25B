@@ -139,7 +139,7 @@ public class AutoScoreCommand extends Command {
     // Set initial positions and velocities
     RobotContainer.coralIntakeCommand.manual = true;
     CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
-    RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+    // RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
 
   @Override
@@ -151,7 +151,7 @@ public class AutoScoreCommand extends Command {
     }
 
     // Move arm to target height
-    RobotContainer.armCommand.setHeight(level);
+    // RobotContainer.armCommand.setHeight(level);
 
     // Handle path following if endPose is set
     if (endPose != null) {
@@ -229,7 +229,7 @@ public class AutoScoreCommand extends Command {
       CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(4, MetersPerSecond));
     }
     RobotContainer.coralIntakeCommand.manual = false;
-    RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+    // RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
     Drive.getInstance().stop();
     DriveConstants.setSdMultiplier(1);
 

@@ -123,7 +123,7 @@ public class IntakeConstants {
 
   public static final IntakeConstants AlgaeIntake =
       new IntakeConstants(
-          0,
+          31,
           InvertedValue.CounterClockwise_Positive,
           120,
           50,
@@ -142,8 +142,8 @@ public class IntakeConstants {
           -1,
           -1,
           -1,
-          LinearVelocity.ofBaseUnits(100, MetersPerSecond),
-          LinearVelocity.ofBaseUnits(-100, MetersPerSecond),
+          LinearVelocity.ofBaseUnits(1000, MetersPerSecond),
+          LinearVelocity.ofBaseUnits(-1000, MetersPerSecond),
           LinearVelocity.ofBaseUnits(0, MetersPerSecond),
           LinearVelocity.ofBaseUnits(0, MetersPerSecond),
           1.0 / 16.709);

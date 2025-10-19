@@ -1,7 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,11 +7,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.RobotContainer.Mode;
-import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ArmCommand.ScoringLevel;
-import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.wrists.Pivot;
 
 public class ControlMap {
   private static ControlMap instance;
@@ -229,62 +224,68 @@ public class ControlMap {
     // Commands not done: whatever the "rest position" thing is on
     // the document
 
-
-    // MANUAL COMMANDS --> Operator: 
+    // MANUAL COMMANDS --> Operator:
     // Pivot down to limit
     operator
-    .a()
-    .whileTrue(
-        new InstantCommand(
-            () -> {
-              // Pivot.getInstance().goToAngleClosedLoop(-19);
-              RobotContainer.armCommand.setPivotAngle(-19);
-              RobotContainer.algaeIntakeCommand.runVelocity(0);
-            }));
-    
+        .a()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  // Pivot.getInstance().goToAngleClosedLoop(-19);
+                  RobotContainer.armCommand.setPivotAngle(-15);
+                  RobotContainer.algaeIntakeCommand.runVelocity(0);
+                }));
+
     // Pivot up to hang position
     operator
-    .y()
-    .whileTrue(
-        new InstantCommand(
-            () -> {
-              RobotContainer.armCommand.setPivotAngle(9);
-              // Pivot.getInstance().goToAngleClosedLoop(9);
-            }));
+        .y()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setPivotAngle(9);
+                  // Pivot.getInstance().goToAngleClosedLoop(9);
+                }));
     // hanging after we have clamped the barge
-operator
-    .x()
-    .whileTrue(
-        new InstantCommand(() -> RobotContainer.hangCommand.hang())
-            .andThen(
-                new InstantCommand(
-                    () -> {
-                      RobotContainer.armCommand.setPivotAngle(-20);
-                      // Pivot.getInstance().goToAngleClosedLoop(-20);
-                    })));
-  // Algae intake
-operator
-    .leftBumper()
-    .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake())).onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
-  // Algae outtake
-operator
-    .leftTrigger()
-    .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.outtake())).onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+    operator
+        .x()
+        .whileTrue(
+            new InstantCommand(() -> RobotContainer.hangCommand.hang())
+                .andThen(
+                    new InstantCommand(
+                        () -> {
+                          RobotContainer.armCommand.setPivotAngle(-19);
+                          // Pivot.getInstance().goToAngleClosedLoop(-20);
+                        })));
+    // Algae intake
+    operator
+        .leftBumper()
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
+    // .onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+    // Algae outtake
+    operator
+        .leftTrigger()
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.outtake()));
+    // .onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+    operator
+        .rightBumper()
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
 
-// For hang + other stuff -> flip out the wrist
+    // For hang + other stuff -> flip out the wrist
     operator
         .povRight()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setWristAngle(-14);
+                  RobotContainer.armCommand.setWristAngle(-15);
                   // RobotContainer.hangCommand.flipOut()
                 }));
 
-  // Flip in the wrist to angle 0
-    operator.povLeft().whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setWristAngle(0)));
+    // Flip in the wrist to angle 0
+    operator
+        .povLeft()
+        .whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setWristAngle(0)));
     // RobotContainer.hangCommand.flipIn()
-  // run the hang motors
+    // run the hang motors
     operator
         .b()
         .whileTrue(
@@ -293,14 +294,39 @@ operator
                   RobotContainer.hangCommand.run();
                 }))
         .onFalse(new InstantCommand(() -> RobotContainer.hangCommand.stop()));
-  
+    operator
+        .povUp()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setWristAngle(-11);
+                }));
 
-  // MANUAL CONTROLS --> DRIVER:
-  // Intake and outtake (L2 and R2)
-  driver.L2().whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualIntake())).onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
-  driver.R2().whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualOuttake())).onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
-  // Go to hang position with BOTH arm and pivot. Just a test, can be moved later.
-  driver.L1().whileTrue(new InstantCommand(() -> {RobotContainer.armCommand.setManualPos(ScoringLevel.HANG);System.out.println("AAAAAAAAAAAAAAAAAAAAAAOIHAOPIAJOI");}));
-
+    // MANUAL CONTROLS --> DRIVER:
+    // Intake and outtake (L2 and R2)
+    driver
+        .L2()
+        .whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualIntake()))
+        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+    driver
+        .R2()
+        .whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualOuttake()))
+        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+    // Go to hang position with BOTH arm and pivot. Just a test, can be moved later.
+    driver
+        .L1()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setManualPos(ScoringLevel.HANG);
+                }));
+    operator
+        .povDown()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setElevatorLength(2);
+                  System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                }));
   }
 }

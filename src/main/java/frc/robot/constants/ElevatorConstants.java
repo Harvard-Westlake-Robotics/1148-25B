@@ -7,15 +7,15 @@ import edu.wpi.first.units.measure.Distance;
 
 public class ElevatorConstants {
   // Motor constants
-  public static final int elevator1ID = 0;
-  public static final int elevator2ID = 0;
-  public static final InvertedValue elevator2Inverted = InvertedValue.Clockwise_Positive;
-  public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
+  public static final int elevator1ID = 18;
+  public static final int elevator2ID = 19;
+  public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
+  public static final InvertedValue elevator1Inverted = InvertedValue.CounterClockwise_Positive;
   public static final int statorLimit = 120;
   public static final int supplyLimit = 50;
 
   // PID constants
-  public static double kP = 5.0;
+  public static double kP = 0.05;
   public static double kI = 0.0;
   public static double kD = 0.0;
   public static double kS = 0.1;
