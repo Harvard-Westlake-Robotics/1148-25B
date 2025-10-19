@@ -97,7 +97,7 @@ public class IntakeConstants {
   // TODO: ID These
   public static final IntakeConstants CoralIntake =
       new IntakeConstants(
-          0,
+          9,
           InvertedValue.Clockwise_Positive,
           80,
           40,
@@ -124,7 +124,7 @@ public class IntakeConstants {
 
   public static final IntakeConstants AlgaeIntake =
       new IntakeConstants(
-          0,
+          31,
           InvertedValue.CounterClockwise_Positive,
           120,
           50,

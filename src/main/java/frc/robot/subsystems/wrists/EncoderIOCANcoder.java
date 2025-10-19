@@ -21,8 +21,8 @@ public class EncoderIOCANcoder implements EncoderIO {
     cancoder = new CANcoder(WristConstants.pivotEncoderId);
 
     encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.MagnetOffset = WristConstants.pivotEncoderOffset;
     encoderConfig.MagnetSensor.SensorDirection = WristConstants.pivotEncoderSensorDirection;
+    encoderConfig.MagnetSensor.MagnetOffset = WristConstants.pivotEncoderOffset;
     cancoder.getConfigurator().apply(encoderConfig);
 
     encoderAngle = cancoder.getPosition();

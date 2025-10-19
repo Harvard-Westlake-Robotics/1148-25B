@@ -5,11 +5,9 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -36,7 +34,7 @@ public class WristIOTalonFX implements WristIO {
     this.constants = constants;
     wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
     wristMotor.setPosition(constants.angleOffset);
-    this.wristController = new MotionMagicVoltage(0).withEnableFOC(true);
+    this.wristController = new MotionMagicVoltage(constants.angleOffset).withEnableFOC(true);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -53,10 +51,10 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
     wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        constants.wristMaxAngle.in(Rotations);
+        constants.wristMaxAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
     wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        constants.wristMinAngle.in(Rotations);
+        constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
     this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
         this.constants.motionMagicCruiseVelocity;
@@ -85,16 +83,16 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void runCharacterization(double voltage) {
-    wristMotor.setControl(new VoltageOut(voltage));
+    // wristMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
   public void goToAngleClosedLoop(double angle, double offsetAngle) {
-    wristMotor.setControl(
-        wristController
-            .withPosition(angle * constants.motorRotationsPerWristRotationRatio)
-            .withFeedForward(
-                Math.cos(Units.rotationsToRadians(angle + offsetAngle)) * constants.kG));
+    // wristMotor.setControl(
+    //     wristController
+    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio)
+    //         .withFeedForward(
+    //             Math.cos(Units.rotationsToRadians(angle + offsetAngle)) * constants.kG));
   }
 
   @Override

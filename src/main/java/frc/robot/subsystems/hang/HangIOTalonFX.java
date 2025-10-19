@@ -32,9 +32,7 @@ public class HangIOTalonFX implements HangIO {
   public HangIOTalonFX() {
     hangMotor = new TalonFX(HangConstants.motorId);
     hangMotor.setPosition(0);
-    hangController =
-        new MotionMagicVelocityTorqueCurrentFOC(
-            RotationsPerSecond.of(0));
+    hangController = new MotionMagicVelocityTorqueCurrentFOC(RotationsPerSecond.of(0));
 
     TalonFXConfiguration hangConfig = new TalonFXConfiguration();
 

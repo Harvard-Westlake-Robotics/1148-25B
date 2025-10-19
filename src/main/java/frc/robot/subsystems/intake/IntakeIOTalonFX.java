@@ -42,9 +42,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     this.constants = constants;
     intakeMotor = new TalonFX(constants.motorId + motorNum - 1);
     intakeMotor.setPosition(0);
-    intakeController =
-        new MotionMagicVelocityTorqueCurrentFOC(
-            RotationsPerSecond.of(0));
+    intakeController = new MotionMagicVelocityTorqueCurrentFOC(RotationsPerSecond.of(0));
     TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
 
     intakeConfig.MotorOutput.Inverted = constants.motorInverted;

@@ -136,7 +136,7 @@ public class ArmCommand extends Command {
         return new double[] {0, 0, 0};
       case GROUND_ALGAE:
         outtakePosition = false;
-        return new double[] {1, 1, 0};
+        return new double[] {5, 0, 0};
       case L1:
         outtakePosition = true;
         // Might want to make the boolean false here depending on if L1 outtakes

@@ -83,9 +83,9 @@ public class WristConstants {
 
   // Pivot encoder constants
   public static final int pivotEncoderId = 30;
-  public static final double pivotEncoderOffset = 0;
+  public static final double pivotEncoderOffset = 0.403 + 0.194 + 0.0004;
   public static final SensorDirectionValue pivotEncoderSensorDirection =
-      SensorDirectionValue.CounterClockwise_Positive;
+      SensorDirectionValue.Clockwise_Positive;
 
   // TODO: Fix later with real values
   public static final WristConstants Pivot =
@@ -107,7 +107,7 @@ public class WristConstants {
           112.5,
           Degrees.of(0.0), // AngleOffset
           Rotations.of(0), // Resting on base
-          Degrees.of(205), // 205 deg
+          Degrees.of(118),
           Meters.of(0)); // Unused
 
   // TODO: Fix later with real values
@@ -129,7 +129,7 @@ public class WristConstants {
           1000.0,
           36.73,
           Rotations.of(11.98),
-          Degrees.of(-100),
-          Degrees.of(72.5),
+          Degrees.of(-72.5),
+          Degrees.of(100),
           Meters.of(0.10));
 }

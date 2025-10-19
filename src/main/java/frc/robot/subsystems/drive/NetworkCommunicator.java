@@ -154,8 +154,7 @@ public class NetworkCommunicator {
                               () -> {
                                 RobotContainer.armCommand.setHeight(ScoringLevel.SOURCE_CORAL);
                                 RobotContainer.coralIntakeCommand.manual = true;
-                                RobotContainer.coralIntakeCommand.velocity =
-                                    MetersPerSecond.of(6);
+                                RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
                               })
                           .until(() -> CoralIntake.getInstance().hasCoralHotDog()));
           // If selected command is a reef command
