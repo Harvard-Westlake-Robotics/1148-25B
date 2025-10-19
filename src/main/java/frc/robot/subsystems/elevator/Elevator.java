@@ -14,9 +14,10 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
+  private DigitalInput dio = new DigitalInput(5);
+  
   private final String key = "Elevator";
   private static Elevator instance = null;
-  private DigitalInput dio = new DigitalInput(5);
   SysIdRoutine sysId;
 
   public static Elevator getInstance() {
@@ -42,7 +43,6 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
 
-    // TODO: What does this do?
     if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
       io.tareHeight(0);
     }

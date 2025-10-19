@@ -101,9 +101,9 @@ public class WristConstants {
           0.0,
           0.0,
           0.0,
-          1000.0,
-          1000.0,
-          1000.0,
+          0.5 * 112.5, // 0.5 rot/s^2
+          0.2 * 112.5, // 0.2 rot/s
+          1 * 112.5, // 1 rot/s^3
           112.5,
           Degrees.of(0.0), // AngleOffset
           Rotations.of(0), // Resting on base
