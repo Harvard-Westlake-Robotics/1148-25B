@@ -93,9 +93,9 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    // wristMotor.setControl(
-    //     wristController
-    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
+    wristMotor.setControl(
+        wristController
+            .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
   }
 
   @Override
