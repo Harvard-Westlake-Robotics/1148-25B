@@ -36,7 +36,7 @@ public class WristIOTalonFX implements WristIO {
     this.constants = constants;
     wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
     wristMotor.setPosition(constants.angleOffset);
-    this.wristController = new MotionMagicVoltage(constants.angleOffset).withEnableFOC(true);
+    this.wristController = new MotionMagicVoltage(0).withEnableFOC(true).withPosition(constants.angleOffset);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -93,9 +93,9 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    wristMotor.setControl(
-        wristController
-            .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
+    // wristMotor.setControl(
+    //     wristController
+    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
   }
 
   @Override
