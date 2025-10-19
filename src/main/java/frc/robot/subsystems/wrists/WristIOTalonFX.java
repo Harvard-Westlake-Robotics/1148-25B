@@ -2,6 +2,8 @@ package frc.robot.subsystems.wrists;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -79,6 +81,9 @@ public class WristIOTalonFX implements WristIO {
         motorVelocity.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio;
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
+
+    // TODO: use key and in Wrist.java instead
+    Logger.recordOutput("RealOutputs/Wrist/motionMagicState", wristController.toString());
   }
 
   @Override

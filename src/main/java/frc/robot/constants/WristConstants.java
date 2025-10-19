@@ -110,7 +110,6 @@ public class WristConstants {
           Degrees.of(118),
           Meters.of(0)); // Unused
 
-  // TODO: Fix later with real values
   public static final WristConstants Wrist =
       new WristConstants(
           16,
