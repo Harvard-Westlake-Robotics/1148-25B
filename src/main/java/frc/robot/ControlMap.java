@@ -210,15 +210,15 @@ public class ControlMap {
     //     .whileTrue(
     //         new InstantCommand(
     //             () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
-    // driver
-    //     .povDown()
-    //     .whileTrue(
-    //         new InstantCommand(
-    //             () -> {
-    //               Pivot.getInstance().goToAngleClosedLoop(30);
-    //               ;
-    //               RobotContainer.coralIntakeCommand.stopIntake();
-    //             }));
+    driver
+        .povDown()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  Pivot.getInstance().goToAngleClosedLoop(30);
+                  ;
+                  RobotContainer.coralIntakeCommand.stopIntake();
+                }));
 
     // Hang
 

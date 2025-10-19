@@ -7,8 +7,8 @@ import edu.wpi.first.units.measure.Distance;
 
 public class ElevatorConstants {
   // Motor constants
-  public static final int elevator1ID = 18;
-  public static final int elevator2ID = 19;
+  public static final int elevator1ID = 0; // 18
+  public static final int elevator2ID = 0; // 19
   public static final InvertedValue elevator2Inverted = InvertedValue.Clockwise_Positive;
   public static final InvertedValue elevator1Inverted = InvertedValue.Clockwise_Positive;
   public static final int statorLimit = 80;

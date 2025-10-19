@@ -270,8 +270,8 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getR2Axis()));
     // Instantiate and set default commands
-    // armCommand = new ArmCommand();
-    // elevator.setDefaultCommand(armCommand);
+    armCommand = new ArmCommand();
+    elevator.setDefaultCommand(armCommand);
     coralIntakeCommand = new CoralIntakeCommand();
     coralIntake.setDefaultCommand(coralIntakeCommand);
     algaeIntakeCommand = new AlgaeIntakeCommand();

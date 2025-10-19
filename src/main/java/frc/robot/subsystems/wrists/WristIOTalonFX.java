@@ -1,7 +1,5 @@
 package frc.robot.subsystems.wrists;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -51,12 +49,14 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.StatorCurrentLimit = constants.statorLimit;
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
-    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        constants.wristMaxAngle.in(Rotations);
-    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
+    // wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+    //     constants.wristMaxAngle.in(Rotations);
+    // wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+    //     constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio;
+    // System.out.println(
+    //     constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio);
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
     this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
         this.constants.motionMagicCruiseVelocity;
@@ -93,9 +93,9 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    wristMotor.setControl(
-        wristController
-            .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
+    // wristMotor.setControl(
+    //     wristController
+    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
   }
 
   @Override
