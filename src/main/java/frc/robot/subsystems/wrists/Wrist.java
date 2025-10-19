@@ -65,7 +65,6 @@ public class Wrist extends SubsystemBase {
   }
 
   public void goToAngleClosedLoop2(double angle) {
-    System.out.println("Going to " + angle);
     io1.goToAngleClosedLoop(angle, 0);
     // io2.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
   }

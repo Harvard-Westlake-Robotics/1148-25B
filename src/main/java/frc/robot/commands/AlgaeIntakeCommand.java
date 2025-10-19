@@ -36,24 +36,34 @@ public class AlgaeIntakeCommand extends Command {
   }
 
   public void intake() {
-    if (!algaeLastStop) {
-      this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
-    } else {
-      this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
-    }
+    // for auto intake
+    // if (!algaeLastStop) {
+    //   this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
+    // } else {
+    //   this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
+    // }
+    runVelocity(IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
+  }
+
+  public void outtake() {
+    runVelocity(IntakeConstants.AlgaeIntake.outtakeVelocity.in(MetersPerSecond));
   }
 
   public void stop() {
-    if (AlgaeIntake.getInstance().hasAlgae()) {
-      this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
-      // TODO: Why is this here?
-      AlgaeIntake.getInstance().runCharacterization(1.5);
-      algaeLastStop = true;
-    } else {
-      this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
-      AlgaeIntake.getInstance().runCharacterization(0);
-      algaeLastStop = false;
-    }
+    // auto intake
+    // if (AlgaeIntake.getInstance().hasAlgae()) {
+    //   this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    //   // TODO: Why is this here?
+    //   AlgaeIntake.getInstance().runCharacterization(1.5);
+    //   algaeLastStop = true;
+    // } else {
+    //   this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
+    //   AlgaeIntake.getInstance().runCharacterization(0);
+    //   algaeLastStop = false;
+    // }
+
+    // manual
+    runVelocity(0);
   }
 
   public void runVelocity(double velocity) {

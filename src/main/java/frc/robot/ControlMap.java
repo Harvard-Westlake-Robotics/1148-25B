@@ -191,14 +191,14 @@ public class ControlMap {
     //               RobotContainer.algaeIntakeCommand.runVelocity(0);
     //               RobotContainer.coralIntakeCommand.stopIntake();
     //             }));
-    operator
-        .leftBumper()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L2);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
+    // operator
+    //     .leftBumper()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L2);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
     operator
         .rightBumper()
         .whileTrue(
@@ -243,8 +243,15 @@ public class ControlMap {
                 .andThen(
                     new InstantCommand(
                         () -> {
-                          Pivot.getInstance().goToAngleClosedLoop(-17);
+                          Pivot.getInstance().goToAngleClosedLoop(-20);
                         })));
+
+    operator
+        .leftBumper()
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
+    operator
+        .leftTrigger()
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.outtake()));
     // RobotContainer.algaeIntakeCommand.runVelocity(0);
     // RobotContainer.coralIntakeCommand.stopIntake();
     // operator
@@ -259,11 +266,10 @@ public class ControlMap {
             new InstantCommand(
                 () -> {
                   RobotContainer.hangCommand.flipOut();
-                  System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAA");
                 }));
 
     // Hang
-
+    operator.povLeft().whileTrue(new InstantCommand(() -> RobotContainer.hangCommand.flipIn()));
     operator
         .b()
         .whileTrue(

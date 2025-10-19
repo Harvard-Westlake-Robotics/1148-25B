@@ -209,4 +209,9 @@ public class ArmCommand extends Command {
         return new double[] {0, 0, 0};
     }
   }
+
+  public void goTopAlgae() {
+    Pivot.getInstance().goToAngleClosedLoop(0);
+    Wrist.getInstance().goToAngleClosedLoop2(0);
+  }
 }

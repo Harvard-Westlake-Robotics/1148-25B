@@ -99,10 +99,10 @@ public class WristConstants {
           27,
           30,
           InvertedValue.Clockwise_Positive,
-          40,
-          80,
-          0.2,
-          0.0,
+          120,
+          60,
+          0.4,
+          0.02,
           0.0,
           0.000,
           0.0,
@@ -128,7 +128,7 @@ public class WristConstants {
           InvertedValue.CounterClockwise_Positive,
           40,
           80,
-          5,
+          50,
           0.0,
           0.0,
           0.000,
@@ -140,7 +140,7 @@ public class WristConstants {
           1000.0,
           10,
           1.0,
-          Angle.ofBaseUnits(0, Rotations), // AngleOffset 11.98 - 1.906494
+          Rotations.of(0), // AngleOffset 11.98 - 1.906494
           Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
           Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
           Meters.of(0.10));
