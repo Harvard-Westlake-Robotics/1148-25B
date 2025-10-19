@@ -53,78 +53,78 @@ public class ControlMap {
 
     // Coral intake commands
     // Coral intake is intaking automatically when elevator is at coral source (ground)
-    driver
-        .R1()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
-                    // If at algae level, intake algae
-                    RobotContainer.algaeIntakeCommand.runVelocity(
-                        IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
-                  } else {
-                    // Intake straight
-                    RobotContainer.coralIntakeCommand.runIntake(true);
-                  }
-                }))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
-                    // If at algae level, intake algae
-                    RobotContainer.algaeIntakeCommand.runVelocity(0);
-                  } else {
-                    // Intake straight
-                    RobotContainer.coralIntakeCommand.stopIntake();
-                  }
-                }));
-    driver
-        .L1()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
-                    // If at algae level, intake algae
-                    RobotContainer.algaeIntakeCommand.runVelocity(
-                        IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
-                  } else {
-                    // Intake straight
-                    RobotContainer.coralIntakeCommand.runIntake(false);
-                  }
-                }))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
-                    // If at algae level, intake algae
-                    RobotContainer.algaeIntakeCommand.runVelocity(0);
-                  } else {
-                    // Intake straight
-                    RobotContainer.coralIntakeCommand.stopIntake();
-                  }
-                }));
+    // driver
+    //     .R1()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+    //                 // If at algae level, intake algae
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(
+    //                     IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
+    //               } else {
+    //                 // Intake straight
+    //                 RobotContainer.coralIntakeCommand.runIntake(true);
+    //               }
+    //             }))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+    //                 // If at algae level, intake algae
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //               } else {
+    //                 // Intake straight
+    //                 RobotContainer.coralIntakeCommand.stopIntake();
+    //               }
+    //             }));
+    // driver
+    //     .L1()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+    //                 // If at algae level, intake algae
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(
+    //                     IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
+    //               } else {
+    //                 // Intake straight
+    //                 RobotContainer.coralIntakeCommand.runIntake(false);
+    //               }
+    //             }))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+    //                 // If at algae level, intake algae
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //               } else {
+    //                 // Intake straight
+    //                 RobotContainer.coralIntakeCommand.stopIntake();
+    //               }
+    //             }));
     // Shared Outtake
-    driver
-        .R2()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  if (RobotContainer.armCommand.outtakePosition) {
-                    RobotContainer.coralIntakeCommand.runOuttake();
-                  } else if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
-                    RobotContainer.algaeIntakeCommand.runVelocity(
-                        IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
-                  } else if (ArmCommand.level == ScoringLevel.NET) {
-                    RobotContainer.algaeIntakeCommand.runVelocity(
-                        IntakeConstants.AlgaeIntake.outtakeVelocity.in(MetersPerSecond));
-                  }
-                }))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.coralIntakeCommand.stopIntake();
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
+    // driver
+    //     .R2()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               if (RobotContainer.armCommand.outtakePosition) {
+    //                 RobotContainer.coralIntakeCommand.runOuttake();
+    //               } else if (ArmCommand.level == ScoringLevel.GROUND_ALGAE) {
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(
+    //                     IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
+    //               } else if (ArmCommand.level == ScoringLevel.NET) {
+    //                 RobotContainer.algaeIntakeCommand.runVelocity(
+    //                     IntakeConstants.AlgaeIntake.outtakeVelocity.in(MetersPerSecond));
+    //               }
+    //             }))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.coralIntakeCommand.stopIntake();
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
 
     // driver
     //     .L2()
@@ -153,18 +153,6 @@ public class ControlMap {
     //             }
     //           }
     //         });
-
-    // Elevator
-    operator
-        .a()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  Pivot.getInstance().goToAngleClosedLoop(-19);
-                  // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                  ;
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
     // operator
     //     .x()
     //     .whileTrue(
@@ -199,27 +187,27 @@ public class ControlMap {
     //               RobotContainer.armCommand.setHeight(ScoringLevel.L2);
     //               RobotContainer.algaeIntakeCommand.runVelocity(0);
     //             }));
-    operator
-        .rightBumper()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L3);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
-    operator
-        .rightTrigger()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.L4);
-                  RobotContainer.algaeIntakeCommand.runVelocity(0);
-                }));
-    operator
-        .povUp()
-        .whileTrue(
-            new InstantCommand(
-                () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
+    // operator
+    //     .rightBumper()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L3);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
+    // operator
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> {
+    //               RobotContainer.armCommand.setHeight(ScoringLevel.L4);
+    //               RobotContainer.algaeIntakeCommand.runVelocity(0);
+    //             }));
+    // operator
+    //     .povUp()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //             () -> RobotContainer.armCommand.setHeight(ScoringLevel.BOTTOM_REMOVE)));
     // driver
     //     .povDown()
     //     .whileTrue(
@@ -229,29 +217,6 @@ public class ControlMap {
     //               ;
     //               RobotContainer.coralIntakeCommand.stopIntake();
     //             }));
-    operator
-        .y()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  Pivot.getInstance().goToAngleClosedLoop(9);
-                }));
-    operator
-        .x()
-        .whileTrue(
-            new InstantCommand(() -> RobotContainer.hangCommand.hang())
-                .andThen(
-                    new InstantCommand(
-                        () -> {
-                          Pivot.getInstance().goToAngleClosedLoop(-20);
-                        })));
-
-    operator
-        .leftBumper()
-        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
-    operator
-        .leftTrigger()
-        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.outtake()));
     // RobotContainer.algaeIntakeCommand.runVelocity(0);
     // RobotContainer.coralIntakeCommand.stopIntake();
     // operator
@@ -260,16 +225,66 @@ public class ControlMap {
     //         new InstantCommand(() -> Pivot.getInstance().goToAngleClosedLoop(-15)));
     // RobotContainer.algaeIntakeCommand.runVelocity(0);
     // RobotContainer.coralIntakeCommand.stopIntake();
+
+    // Commands not done: whatever the "rest position" thing is on
+    // the document
+
+
+    // MANUAL COMMANDS --> Operator: 
+    // Pivot down to limit
+    operator
+    .a()
+    .whileTrue(
+        new InstantCommand(
+            () -> {
+              // Pivot.getInstance().goToAngleClosedLoop(-19);
+              RobotContainer.armCommand.setPivotAngle(-19);
+              RobotContainer.algaeIntakeCommand.runVelocity(0);
+            }));
+    
+    // Pivot up to hang position
+    operator
+    .y()
+    .whileTrue(
+        new InstantCommand(
+            () -> {
+              RobotContainer.armCommand.setPivotAngle(9);
+              // Pivot.getInstance().goToAngleClosedLoop(9);
+            }));
+    // hanging after we have clamped the barge
+operator
+    .x()
+    .whileTrue(
+        new InstantCommand(() -> RobotContainer.hangCommand.hang())
+            .andThen(
+                new InstantCommand(
+                    () -> {
+                      RobotContainer.armCommand.setPivotAngle(-20);
+                      // Pivot.getInstance().goToAngleClosedLoop(-20);
+                    })));
+  // Algae intake
+operator
+    .leftBumper()
+    .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake())).onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+  // Algae outtake
+operator
+    .leftTrigger()
+    .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.outtake())).onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+
+// For hang + other stuff -> flip out the wrist
     operator
         .povRight()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.hangCommand.flipOut();
+                  RobotContainer.armCommand.setWristAngle(-14);
+                  // RobotContainer.hangCommand.flipOut()
                 }));
 
-    // Hang
-    operator.povLeft().whileTrue(new InstantCommand(() -> RobotContainer.hangCommand.flipIn()));
+  // Flip in the wrist to angle 0
+    operator.povLeft().whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setWristAngle(0)));
+    // RobotContainer.hangCommand.flipIn()
+  // run the hang motors
     operator
         .b()
         .whileTrue(
@@ -278,9 +293,14 @@ public class ControlMap {
                   RobotContainer.hangCommand.run();
                 }))
         .onFalse(new InstantCommand(() -> RobotContainer.hangCommand.stop()));
+  
 
-    // Commands not done: whatever the "rest position" thing is on
-    // the document
+  // MANUAL CONTROLS --> DRIVER:
+  // Intake and outtake (L2 and R2)
+  driver.L2().whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualIntake())).onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+  driver.R2().whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualOuttake())).onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+  // Go to hang position with BOTH arm and pivot. Just a test, can be moved later.
+  driver.L1().whileTrue(new InstantCommand(() -> {RobotContainer.armCommand.setManualPos(ScoringLevel.HANG);System.out.println("AAAAAAAAAAAAAAAAAAAAAAOIHAOPIAJOI");}));
 
   }
 }

@@ -198,6 +198,9 @@ public class RobotContainer {
         algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Pivot SysID (Dynamic Forward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption("Pivot SysID (Dynamic Backward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption("PivotSysId (Quasistatic Forward)", pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption("Pivot SysID (Quasistatic Backward)", pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // autoChooser.addOption()
 
     // Configure the button bindings
@@ -224,8 +227,8 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getR2Axis()));
     // Instantiate and set default commands
-    // armCommand = new ArmCommand();
-    // elevator.setDefaultCommand(armCommand);
+    armCommand = new ArmCommand();
+    elevator.setDefaultCommand(armCommand);
     coralIntakeCommand = new CoralIntakeCommand();
     coralIntake.setDefaultCommand(coralIntakeCommand);
     algaeIntakeCommand = new AlgaeIntakeCommand();

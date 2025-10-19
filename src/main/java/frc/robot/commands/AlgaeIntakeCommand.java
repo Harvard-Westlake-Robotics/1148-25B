@@ -42,11 +42,11 @@ public class AlgaeIntakeCommand extends Command {
     // } else {
     //   this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
     // }
-    runVelocity(IntakeConstants.AlgaeIntake.intakeVelocity.in(MetersPerSecond));
+    this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
   }
 
   public void outtake() {
-    runVelocity(IntakeConstants.AlgaeIntake.outtakeVelocity.in(MetersPerSecond));
+    this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
   }
 
   public void stop() {

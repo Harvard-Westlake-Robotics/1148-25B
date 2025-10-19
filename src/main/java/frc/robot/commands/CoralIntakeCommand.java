@@ -43,7 +43,8 @@ public class CoralIntakeCommand extends Command {
     this.intakingHotdog = true;
     this.outtaking = false;
     this.running = false;
-    this.manual = false;
+    // Change this later
+    this.manual = true;
     velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
   }
 
@@ -132,7 +133,16 @@ public class CoralIntakeCommand extends Command {
 
   public void stopIntake() {
     running = false;
+    this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
     AlgaeIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+  }
+
+  public void manualIntake() {
+    this.velocity = IntakeConstants.CoralIntake.intakeVelocity;
+  }
+
+  public void manualOuttake() {
+    this.velocity = IntakeConstants.CoralIntake.outtakeVelocity;
   }
 
   @Override

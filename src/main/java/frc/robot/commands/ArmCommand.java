@@ -21,6 +21,9 @@ public class ArmCommand extends Command {
   // Tag ids corresponding to the reef ids
   private static double[] targetPos;
   public boolean outtakePosition;
+  private double pivotAngle;
+  private double elevatorLength;
+  private double wristAngle;
 
   public static double[] getTargetPos() {
     return targetPos;
@@ -54,6 +57,9 @@ public class ArmCommand extends Command {
     this.addRequirements(Elevator.getInstance(), Pivot.getInstance(), Wrist.getInstance());
     level = ScoringLevel.NEUTRAL;
     outtakePosition = false;
+    pivotAngle = 0;
+    elevatorLength = 0;
+    wristAngle = 0;
     setHeight(level);
   }
 
@@ -62,9 +68,14 @@ public class ArmCommand extends Command {
 
   @Override
   public void execute() {
-    Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
-    Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
-    Wrist.getInstance().goToAngleClosedLoop(targetPos[2] + targetPos[0]);
+    // with ArmKinematics
+    // Pivot.getInstance().goToAngleClosedLoop(targetPos[0]);
+    // Elevator.getInstance().goToHeightClosedLoop(targetPos[1]);
+    // Wrist.getInstance().goToAngleClosedLoop(targetPos[2] + targetPos[0]);
+    // Without armKinematics
+    Pivot.getInstance().goToAngleClosedLoop(pivotAngle);
+    Elevator.getInstance().goToHeightClosedLoop(elevatorLength);
+    Wrist.getInstance().goToAngleClosedLoop2(wristAngle);
   }
 
   @Override
@@ -124,6 +135,7 @@ public class ArmCommand extends Command {
     return theta >= 0 && theta <= Math.PI;
   }
 
+  // Arm kinematic target pos, NOT USED
   public double[] getTargetPos(ScoringLevel level) {
     // TODO: Add real values
     switch (level) {
@@ -210,8 +222,78 @@ public class ArmCommand extends Command {
     }
   }
 
-  public void goTopAlgae() {
-    Pivot.getInstance().goToAngleClosedLoop(0);
-    Wrist.getInstance().goToAngleClosedLoop2(0);
-  }
+  // For manual position, no arm kinematics, just straight going to position
+  public void setManualPos(ScoringLevel level) {
+    // TODO: Add real values
+    switch (level) {
+      case SOURCE_CORAL:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case GROUND_CORAL:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case GROUND_ALGAE:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case L1:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case L2:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case L3:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case L4:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case TOP_REMOVE:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case BOTTOM_REMOVE:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case NET:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case PROCESSOR:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      case HANG:
+      pivotAngle = 9;
+      elevatorLength = 0;
+      wristAngle = -14;
+      case NEUTRAL:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;
+      default:
+      pivotAngle = 0;
+      elevatorLength = 0;
+      wristAngle = 0;  
+    }
+}
+
+public void setPivotAngle(double angle) {
+  pivotAngle = angle;
+}
+
+public void setElevatorLength(double angle) {
+elevatorLength = angle;
+}
+
+public void setWristAngle(double angle) {
+wristAngle = angle;
+}
 }
