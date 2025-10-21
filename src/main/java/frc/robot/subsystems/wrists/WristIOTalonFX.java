@@ -39,10 +39,7 @@ public class WristIOTalonFX implements WristIO {
   public WristIOTalonFX(WristConstants constants, int motorNum, String canbus) {
     this.constants = constants;
     wristMotor = new TalonFX(constants.motorId + motorNum - 1, canbus);
-    // System.out.println(constants.angleOffset.baseUnitMagnitude());
-    System.out.println(Rotations.of(11.98));
     wristMotor.setPosition(constants.angleOffset);
-    // System.out.println(constants.angleOffset.in(Rotations));
     this.wristController = new MotionMagicVoltage(0).withEnableFOC(true);
     wristConfig = new TalonFXConfiguration();
     wristConfig.MotorOutput.Inverted = constants.motorInverted;
@@ -56,8 +53,7 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     wristConfig.CurrentLimits.SupplyCurrentLimit = constants.supplyLimit;
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
-    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
-        this.constants.motionMagicCruiseVelocity;
+    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.constants.motionMagicCruiseVelocity;
     this.wristConfig.MotionMagic.MotionMagicJerk = this.constants.motionMagicJerk;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
     wristMotor.setControl(wristController);
