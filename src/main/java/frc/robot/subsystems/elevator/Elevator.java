@@ -75,4 +75,8 @@ public class Elevator extends SubsystemBase {
   public double getTarget() {
     return io.getTarget();
   }
+
+  public double getCurrentHeight() {
+    return inputs.elevator1PositionMeters;
+  }
 }

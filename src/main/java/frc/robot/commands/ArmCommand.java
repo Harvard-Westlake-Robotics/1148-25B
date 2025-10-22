@@ -7,9 +7,9 @@ import frc.robot.subsystems.wrists.Wrist;
 
 public class ArmCommand extends Command {
   public boolean outtakePosition;
-  private double pivotAngle;
-  private double elevatorLength;
-  private double wristAngle;
+  private static double pivotAngle;
+  private static double elevatorLength;
+  private static double wristAngle;
 
   /*
    * An enum that stores y and wrist values that are fed into our ArmKinematics
@@ -160,5 +160,9 @@ public class ArmCommand extends Command {
 
   public void setWristAngle(double angle) {
     wristAngle = angle;
+  }
+
+  public static double[] getState() {
+    return new double[] { pivotAngle, elevatorLength, wristAngle };
   }
 }

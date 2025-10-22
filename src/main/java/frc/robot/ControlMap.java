@@ -318,7 +318,7 @@ public class ControlMap {
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setManualPos(ScoringLevel.HANG);
+                  RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
                 }));
     operator
         .povDown()
@@ -326,7 +326,6 @@ public class ControlMap {
             new InstantCommand(
                 () -> {
                   RobotContainer.armCommand.setElevatorLength(2);
-                  System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 }));
   }
 }
