@@ -6,7 +6,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.networktables.*;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -155,8 +154,7 @@ public class NetworkCommunicator {
                               () -> {
                                 RobotContainer.armCommand.setHeight(ScoringLevel.SOURCE_CORAL);
                                 RobotContainer.coralIntakeCommand.manual = true;
-                                RobotContainer.coralIntakeCommand.velocity =
-                                    LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                                RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
                               })
                           .until(() -> CoralIntake.getInstance().hasCoralHotDog()));
           // If selected command is a reef command

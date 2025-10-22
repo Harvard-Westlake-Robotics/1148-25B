@@ -11,7 +11,7 @@ import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends SubsystemBase {
-  private final WristIOTalonFX io1;
+  private final WristIOTalonFX io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
   private final WristConstants constants;
@@ -21,7 +21,7 @@ public class Wrist extends SubsystemBase {
   SysIdRoutine sysId;
 
   public double getAngle() {
-    return inputs.wristPositionRot / constants.motorToWristRotations;
+    return inputs.wristPositionRot / constants.motorRotationsPerWristRotationRatio;
   }
 
   public static Wrist getInstance() {
@@ -33,7 +33,7 @@ public class Wrist extends SubsystemBase {
 
   public Wrist() {
     this.constants = WristConstants.Wrist;
-    io1 = new WristIOTalonFX(constants, 1, "rio");
+    io = new WristIOTalonFX(constants, 1, "rio");
     sysId =
         new SysIdRoutine(
             new Config(
@@ -45,24 +45,20 @@ public class Wrist extends SubsystemBase {
   }
 
   public void periodic() {
-    io1.updateInputs(inputs);
+    io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
   }
 
   public void runCharacterization(double voltage) {
-    io1.runCharacterization(voltage);
+    io.runCharacterization(voltage);
   }
 
   public void goToAngleClosedLoop(double angle) {
-    io1.goToAngleClosedLoop(angle, Pivot.getInstance().getAngle());
-  }
-
-  public void goToAngleClosedLoop2(double angle) {
-    io1.goToAngleClosedLoop(angle, 0);
+    io.goToAngleClosedLoop(angle);
   }
 
   public void tareAngle(double angle) {
-    io1.tareAngle(angle);
+    io.tareAngle(angle);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

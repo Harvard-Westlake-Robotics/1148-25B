@@ -3,7 +3,6 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.constants.DriveConstants;
@@ -32,8 +31,7 @@ public class TeleopCommand extends Command {
           .andThen(
               () -> {
                 RobotContainer.coralIntakeCommand.manual = true;
-                RobotContainer.coralIntakeCommand.velocity =
-                    LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
               });
 
   @Override
@@ -44,7 +42,7 @@ public class TeleopCommand extends Command {
       sourceCommand.cancel();
       reefCommand.schedule();
     } else {
-      RobotContainer.coralIntakeCommand.velocity = LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+      RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
       sourceCommand.addRequirements(getRequirements());
       reefCommand.cancel();
       sourceCommand.schedule();
@@ -74,8 +72,7 @@ public class TeleopCommand extends Command {
             .andThen(
                 () -> {
                   RobotContainer.coralIntakeCommand.manual = true;
-                  RobotContainer.coralIntakeCommand.velocity =
-                      LinearVelocity.ofBaseUnits(6, MetersPerSecond);
+                  RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
                 });
   }
 }

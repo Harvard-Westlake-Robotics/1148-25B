@@ -68,7 +68,7 @@ public class CoralIntakeCommand extends Command {
           outtake();
         }
       } else {
-        CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+        CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
       }
     } else {
       CoralIntake.getInstance().runVelocity(velocity);
@@ -117,7 +117,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    CoralIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
+    CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
   }
 
   public void runIntake(boolean intakingStraight) {

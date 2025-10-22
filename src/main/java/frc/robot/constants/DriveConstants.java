@@ -32,11 +32,8 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
@@ -54,9 +51,10 @@ public class DriveConstants {
   // ================================= PID Tuning =================================
 
   // Swerve Steer PID Values
+  // TODO: Tune drive/steer PIDSVA constants
   public static final double kSteerP = 65;
   public static final double kSteerI = 0;
-  public static final double kSteerD = 0.5;
+  public static final double kSteerD = 0;
   public static final double kSteerS = 0;
   public static final double kSteerV = 0;
   public static final double kSteerA = 0;
@@ -109,10 +107,12 @@ public class DriveConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
+  // TODO: Sysid this
   public static final Current kSlipCurrent = Amps.of(130.0);
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
+  // TODO: Sysid this
   public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(7.50);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
@@ -139,7 +139,7 @@ public class DriveConstants {
   public static final int kFrontLeftDriveMotorId = 1;
   public static final int kFrontLeftSteerMotorId = 2;
   public static final int kFrontLeftEncoderId = 11;
-  public static final Angle kFrontLeftEncoderOffset = Rotations.of(0.010742); // 0.015381 - 0.010498
+  public static final Angle kFrontLeftEncoderOffset = Rotations.of(0.010742);
   public static final boolean kFrontLeftSteerMotorInverted = true;
   public static final boolean kFrontLeftEncoderInverted = false;
   public static final Distance kFrontLeftXPos = Inches.of(11.5);
@@ -149,8 +149,7 @@ public class DriveConstants {
   public static final int kFrontRightDriveMotorId = 3;
   public static final int kFrontRightSteerMotorId = 4;
   public static final int kFrontRightEncoderId = 12;
-  public static final Angle kFrontRightEncoderOffset =
-      Rotations.of(-0.452881); // -0.049805 - 0.406494
+  public static final Angle kFrontRightEncoderOffset = Rotations.of(-0.452881);
   public static final boolean kFrontRightSteerMotorInverted = true;
   public static final boolean kFrontRightEncoderInverted = false;
 
@@ -161,8 +160,7 @@ public class DriveConstants {
   public static final int kBackLeftDriveMotorId = 5;
   public static final int kBackLeftSteerMotorId = 6;
   public static final int kBackLeftEncoderId = 13;
-  public static final Angle kBackLeftEncoderOffset =
-      Rotations.of(-0.299316 + 0.5); // 0.295654 + 0.395508 + 0.5
+  public static final Angle kBackLeftEncoderOffset = Rotations.of(-0.299316 + 0.5);
   public static final boolean kBackLeftSteerMotorInverted = true;
   public static final boolean kBackLeftEncoderInverted = false;
 
@@ -173,8 +171,7 @@ public class DriveConstants {
   public static final int kBackRightDriveMotorId = 7;
   public static final int kBackRightSteerMotorId = 8;
   public static final int kBackRightEncoderId = 14;
-  public static final Angle kBackRightEncoderOffset =
-      Rotations.of(0.139404 + 0.5); // -0.163818 + 0.315186 + 0.5
+  public static final Angle kBackRightEncoderOffset = Rotations.of(0.139404 + 0.5);
   public static final boolean kBackRightSteerMotorInverted = true;
   public static final boolean kBackRightEncoderInverted = false;
 
@@ -236,9 +233,7 @@ public class DriveConstants {
                   .withSupplyCurrentLimit(Amps.of(60))
                   .withStatorCurrentLimitEnable(true)
                   .withStatorCurrentLimit(kSlipCurrent))
-          .withMotorOutput(
-              // TODO: Remove this? Or change to brake?
-              new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast)); // REMOVE LATER
+          .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
   public static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
           .withCurrentLimits(
@@ -257,8 +252,7 @@ public class DriveConstants {
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
-  // TODO: Why is there a placeholder filepath?
-  public static final CANBus kCANBus = new CANBus("drive", "./logs/example.hoot");
+  public static final CANBus kCANBus = new CANBus("drive", "./logs/driveCAN.hoot");
 
   public static final SwerveDrivetrainConstants DrivetrainConstants =
       new SwerveDrivetrainConstants()
@@ -401,13 +395,13 @@ public class DriveConstants {
 
   // ================================= PathPlanner Constraints =================================
 
+  // TODO: Tune
   public static final PathConstraints PP_CONSTRAINTS =
       new PathConstraints(
-          LinearVelocity.ofBaseUnits(7.5, MetersPerSecond),
-          LinearAcceleration.ofBaseUnits(5.5, MetersPerSecondPerSecond),
-          AngularVelocity.ofBaseUnits(1020, DegreesPerSecond),
-          AngularAcceleration.ofBaseUnits(
-              2400, DegreesPerSecondPerSecond)); // PathConstraints.unlimitedConstraints(12);
+          MetersPerSecond.of(7.5),
+          MetersPerSecondPerSecond.of(5.5),
+          DegreesPerSecond.of(1020),
+          DegreesPerSecondPerSecond.of(2400));
 
   public static double xyStdDev(AprilTagResult result) {
     return xyStdDevCoeff

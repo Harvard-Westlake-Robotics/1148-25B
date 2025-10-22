@@ -45,7 +45,7 @@ public class ControlMap {
                 .ignoringDisable(true));
 
     // Intake commands
-
+    //shouldn't we delete this-Daniel
     // Coral intake commands
     // Coral intake is intaking automatically when elevator is at coral source (ground)
     // driver
@@ -249,7 +249,7 @@ public class ControlMap {
     operator
         .x()
         .whileTrue(
-            new InstantCommand(() -> RobotContainer.hangCommand.hang())
+            new InstantCommand(() -> RobotContainer.hangCommand.lock())
                 .andThen(
                     new InstantCommand(
                         () -> {
