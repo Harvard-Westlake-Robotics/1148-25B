@@ -5,15 +5,14 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public class WristConstants {
   // Motor constants
+  // ID of the first motor
   public final int motorId;
-  public final int motorId2;
-  public final int motorId3;
-  public final int canid;
   public final InvertedValue motorInverted;
   public final int statorLimit;
   public final int supplyLimit;
@@ -24,19 +23,18 @@ public class WristConstants {
   public double kD;
   public double kS;
   public double kV;
-  public double kG;
   public double kA;
+  // Determine kG by gradually increasing phoenix tuner voltage until the wrist can hold itself up
+  // (velocity is 0), then divide the voltage by the cosine of the absolute angle to get kG
+  public double kG;
 
   // Motion magic constants
   public final double motionMagicAcceleration;
   public final double motionMagicCruiseVelocity;
   public final double motionMagicJerk;
 
-  // Velocity constants
-  public final double wristVelocity;
-
   // Physical constants
-  public final double motorToWristRotations;
+  public final double motorRotationsPerWristRotationRatio;
   public final Angle angleOffset;
   public final Angle wristMinAngle;
   public final Angle wristMaxAngle;
@@ -44,9 +42,6 @@ public class WristConstants {
 
   public WristConstants(
       int motorId,
-      int motorId2,
-      int motorId3,
-      int canId,
       InvertedValue motorInverted,
       int statorLimit,
       int supplyLimit,
@@ -55,21 +50,17 @@ public class WristConstants {
       double kD,
       double kS,
       double kV,
-      double kG,
       double kA,
+      double kG,
       double motionMagicAcceleration,
       double motionMagicCruiseVelocity,
       double motionMagicJerk,
-      double wristVelocity,
-      double motorToWristRotations,
+      double motorRotationsPerWristRotationRatio,
       Angle angleOffset,
       Angle wristMinAngle,
       Angle wristMaxAngle,
       Distance wristLength) {
     this.motorId = motorId;
-    this.motorId2 = motorId2;
-    this.motorId3 = motorId3;
-    this.canid = canId;
     this.motorInverted = motorInverted;
     this.statorLimit = statorLimit;
     this.supplyLimit = supplyLimit;
@@ -78,70 +69,64 @@ public class WristConstants {
     this.kD = kD;
     this.kS = kS;
     this.kV = kV;
-    this.kG = kG;
     this.kA = kA;
+    this.kG = kG;
     this.motionMagicAcceleration = motionMagicAcceleration;
     this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
     this.motionMagicJerk = motionMagicJerk;
-    this.wristVelocity = wristVelocity;
-    this.motorToWristRotations = motorToWristRotations;
+    this.motorRotationsPerWristRotationRatio = motorRotationsPerWristRotationRatio;
     this.angleOffset = angleOffset;
     this.wristMinAngle = wristMinAngle;
     this.wristMaxAngle = wristMaxAngle;
     this.wristLength = wristLength;
   }
 
+  // Pivot encoder constants
+  public static final int pivotEncoderId = 30;
+  public static final double pivotEncoderOffset = 0.403;
+  public static final SensorDirectionValue pivotEncoderSensorDirection =
+      SensorDirectionValue.Clockwise_Positive;
+
   // TODO: Fix later with real values
   public static final WristConstants Pivot =
       new WristConstants(
           25,
-          26,
-          27,
-          30,
           InvertedValue.Clockwise_Positive,
-          120,
-          60,
-          0.4,
-          0.02,
-          0.0,
-          0.000,
-          0.0,
-          0.0,
-          0.0,
-          1000.0,
-          1000.0,
-          1000.0,
-          100000,
-          1.0, // 4.846
-          Angle.ofBaseUnits(0.0, Degrees), // AngleOffset
-          Angle.ofBaseUnits(0, Rotations), // Resting on base
-          Angle.ofBaseUnits(0.569, Rotations), // 205 deg
-          Meters.of(0));
-
-  // TODO: Fix later with real values
-  public static final WristConstants Wrist =
-      new WristConstants(
-          16,
-          0,
-          0,
-          0,
-          InvertedValue.CounterClockwise_Positive,
           40,
           80,
-          89,
-          0.0,
-          0.0,
-          0.000,
-          0.0,
           0.2,
           0.0,
-          1000.0,
-          1000.0,
-          1000.0,
-          15,
-          1.0,
-          Rotations.of(0), // AngleOffset 11.98 - 1.906494
-          Angle.ofBaseUnits(-1.0 / 3.0, Rotations), // -120°
-          Angle.ofBaseUnits(1.0 / 3.0, Rotations), // +120°
+          0.0,
+          0.1,
+          0.0,
+          0.0,
+          0.0,
+          0.5 * 112.5, // 0.5 rot/s^2
+          0.2 * 112.5, // 0.2 rot/s
+          1 * 112.5, // 1 rot/s^3
+          112.5,
+          Degrees.of(0.0), // AngleOffset
+          Rotations.of(0), // Resting on base
+          Rotations.of(0.29),
+          Meters.of(0)); // Unused
+    public static final WristConstants Wrist =
+      new WristConstants(
+        16, 
+            InvertedValue.CounterClockwise_Positive,
+            40,
+            80,
+            85,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.2,500,
+            200,
+            1000,
+            36.73,
+                      Rotations.of(11.8),
+          Rotations.of(-7.3),
+          Rotations.of(11.8),
           Meters.of(0.10));
 }
