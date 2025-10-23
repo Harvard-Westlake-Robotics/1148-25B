@@ -8,11 +8,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.constants.ElevatorConstants;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-  private final ElevatorIO io;
-  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private final ElevatorIO io1;
+  private final ElevatorIO io2;
+  private final ElevatorIOInputsAutoLogged inputs1 = new ElevatorIOInputsAutoLogged();
+  private final ElevatorIOInputsAutoLogged inputs2 = new ElevatorIOInputsAutoLogged();
 
   private DigitalInput dio = new DigitalInput(5);
 
@@ -28,7 +32,8 @@ public class Elevator extends SubsystemBase {
   }
 
   private Elevator() {
-    io = new ElevatorIOTalonFX();
+    io1 = new ElevatorIOTalonFX(ElevatorConstants.elevator1Inverted, ElevatorConstants.elevator1ID);
+    io2 = new ElevatorIOTalonFX(ElevatorConstants.elevator2Inverted, ElevatorConstants.elevator2ID);
     sysId =
         new SysIdRoutine(
             new Config(
@@ -40,24 +45,25 @@ public class Elevator extends SubsystemBase {
   }
 
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(key, inputs);
+    io1.updateInputs(inputs1);
+    io2.updateInputs(inputs2);
+    Logger.processInputs(key, inputs1);
+    Logger.processInputs(key, inputs2);
 
-    if (!dio.get() && inputs.elevator1PositionMeters >= 0.05) {
-      io.tareHeight(0);
+    if (!dio.get() && inputs1.elevatorPositionMeters >= 0.05) {
+      io1.tareHeight(0);
+      io2.tareHeight(0);
     }
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+    io1.runCharacterization(voltage);
+    io2.runCharacterization(voltage);
   }
 
   public void goToHeightClosedLoop(double height) {
-    io.goToHeightClosedLoop(height);
-  }
-
-  public double getExtension() {
-    return inputs.elevator1PositionMeters;
+    io1.goToHeightClosedLoop(height);
+    io2.goToHeightClosedLoop(height);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -72,11 +78,7 @@ public class Elevator extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  public double getTarget() {
-    return io.getTarget();
-  }
-
   public double getCurrentHeight() {
-    return inputs.elevator1PositionMeters;
+    return inputs1.elevatorPositionMeters;
   }
 }

@@ -9,8 +9,8 @@ public class ElevatorConstants {
   // Motor constants
   public static final int elevator1ID = 18;
   public static final int elevator2ID = 19;
-  public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
   public static final InvertedValue elevator1Inverted = InvertedValue.CounterClockwise_Positive;
+  public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
   public static final int statorLimit = 120;
   public static final int supplyLimit = 50;
 

@@ -5,6 +5,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -16,144 +18,83 @@ import frc.robot.subsystems.wrists.Pivot;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   // Motors and elevator controllers
-  private final TalonFX elevator1;
-  private final TalonFX elevator2;
+  private final TalonFX elevatorMotor;
   private final MotionMagicVoltage elevatorController;
-  private final MotionMagicVoltage elevator2Controller;
 
-  private final StatusSignal<Angle> motor1Position;
-  private final StatusSignal<AngularVelocity> motor1Velocity;
-  private final StatusSignal<Voltage> motor1AppliedVolts;
-  private final StatusSignal<Current> motor1Current;
-
-  private final StatusSignal<Angle> motor2Position;
-  private final StatusSignal<AngularVelocity> motor2Velocity;
-  private final StatusSignal<Voltage> motor2AppliedVolts;
-  private final StatusSignal<Current> motor2Current;
+  private final StatusSignal<Angle> motorPosition;
+  private final StatusSignal<AngularVelocity> motorVelocity;
+  private final StatusSignal<Voltage> motorAppliedVolts;
+  private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
-  private final Debouncer motor1ConnectedDebouncer = new Debouncer(0.5);
-  private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
-  public ElevatorIOTalonFX() {
-    elevator1 = new TalonFX(ElevatorConstants.elevator1ID);
-    elevator2 = new TalonFX(ElevatorConstants.elevator2ID);
-    elevator1.setPosition(0);
-    elevator2.setPosition(0);
+  public ElevatorIOTalonFX(InvertedValue motorInverted, int motorId) {
+    elevatorMotor = new TalonFX(motorId);
     elevatorController = new MotionMagicVoltage(0).withEnableFOC(true).withSlot(0);
-    elevator2Controller = new MotionMagicVoltage(0).withEnableFOC(true).withSlot(0);
-    TalonFXConfiguration elevator1Config = new TalonFXConfiguration();
-    TalonFXConfiguration elevator2Config = new TalonFXConfiguration();
-    elevator1Config.MotorOutput.Inverted = ElevatorConstants.elevator1Inverted;
-    elevator2Config.MotorOutput.Inverted = ElevatorConstants.elevator2Inverted;
+    TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
+    elevatorConfig.MotorOutput.Inverted = motorInverted;
 
-    elevator1Config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
-    elevator1Config.MotionMagic.MotionMagicCruiseVelocity =
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity =
         ElevatorConstants.motionMagicCruiseVelocity;
-    elevator1Config.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
+    elevatorConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
+    
+    elevatorConfig.Slot0.kP = ElevatorConstants.kP;
+    elevatorConfig.Slot0.kI = ElevatorConstants.kI;
+    elevatorConfig.Slot0.kD = ElevatorConstants.kD;
+    elevatorConfig.Slot0.kS = ElevatorConstants.kS;
+    elevatorConfig.Slot0.kV = ElevatorConstants.kV;
+    elevatorConfig.Slot0.kG = ElevatorConstants.kG;
+    elevatorConfig.Slot0.kA = ElevatorConstants.kA;
 
-    elevator2Config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
-    elevator2Config.MotionMagic.MotionMagicCruiseVelocity =
-        ElevatorConstants.motionMagicCruiseVelocity;
-    elevator2Config.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
-
-    elevator1Config.Slot0.kP = ElevatorConstants.kP;
-    elevator1Config.Slot0.kI = ElevatorConstants.kI;
-    elevator1Config.Slot0.kD = ElevatorConstants.kD;
-    elevator1Config.Slot0.kS = ElevatorConstants.kS;
-    elevator1Config.Slot0.kV = ElevatorConstants.kV;
-    elevator1Config.Slot0.kA = ElevatorConstants.kA;
-
-    elevator2Config.Slot0.kP = ElevatorConstants.kP;
-    elevator2Config.Slot0.kI = ElevatorConstants.kI;
-    elevator2Config.Slot0.kD = ElevatorConstants.kD;
-    elevator2Config.Slot0.kS = ElevatorConstants.kS;
-    elevator2Config.Slot0.kV = ElevatorConstants.kV;
-    elevator2Config.Slot0.kA = ElevatorConstants.kA;
-
-    elevator1Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    elevator1Config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
-    elevator1Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    elevator1Config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
-    elevator2Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    elevator2Config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
-    elevator2Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    elevator2Config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
-    elevator1Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    elevator1Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
+    elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         ElevatorConstants.elevatorForwardSoftLimitRotations;
-    elevator1Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    elevator1Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         ElevatorConstants.elevatorReverseSoftLimitRotations;
-    elevator2Config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    elevator2Config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.elevatorForwardSoftLimitRotations;
-    elevator2Config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    elevator2Config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        ElevatorConstants.elevatorReverseSoftLimitRotations;
-    elevator1.getConfigurator().apply(elevator1Config);
-    elevator2.getConfigurator().apply(elevator2Config);
-    elevator1.setControl(elevatorController);
-    elevator2.setControl(elevator2Controller);
+    elevatorMotor.getConfigurator().apply(elevatorConfig);
+    elevatorMotor.setControl(elevatorController);
 
-    motor1Position = elevator1.getPosition();
-    motor1Velocity = elevator1.getVelocity();
-    motor1AppliedVolts = elevator1.getMotorVoltage();
-    motor1Current = elevator1.getStatorCurrent();
-
-    motor2Position = elevator2.getPosition();
-    motor2Velocity = elevator2.getVelocity();
-    motor2AppliedVolts = elevator2.getMotorVoltage();
-    motor2Current = elevator2.getStatorCurrent();
+    motorPosition = elevatorMotor.getPosition();
+    motorVelocity = elevatorMotor.getVelocity();
+    motorAppliedVolts = elevatorMotor.getMotorVoltage();
+    motorCurrent = elevatorMotor.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    StatusSignal.refreshAll(motor1Position, motor1Velocity, motor1AppliedVolts, motor1Current);
-    StatusSignal.refreshAll(motor2Position, motor2Velocity, motor2AppliedVolts, motor2Current);
+    StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
-    inputs.elevator1Connected = motor1ConnectedDebouncer.calculate(elevator1.isConnected());
-    inputs.elevator1PositionMeters =
-        motor1Position.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
-    inputs.elevator1VelocityMPS =
-        motor1Velocity.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
-    inputs.elevator1AppliedVolts = motor1AppliedVolts.getValueAsDouble();
-    inputs.elevator1CurrentAmps = motor1Current.getValueAsDouble();
-
-    inputs.elevator2Connected = motor2ConnectedDebouncer.calculate(elevator2.isConnected());
-    inputs.elevator2PositionMeters =
-        motor2Position.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
-    inputs.elevator2VelocityMPS =
-        motor2Velocity.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
-    inputs.elevator2AppliedVolts = motor2AppliedVolts.getValueAsDouble();
-    inputs.elevator2CurrentAmps = motor2Current.getValueAsDouble();
+    inputs.elevatorConnected = motorConnectedDebouncer.calculate(elevatorMotor.isConnected());
+    inputs.elevatorPositionMeters =
+        motorPosition.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
+    inputs.elevatorVelocityMPS =
+        motorVelocity.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
+    inputs.elevatorAppliedVolts = motorAppliedVolts.getValueAsDouble();
+    inputs.elevatorCurrentAmps = motorCurrent.getValueAsDouble();
   }
 
   @Override
   public void runCharacterization(double voltage) {
-    elevator1.setControl(new VoltageOut(voltage));
-    elevator2.setControl(new VoltageOut(voltage));
+    elevatorMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
   public void goToHeightClosedLoop(double height) {
-    elevator1.setControl(
+    elevatorMotor.setControl(
         elevatorController
-            .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
-            .withFeedForward(Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngle()))));
-    elevator2.setControl(
-        elevator2Controller
             .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
             .withFeedForward(Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngle()))));
   }
 
   @Override
   public void tareHeight(double height) {
-    elevator1.setPosition(height * ElevatorConstants.rotationsPerMeterRatio);
-    elevator2.setPosition(height * ElevatorConstants.rotationsPerMeterRatio);
-  }
-
-  public double getTarget() {
-    return elevatorController.Position;
+    elevatorMotor.setPosition(height * ElevatorConstants.rotationsPerMeterRatio);
   }
 }
