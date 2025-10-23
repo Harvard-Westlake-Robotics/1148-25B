@@ -2,7 +2,6 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -17,8 +16,6 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIO io2;
   private final ElevatorIOInputsAutoLogged inputs1 = new ElevatorIOInputsAutoLogged();
   private final ElevatorIOInputsAutoLogged inputs2 = new ElevatorIOInputsAutoLogged();
-
-  private DigitalInput dio = new DigitalInput(5);
 
   private final String key = "Elevator";
   private static Elevator instance = null;
@@ -50,7 +47,7 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs(key + "/Motor1", inputs1);
     Logger.processInputs(key + "/Motor2", inputs2);
 
-    if (!dio.get() && inputs1.elevatorPositionMeters >= 0.05) {
+    if (inputs1.elevatorPositionMeters <= 0.05) {
       io1.tareHeight(0);
       io2.tareHeight(0);
     }
