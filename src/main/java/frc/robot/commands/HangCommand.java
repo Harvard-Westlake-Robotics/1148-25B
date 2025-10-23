@@ -26,7 +26,6 @@ public class HangCommand extends Command {
     Hang.getInstance().runVelocityClosedLoop(velocity);
     if (lock) {
       Hang.getInstance().servo.setAngle(100);
-      stop();
     }
   }
 

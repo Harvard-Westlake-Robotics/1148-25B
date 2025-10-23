@@ -27,7 +27,7 @@ public class CoralIntakeCommand extends Command {
   private boolean running;
 
   // For ignoring intake logic
-  public Boolean manual = false;
+  public Boolean manual = true;
   public LinearVelocity velocity;
 
   public Boolean isIntakingHotdog() {

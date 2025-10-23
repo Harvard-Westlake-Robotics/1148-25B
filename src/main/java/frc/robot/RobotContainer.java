@@ -268,7 +268,7 @@ public class RobotContainer {
     // Set default commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getR2Axis()));
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
     // Instantiate and set default commands
     armCommand = new ArmCommand();
     elevator.setDefaultCommand(armCommand);
