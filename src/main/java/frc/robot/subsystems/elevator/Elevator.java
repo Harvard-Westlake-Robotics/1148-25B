@@ -47,8 +47,8 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io1.updateInputs(inputs1);
     io2.updateInputs(inputs2);
-    Logger.processInputs(key, inputs1);
-    Logger.processInputs(key, inputs2);
+    Logger.processInputs(key + "/Motor1", inputs1);
+    Logger.processInputs(key + "/Motor2", inputs2);
 
     if (!dio.get() && inputs1.elevatorPositionMeters >= 0.05) {
       io1.tareHeight(0);
