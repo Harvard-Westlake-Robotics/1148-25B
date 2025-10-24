@@ -45,7 +45,8 @@ public class ArmCommand extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   @Override
   public void execute() {
@@ -55,7 +56,8 @@ public class ArmCommand extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   @Override
   public boolean isFinished() {
@@ -67,7 +69,7 @@ public class ArmCommand extends Command {
     // All of these need to be changed based on actual positions
     if (level == ScoringLevel.NEUTRAL) {
       // Changes based on stuff
-      setPivotAngle(20.873779);
+      setPivotAngle(0);
       setElevatorLength(0);
       setWristAngle(0);
       return;
@@ -161,6 +163,6 @@ public class ArmCommand extends Command {
   }
 
   public static double[] getState() {
-    return new double[] {pivotAngle, elevatorLength, wristAngle};
+    return new double[] { pivotAngle, elevatorLength, wristAngle };
   }
 }

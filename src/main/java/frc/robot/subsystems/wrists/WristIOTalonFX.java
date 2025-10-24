@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.Logger;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -58,8 +59,7 @@ public class WristIOTalonFX implements WristIO {
     // System.out.println(
     //     constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio);
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
-    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
-        this.constants.motionMagicCruiseVelocity;
+    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.constants.motionMagicCruiseVelocity;
     this.wristConfig.MotionMagic.MotionMagicJerk = this.constants.motionMagicJerk;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
     wristMotor.setControl(wristController);
@@ -94,11 +94,12 @@ public class WristIOTalonFX implements WristIO {
   @Override
   public void goToAngleClosedLoop(double angle) {
     // wristMotor.setControl(
-    //     wristController.withPosition(angle * constants.motorRotationsPerWristRotationRatio));
+    //     wristController
+    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
   }
 
   @Override
   public void tareAngle(double angle) {
-    // wristMotor.setPosition(angle * constants.motorRotationsPerWristRotationRatio);
+    wristMotor.setPosition(angle * constants.motorRotationsPerWristRotationRatio);
   }
 }
