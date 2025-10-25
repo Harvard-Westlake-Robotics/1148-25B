@@ -45,7 +45,7 @@ public class ControlMap {
                 .ignoringDisable(true));
 
     // Intake commands
-    //shouldn't we delete this-Daniel
+    // shouldn't we delete this-Daniel
     // Coral intake commands
     // Coral intake is intaking automatically when elevator is at coral source (ground)
     // driver
@@ -320,12 +320,13 @@ public class ControlMap {
                 () -> {
                   RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
                 }));
-    operator
+    driver
         .povDown()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setElevatorLength(2);
+                  RobotContainer.armCommand.setElevatorLength(0.5);
                 }));
+    driver.povUp().whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setPivotAngle(0)));
   }
 }

@@ -66,6 +66,7 @@ public class Pivot extends SubsystemBase {
     Logger.processInputs(key + "/Motor3", inputs3);
     encoderIO.updateInputs(encoderInputs);
     Logger.processInputs(key + "/Encoder", encoderInputs);
+    Logger.recordOutput(key + "/Target Angle", io1.getTargetDegrees());
   }
 
   public void runCharacterization(double voltage) {

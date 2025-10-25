@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.wrists.Pivot;
@@ -37,27 +38,24 @@ public class ArmCommand extends Command {
 
   public ArmCommand() {
     this.addRequirements(Elevator.getInstance(), Pivot.getInstance(), Wrist.getInstance());
-    // level = ScoringLevel.NEUTRAL;
     outtakePosition = false;
-    pivotAngle = 0;
+    pivotAngle = Units.degreesToRotations(45);
     elevatorLength = 0;
     wristAngle = 0;
   }
 
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
     Pivot.getInstance().goToAngleClosedLoop(pivotAngle);
     Elevator.getInstance().goToHeightClosedLoop(elevatorLength);
-    Wrist.getInstance().goToAngleClosedLoop(wristAngle);
+    // Wrist.getInstance().goToAngleClosedLoop(wristAngle);
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
@@ -143,15 +141,15 @@ public class ArmCommand extends Command {
 
     // Position will be changed when we bring in encoder code
     if (level == ScoringLevel.HANG) {
-      setPivotAngle(12);
+      setPivotAngle(90);
       setElevatorLength(0);
-      setWristAngle(-14);
+      setWristAngle(0);
       return;
     }
   }
 
   public void setPivotAngle(double angle) {
-    pivotAngle = angle;
+    pivotAngle = Units.degreesToRotations(angle);
   }
 
   public void setElevatorLength(double length) {
@@ -159,10 +157,10 @@ public class ArmCommand extends Command {
   }
 
   public void setWristAngle(double angle) {
-    wristAngle = angle;
+    wristAngle = Units.degreesToRotations(angle);
   }
 
   public static double[] getState() {
-    return new double[] { pivotAngle, elevatorLength, wristAngle };
+    return new double[] {pivotAngle, elevatorLength, wristAngle};
   }
 }

@@ -62,12 +62,12 @@ public class DriveConstants {
       StaticFeedforwardSignValue.UseClosedLoopSign;
 
   // Swerve Drive PID Values
-  public static final double kDriveP = 0.03152 * (180 / Math.PI) * 2 * 0.0254;
+  public static final double kDriveP = 0.032762;
   public static final double kDriveI = 0;
   public static final double kDriveD = 0;
-  public static final double kDriveS = 0.28949;
-  public static final double kDriveV = 0.11353 * (180 / Math.PI) * 2 * 0.0254;
-  public static final double kDriveA = 0.083369 * (180 / Math.PI) * 2 * 0.0254;
+  public static final double kDriveS = 0.047782;
+  public static final double kDriveV = 0.10756;
+  public static final double kDriveA = 0.023363;
 
   // The closed-loop output type to use for the motors;
   // This affects PID/FF gains

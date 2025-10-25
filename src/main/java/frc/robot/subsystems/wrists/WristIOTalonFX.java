@@ -3,16 +3,16 @@ package frc.robot.subsystems.wrists;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.WristConstants;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.Logger;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -59,7 +59,8 @@ public class WristIOTalonFX implements WristIO {
     // System.out.println(
     //     constants.wristMinAngle.in(Rotations) * constants.motorRotationsPerWristRotationRatio);
     this.wristConfig.MotionMagic.MotionMagicAcceleration = this.constants.motionMagicAcceleration;
-    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity = this.constants.motionMagicCruiseVelocity;
+    this.wristConfig.MotionMagic.MotionMagicCruiseVelocity =
+        this.constants.motionMagicCruiseVelocity;
     this.wristConfig.MotionMagic.MotionMagicJerk = this.constants.motionMagicJerk;
     this.wristMotor.getConfigurator().apply(this.wristConfig);
     wristMotor.setControl(wristController);
@@ -75,31 +76,40 @@ public class WristIOTalonFX implements WristIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.wristMotorConnected = motorConnectedDebouncer.calculate(wristMotor.isConnected());
-    inputs.wristPositionRot =
-        motorPosition.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio;
-    inputs.wristVelocityRPS =
-        motorVelocity.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio;
+    inputs.wristPositionDeg =
+        Units.rotationsToDegrees(
+            motorPosition.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio);
+    inputs.wristVelocityDPS =
+        Units.rotationsToDegrees(
+            motorVelocity.getValueAsDouble() / constants.motorRotationsPerWristRotationRatio);
     inputs.wristAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.wristCurrentAmps = motorCurrent.getValueAsDouble();
-
-    // TODO: use key and in Wrist.java instead
-    Logger.recordOutput("RealOutputs/Wrist/motionMagicState", wristController.toString());
   }
 
   @Override
   public void runCharacterization(double voltage) {
-    // wristMotor.setControl(new VoltageOut(voltage));
+    wristMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    // wristMotor.setControl(
-    //     wristController
-    //         .withPosition(angle * constants.motorRotationsPerWristRotationRatio));
+    wristMotor.setControl(
+        wristController.withPosition(angle * constants.motorRotationsPerWristRotationRatio));
   }
 
   @Override
   public void tareAngle(double angle) {
     wristMotor.setPosition(angle * constants.motorRotationsPerWristRotationRatio);
+  }
+
+  @Override
+  public double getTargetDegrees() {
+    return Units.rotationsToDegrees(
+        wristController.Position / constants.motorRotationsPerWristRotationRatio);
+  }
+
+  public double getAngle() {
+    return wristMotor.getPosition().getValueAsDouble()
+        / constants.motorRotationsPerWristRotationRatio;
   }
 }

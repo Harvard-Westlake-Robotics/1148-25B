@@ -9,15 +9,14 @@ public class ElevatorConstants {
   // Motor constants
   public static final int elevator1ID = 18;
   public static final int elevator2ID = 19;
-  public static final InvertedValue elevator1Inverted = InvertedValue.CounterClockwise_Positive;
-  public static final InvertedValue elevator2Inverted = InvertedValue.CounterClockwise_Positive;
+  public static final InvertedValue elevatorInverted = InvertedValue.Clockwise_Positive;
   public static final int statorLimit = 120;
   public static final int supplyLimit = 50;
 
   // PID constants
-  public static double kP = 0.05;
+  public static double kP = 1.5;
   public static double kI = 0.0;
-  public static double kD = 0.0;
+  public static double kD = 0.3;
   public static double kS = 0.0;
   public static double kV = 0.0;
   public static double kG = 0.0;

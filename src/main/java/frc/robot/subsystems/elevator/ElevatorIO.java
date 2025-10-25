@@ -20,4 +20,8 @@ public interface ElevatorIO {
   public default void goToHeightClosedLoop(double height) {}
 
   public default void tareHeight(double height) {}
+
+  public default double getTarget() {
+    return 0.0;
+  }
 }

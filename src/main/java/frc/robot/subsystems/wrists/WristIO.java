@@ -6,8 +6,8 @@ public interface WristIO {
   @AutoLog
   public static class WristIOInputs {
     public boolean wristMotorConnected = false;
-    public double wristPositionRot = 0.0;
-    public double wristVelocityRPS = 0.0;
+    public double wristPositionDeg = 0.0;
+    public double wristVelocityDPS = 0.0;
     public double wristAppliedVolts = 0.0;
     public double wristCurrentAmps = 0.0;
   }
@@ -20,4 +20,8 @@ public interface WristIO {
   public default void goToAngleClosedLoop(double angle) {}
 
   public default void tareAngle(double angle) {}
+
+  public default double getTargetDegrees() {
+    return 0.0;
+  }
 }

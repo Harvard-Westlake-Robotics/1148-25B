@@ -2,20 +2,19 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.ElevatorConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-  private final ElevatorIO io1;
-  private final ElevatorIO io2;
-  private final ElevatorIOInputsAutoLogged inputs1 = new ElevatorIOInputsAutoLogged();
-  private final ElevatorIOInputsAutoLogged inputs2 = new ElevatorIOInputsAutoLogged();
+  private final ElevatorIO io;
+  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+
+  private DigitalInput dio = new DigitalInput(9);
 
   private final String key = "Elevator";
   private static Elevator instance = null;
@@ -29,8 +28,7 @@ public class Elevator extends SubsystemBase {
   }
 
   private Elevator() {
-    io1 = new ElevatorIOTalonFX(ElevatorConstants.elevator1Inverted, ElevatorConstants.elevator1ID);
-    io2 = new ElevatorIOTalonFX(ElevatorConstants.elevator2Inverted, ElevatorConstants.elevator2ID);
+    io = new ElevatorIOTalonFX();
     sysId =
         new SysIdRoutine(
             new Config(
@@ -42,25 +40,23 @@ public class Elevator extends SubsystemBase {
   }
 
   public void periodic() {
-    io1.updateInputs(inputs1);
-    io2.updateInputs(inputs2);
-    Logger.processInputs(key + "/Motor1", inputs1);
-    Logger.processInputs(key + "/Motor2", inputs2);
+    io.updateInputs(inputs);
+    Logger.processInputs(key, inputs);
+    Logger.recordOutput(key + "/Target Height", io.getTarget());
+    Logger.recordOutput(key + "/Current Height", getCurrentHeight());
+    Logger.recordOutput(key + "/Sensor", dio.get());
 
-    if (inputs1.elevatorPositionMeters <= 0.05) {
-      io1.tareHeight(0);
-      io2.tareHeight(0);
+    if (!dio.get() && inputs.elevatorPositionMeters >= 0.05) {
+      io.tareHeight(getCurrentHeight());
     }
   }
 
   public void runCharacterization(double voltage) {
-    io1.runCharacterization(voltage);
-    io2.runCharacterization(voltage);
+    io.runCharacterization(voltage);
   }
 
   public void goToHeightClosedLoop(double height) {
-    io1.goToHeightClosedLoop(height);
-    io2.goToHeightClosedLoop(height);
+    io.goToHeightClosedLoop(height);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -76,6 +72,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getCurrentHeight() {
-    return inputs1.elevatorPositionMeters;
+    return inputs.elevatorPositionMeters;
   }
 }

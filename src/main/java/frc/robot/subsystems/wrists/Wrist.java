@@ -20,10 +20,6 @@ public class Wrist extends SubsystemBase {
 
   SysIdRoutine sysId;
 
-  public double getAngle() {
-    return inputs.wristPositionRot / constants.motorRotationsPerWristRotationRatio;
-  }
-
   public static Wrist getInstance() {
     if (instance == null) {
       instance = new Wrist();
@@ -50,15 +46,15 @@ public class Wrist extends SubsystemBase {
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+    // io.runCharacterization(voltage);
   }
 
   public void goToAngleClosedLoop(double angle) {
-    io.goToAngleClosedLoop(angle);
+    // io.goToAngleClosedLoop(angle);
   }
 
   public void tareAngle(double angle) {
-    io.tareAngle(angle);
+    // io.tareAngle(angle);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
