@@ -384,7 +384,7 @@ public class Drive extends SubsystemBase {
    */
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
-      modules[i].runCharacterization(output);
+      modules[i].runVoltage(output);
     }
   }
 

@@ -15,10 +15,11 @@ public interface ElevatorIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
-  public default void runCharacterization(double voltage) {}
+  public default void runVoltage(double voltage) {}
 
   public default void goToHeightClosedLoop(double height) {}
 
+  /** Sets the motor's internally stored position to what it is fed */
   public default void tareHeight(double height) {}
 
   public default double getTarget() {

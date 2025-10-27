@@ -78,8 +78,8 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
-    io2.runCharacterization(-voltage);
+    io.runVoltage(voltage);
+    io2.runVoltage(-voltage);
   }
 
   public void runVelocity(LinearVelocity velocity) {

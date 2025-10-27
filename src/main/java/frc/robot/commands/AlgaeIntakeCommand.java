@@ -52,12 +52,11 @@ public class AlgaeIntakeCommand extends Command {
   public void stop() {
     if (AlgaeIntake.getInstance().hasAlgae()) {
       this.velocity = MetersPerSecond.of(0);
-      // TODO: Why is this here?
-      AlgaeIntake.getInstance().runCharacterization(1.5);
+      AlgaeIntake.getInstance().runVoltage(IntakeConstants.AlgaeIntake.algaeHoldVoltage);
       algaeLastStop = true;
     } else {
       this.velocity = MetersPerSecond.of(0);
-      AlgaeIntake.getInstance().runCharacterization(0);
+      AlgaeIntake.getInstance().runVoltage(0);
       algaeLastStop = false;
     }
   }

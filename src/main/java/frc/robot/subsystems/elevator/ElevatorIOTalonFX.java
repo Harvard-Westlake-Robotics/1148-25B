@@ -87,7 +87,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void runCharacterization(double voltage) {
+  public void runVoltage(double voltage) {
     elevatorMotor1.setControl(new VoltageOut(voltage));
     elevatorMotor2.setControl(new VoltageOut(voltage));
   }

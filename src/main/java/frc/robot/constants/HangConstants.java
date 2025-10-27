@@ -11,7 +11,7 @@ public class HangConstants {
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
 
   // PID constants
-  public static final double kP = 5;
+  public static final double kP = 10;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kS = 0.1;

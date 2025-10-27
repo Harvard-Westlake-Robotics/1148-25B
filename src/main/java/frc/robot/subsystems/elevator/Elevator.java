@@ -46,13 +46,13 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(key + "/Current Height", getCurrentHeight());
     Logger.recordOutput(key + "/Sensor", dio.get());
 
-    if (!dio.get() && inputs.elevatorPositionMeters >= 0.05) {
-      io.tareHeight(getCurrentHeight());
+    if (dio.get() && inputs.elevatorPositionMeters >= 0.05) {
+      io.tareHeight(0);
     }
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+    io.runVoltage(voltage);
   }
 
   public void goToHeightClosedLoop(double height) {

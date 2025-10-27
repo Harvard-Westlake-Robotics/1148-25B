@@ -117,7 +117,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.MotionMagic.MotionMagicCruiseVelocity = 9999;
     driveConfig.MotionMagic.MotionMagicJerk = 9999;
     configureDriveMotor(driveConfig);
-    // TODO: Why is this here?
     tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
@@ -213,8 +212,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         };
     turnConfig.Feedback.RotorToSensorRatio = constants.SteerMotorGearRatio;
 
-    // TODO: What does this do?
-    // Adjust motion magic parameters for drift mode
     double cruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
     double acceleration = cruiseVelocity / 0.100;
 

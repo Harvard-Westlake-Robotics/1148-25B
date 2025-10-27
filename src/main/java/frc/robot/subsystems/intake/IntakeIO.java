@@ -16,7 +16,7 @@ public interface IntakeIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public default void runCharacterization(double voltage) {}
+  public default void runVoltage(double voltage) {}
 
   public default void runVelocity(LinearVelocity velocity) {}
 

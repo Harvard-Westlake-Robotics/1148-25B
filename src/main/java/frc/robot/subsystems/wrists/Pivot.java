@@ -55,9 +55,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public void periodic() {
-    io1.tareAngle(encoderIO.getAngle());
-    io2.tareAngle(encoderIO.getAngle());
-    io3.tareAngle(encoderIO.getAngle());
+    // io1.tareAngle(encoderIO.getAngle());
+    // io2.tareAngle(encoderIO.getAngle());
+    // io3.tareAngle(encoderIO.getAngle());
     io1.updateInputs(inputs1);
     Logger.processInputs(key + "/Motor1", inputs1);
     io2.updateInputs(inputs2);

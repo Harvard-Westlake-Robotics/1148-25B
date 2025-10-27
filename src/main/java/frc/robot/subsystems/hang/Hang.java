@@ -57,7 +57,7 @@ public class Hang extends SubsystemBase {
   }
 
   public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+    io.runVoltage(voltage);
   }
 
   public void runVelocityClosedLoop(LinearVelocity velocity) {

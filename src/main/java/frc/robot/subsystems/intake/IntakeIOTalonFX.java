@@ -98,7 +98,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void runCharacterization(double voltage) {
+  public void runVoltage(double voltage) {
     intakeMotor.setControl(new VoltageOut(voltage));
   }
 

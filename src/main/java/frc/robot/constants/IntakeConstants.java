@@ -43,6 +43,8 @@ public class IntakeConstants {
   // Physical constants
   public final double rotationsPerMeterRatio;
 
+  public final double algaeHoldVoltage;
+
   public IntakeConstants(
       int motorId,
       InvertedValue motorInverted,
@@ -67,7 +69,8 @@ public class IntakeConstants {
       LinearVelocity outtakeVelocity,
       LinearVelocity shiftVelocity,
       LinearVelocity hamburgerIntakeVelocity,
-      double rotationsPerMeterRatio) {
+      double rotationsPerMeterRatio,
+      double algaeHoldVoltage) {
     this.motorId = motorId;
     this.motorInverted = motorInverted;
     this.statorLimit = statorLimit;
@@ -92,6 +95,7 @@ public class IntakeConstants {
     this.shiftVelocity = shiftVelocity;
     this.hamburgerIntakeVelocity = hamburgerIntakeVelocity;
     this.rotationsPerMeterRatio = rotationsPerMeterRatio;
+    this.algaeHoldVoltage = algaeHoldVoltage;
   }
 
   // TODO: ID These
@@ -120,7 +124,8 @@ public class IntakeConstants {
           MetersPerSecond.of(-20),
           MetersPerSecond.of(20),
           MetersPerSecond.of(20),
-          9.52 / (4 * Math.PI));
+          9.52 / (4 * Math.PI),
+          0);
 
   public static final IntakeConstants AlgaeIntake =
       new IntakeConstants(
@@ -147,5 +152,6 @@ public class IntakeConstants {
           LinearVelocity.ofBaseUnits(-1000, MetersPerSecond),
           LinearVelocity.ofBaseUnits(0, MetersPerSecond),
           LinearVelocity.ofBaseUnits(0, MetersPerSecond),
-          1.0 / 16.709);
+          1.0 / 16.709,
+          1.5);
 }

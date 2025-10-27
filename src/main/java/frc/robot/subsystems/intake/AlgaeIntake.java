@@ -12,7 +12,7 @@ import frc.robot.constants.IntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntake extends SubsystemBase {
-  private final IntakeIO io;
+  private final IntakeIOTalonFX io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
   private IntakeConstants constants;
@@ -43,7 +43,7 @@ public class AlgaeIntake extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
   public IntakeConstants getConstants() {
@@ -56,8 +56,8 @@ public class AlgaeIntake extends SubsystemBase {
     hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
   }
 
-  public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+  public void runVoltage(double voltage) {
+    io.runVoltage(voltage);
   }
 
   public void runVelocity(LinearVelocity velocity) {
@@ -66,13 +66,11 @@ public class AlgaeIntake extends SubsystemBase {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0))
-        .withTimeout(1.0)
-        .andThen(sysId.quasistatic(direction));
+    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 }

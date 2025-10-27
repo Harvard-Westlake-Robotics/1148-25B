@@ -286,16 +286,16 @@ public class ControlMap {
         .whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setWristAngle(0)));
     // RobotContainer.hangCommand.flipIn()
     // run the hang motors
-    operator
-        .b()
+    driver
+        .circle()
         .whileTrue(
             new InstantCommand(
                 () -> {
                   RobotContainer.hangCommand.run();
                 }))
         .onFalse(new InstantCommand(() -> RobotContainer.hangCommand.stop()));
-    operator
-        .povUp()
+    driver
+        .povLeft()
         .whileTrue(
             new InstantCommand(
                 () -> {
@@ -321,12 +321,15 @@ public class ControlMap {
                   RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
                 }));
     driver
-        .povDown()
+        .povUp()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setElevatorLength(0.5);
+                  RobotContainer.armCommand.setPivotAngle(97.5);
                 }));
-    driver.povUp().whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setPivotAngle(0)));
+
+    driver
+        .povDown()
+        .whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setPivotAngle(45)));
   }
 }

@@ -71,7 +71,7 @@ public class HangIOTalonFX implements HangIO {
   }
 
   @Override
-  public void runCharacterization(double voltage) {
+  public void runVoltage(double voltage) {
     hangMotor.setControl(new VoltageOut(voltage));
   }
 

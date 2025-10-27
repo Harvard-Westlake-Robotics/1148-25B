@@ -1,6 +1,5 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
@@ -94,18 +93,18 @@ public class WristConstants {
           InvertedValue.Clockwise_Positive,
           40,
           80,
-          1.5,
-          0.0,
-          0.0,
-          0.1,
+          8,
           0.0,
           0.0,
           0.0,
-          0.5 * 112.5, // 0.5 rot/s^2
-          0.2 * 112.5, // 0.2 rot/s
+          0.0,
+          0.0,
+          4,
+          0.25 * 112.5, // 0.5 rot/s^2
+          0.3 * 112.5, // 0.2 rot/s
           1 * 112.5, // 1 rot/s^3
           112.5,
-          Degrees.of(0.0), // AngleOffset
+          Rotations.of(20.43), // AngleOffset
           Rotations.of(0), // Resting on base
           Rotations.of(0.29),
           Meters.of(0)); // Unused

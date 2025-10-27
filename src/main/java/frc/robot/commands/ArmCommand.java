@@ -39,9 +39,9 @@ public class ArmCommand extends Command {
   public ArmCommand() {
     this.addRequirements(Elevator.getInstance(), Pivot.getInstance(), Wrist.getInstance());
     outtakePosition = false;
-    pivotAngle = Units.degreesToRotations(45);
+    pivotAngle = Units.degreesToRotations(90);
     elevatorLength = 0;
-    wristAngle = 0;
+    wristAngle = Units.degreesToRotations(0);
   }
 
   @Override
@@ -51,7 +51,7 @@ public class ArmCommand extends Command {
   public void execute() {
     Pivot.getInstance().goToAngleClosedLoop(pivotAngle);
     Elevator.getInstance().goToHeightClosedLoop(elevatorLength);
-    // Wrist.getInstance().goToAngleClosedLoop(wristAngle);
+    Wrist.getInstance().goToAngleClosedLoop(wristAngle);
   }
 
   @Override
