@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrists;
+package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -7,14 +7,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends SubsystemBase {
   private final WristIOTalonFX io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
-  private final WristConstants constants;
   private final String key = "RealOutputs/Wrist";
   private static Wrist instance;
 
@@ -28,8 +26,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public Wrist() {
-    this.constants = WristConstants.Wrist;
-    io = new WristIOTalonFX(constants, 1, "rio");
+    io = new WristIOTalonFX(1, "rio");
     sysId =
         new SysIdRoutine(
             new Config(

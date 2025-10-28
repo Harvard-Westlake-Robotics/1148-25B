@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrists;
+package frc.robot.subsystems.pivot;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -7,29 +7,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.constants.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SubsystemBase {
-  private final WristIOTalonFX io1;
-  private final WristIOTalonFX io2;
-  private final WristIOTalonFX io3;
-  private final WristIOInputsAutoLogged inputs1 = new WristIOInputsAutoLogged();
-  private final WristIOInputsAutoLogged inputs2 = new WristIOInputsAutoLogged();
-  private final WristIOInputsAutoLogged inputs3 = new WristIOInputsAutoLogged();
+  private final PivotIOTalonFX io1;
+  private final PivotIOTalonFX io2;
+  private final PivotIOTalonFX io3;
+  private final PivotIOInputsAutoLogged inputs1 = new PivotIOInputsAutoLogged();
+  private final PivotIOInputsAutoLogged inputs2 = new PivotIOInputsAutoLogged();
+  private final PivotIOInputsAutoLogged inputs3 = new PivotIOInputsAutoLogged();
 
-  private final EncoderIOCANcoder encoderIO;
-  private final EncoderIOInputsAutoLogged encoderInputs = new EncoderIOInputsAutoLogged();
-
-  private final WristConstants constants;
   private final String key = "RealOutputs/Pivot";
   private static Pivot instance;
 
   SysIdRoutine sysId;
-
-  public double getAngle() {
-    return encoderIO.getAngle();
-  }
 
   public static Pivot getInstance() {
     if (instance == null) {
@@ -39,11 +30,9 @@ public class Pivot extends SubsystemBase {
   }
 
   public Pivot() {
-    this.constants = WristConstants.Pivot;
-    io1 = new WristIOTalonFX(constants, 1, "drive");
-    io2 = new WristIOTalonFX(constants, 2, "drive");
-    io3 = new WristIOTalonFX(constants, 3, "drive");
-    encoderIO = new EncoderIOCANcoder();
+    io1 = new PivotIOTalonFX(1, "drive");
+    io2 = new PivotIOTalonFX(2, "drive");
+    io3 = new PivotIOTalonFX(3, "drive");
     sysId =
         new SysIdRoutine(
             new Config(
@@ -55,17 +44,12 @@ public class Pivot extends SubsystemBase {
   }
 
   public void periodic() {
-    // io1.tareAngle(encoderIO.getAngle());
-    // io2.tareAngle(encoderIO.getAngle());
-    // io3.tareAngle(encoderIO.getAngle());
     io1.updateInputs(inputs1);
     Logger.processInputs(key + "/Motor1", inputs1);
     io2.updateInputs(inputs2);
     Logger.processInputs(key + "/Motor2", inputs2);
     io3.updateInputs(inputs3);
     Logger.processInputs(key + "/Motor3", inputs3);
-    encoderIO.updateInputs(encoderInputs);
-    Logger.processInputs(key + "/Encoder", encoderInputs);
     Logger.recordOutput(key + "/Target Angle", io1.getTargetDegrees());
   }
 
@@ -85,6 +69,10 @@ public class Pivot extends SubsystemBase {
     io1.tareAngle(angle);
     io2.tareAngle(angle);
     io3.tareAngle(angle);
+  }
+
+  public double getAngle() {
+    return io1.getAnglePivotRots();
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
