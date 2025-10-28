@@ -114,7 +114,7 @@ public class WristConstants {
           InvertedValue.CounterClockwise_Positive,
           40,
           80,
-          50,
+          25,
           0.0,
           0.5,
           0.0,

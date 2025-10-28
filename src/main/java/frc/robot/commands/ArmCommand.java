@@ -85,9 +85,9 @@ public class ArmCommand extends Command {
       return;
     }
     if (level == ScoringLevel.GROUND_ALGAE) {
-      setPivotAngle(0);
+      setPivotAngle(21.5);
       setElevatorLength(0);
-      setWristAngle(0);
+      setWristAngle(-51.5);
       return;
     }
     if (level == ScoringLevel.L1) {

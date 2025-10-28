@@ -312,7 +312,7 @@ public class ControlMap {
         .R2()
         .whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualOuttake()))
         .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
-    // Go to hang position with BOTH arm and pivot. Just a test, can be moved later.
+    // Go to hang position with BOTH arm and pivot
     driver
         .L1()
         .whileTrue(
@@ -320,9 +320,19 @@ public class ControlMap {
                 () -> {
                   RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
                 }));
+    // Go to Ground Algae position with both arm and pivot
+    driver
+        .R1()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_ALGAE);
+                }));
 
     driver
         .povDown()
         .whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setPivotAngle(45)));
+    // TESTING COMMANDS, PLEASE REMOVE THESE BECAUSE THESE SHOULD NOT BE THE ACTUAL COMMANDS
+    driver.square().whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
   }
 }
