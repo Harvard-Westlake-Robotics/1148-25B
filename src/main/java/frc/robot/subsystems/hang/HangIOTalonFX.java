@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -19,7 +19,7 @@ import frc.robot.constants.HangConstants;
 
 public class HangIOTalonFX implements HangIO {
   private final TalonFX hangMotor;
-  private final MotionMagicVelocityTorqueCurrentFOC hangController;
+  private final MotionMagicVelocityVoltage hangController;
 
   private final StatusSignal<Angle> motorPosition;
   private final StatusSignal<AngularVelocity> motorVelocity;
@@ -32,7 +32,7 @@ public class HangIOTalonFX implements HangIO {
   public HangIOTalonFX() {
     hangMotor = new TalonFX(HangConstants.motorId);
     hangMotor.setPosition(0);
-    hangController = new MotionMagicVelocityTorqueCurrentFOC(RotationsPerSecond.of(0));
+    hangController = new MotionMagicVelocityVoltage(RotationsPerSecond.of(0)).withEnableFOC(true);
 
     TalonFXConfiguration hangConfig = new TalonFXConfiguration();
 

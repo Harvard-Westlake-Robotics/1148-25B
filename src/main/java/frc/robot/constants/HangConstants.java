@@ -11,10 +11,10 @@ public class HangConstants {
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
 
   // PID constants
-  public static final double kP = 10;
+  public static final double kP = 30;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
-  public static final double kS = 0.1;
+  public static final double kS = 0.0;
   public static final double kV = 0.0;
   public static final double kA = 0.0;
 
@@ -27,5 +27,5 @@ public class HangConstants {
 
   // Physical constants
   public static final double rotationsPerMeterRatio =
-      3.0 / (4.0 * Math.PI); // 3:1 reduction and 4" diameter wheels
+      3.0 / (0.1016 * Math.PI); // 3:1 reduction and 4" diameter wheels
 }

@@ -320,13 +320,6 @@ public class ControlMap {
                 () -> {
                   RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
                 }));
-    driver
-        .povUp()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  RobotContainer.armCommand.setPivotAngle(97.5);
-                }));
 
     driver
         .povDown()

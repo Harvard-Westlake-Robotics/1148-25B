@@ -141,9 +141,9 @@ public class ArmCommand extends Command {
 
     // Position will be changed when we bring in encoder code
     if (level == ScoringLevel.HANG) {
-      setPivotAngle(90);
+      setPivotAngle(102);
       setElevatorLength(0);
-      setWristAngle(0);
+      setWristAngle(-25);
       return;
     }
   }

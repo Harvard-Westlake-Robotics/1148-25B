@@ -99,7 +99,7 @@ public class WristConstants {
           0.0,
           0.0,
           0.0,
-          4,
+          0,
           0.25 * 112.5, // 0.5 rot/s^2
           0.3 * 112.5, // 0.2 rot/s
           1 * 112.5, // 1 rot/s^3
@@ -114,9 +114,9 @@ public class WristConstants {
           InvertedValue.CounterClockwise_Positive,
           40,
           80,
-          85,
+          50,
           0.0,
-          0.1,
+          0.5,
           0.0,
           0.0,
           0.0,

@@ -43,6 +43,7 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
+    Logger.recordOutput(key + "/Target Angle", io.getTargetDegrees());
   }
 
   public void runCharacterization(double voltage) {

@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,7 +21,7 @@ import frc.robot.constants.IntakeConstants;
 public class IntakeIOTalonFX implements IntakeIO {
   // Motors and intake controllers
   private final TalonFX intakeMotor;
-  private final MotionMagicVelocityTorqueCurrentFOC intakeController;
+  private final MotionMagicVelocityVoltage intakeController;
 
   private final IntakeConstants constants;
 
@@ -42,7 +42,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     this.constants = constants;
     intakeMotor = new TalonFX(constants.motorId + motorNum - 1);
     intakeMotor.setPosition(0);
-    intakeController = new MotionMagicVelocityTorqueCurrentFOC(RotationsPerSecond.of(0));
+    intakeController = new MotionMagicVelocityVoltage(RotationsPerSecond.of(0)).withEnableFOC(true);
     TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
 
     intakeConfig.MotorOutput.Inverted = constants.motorInverted;
