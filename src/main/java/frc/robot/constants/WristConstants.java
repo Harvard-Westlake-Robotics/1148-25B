@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Distance;
 public class WristConstants {
   // Motor constants
   public static final int motorId = 16;
+  public static final String motorCANBusName = "rio";
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
   public static final int statorLimit = 40;
   public static final int supplyLimit = 80;
@@ -21,17 +22,17 @@ public class WristConstants {
   public static final double kS = 0.0;
   public static final double kV = 0.0;
   public static final double kA = 0.0;
-  public static final double kG = 0.2;
+  public static final double kG = 0.0;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 500;
-  public static final double motionMagicCruiseVelocity = 200;
-  public static final double motionMagicJerk = 1000;
+  public static final double motionMagicAcceleration = 0.25;
+  public static final double motionMagicCruiseVelocity = 0.3;
+  public static final double motionMagicJerk = 1;
 
   // Physical constants
   public static final double motorRotationsPerWristRotationRatio = 36.73;
-  public static final Angle angleOffset = Rotations.of(11.8);
-  public static final Angle wristMinAngle = Rotations.of(-7.3);
-  public static final Angle wristMaxAngle = Rotations.of(11.8);
+  public static final Angle angleOffset = Rotations.of(0.3218);
+  public static final Angle wristMinAngle = Rotations.of(-0.1987);
+  public static final Angle wristMaxAngle = Rotations.of(0.3213);
   public static final Distance wristLength = Meters.of(0.10);
 }

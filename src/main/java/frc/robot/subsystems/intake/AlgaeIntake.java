@@ -50,6 +50,7 @@ public class AlgaeIntake extends SubsystemBase {
     return constants;
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);

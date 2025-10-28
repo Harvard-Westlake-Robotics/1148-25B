@@ -39,11 +39,12 @@ public class Elevator extends SubsystemBase {
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
-    Logger.recordOutput(key + "/Target Height", io.getTarget());
-    Logger.recordOutput(key + "/Current Height", getCurrentHeight());
+    Logger.recordOutput(key + "/TargetHeight", io.getTarget());
+    Logger.recordOutput(key + "/CurrentHeight", getCurrentHeight());
     Logger.recordOutput(key + "/Sensor", dio.get());
 
     if (dio.get() && inputs.elevatorPositionMeters >= 0.05) {

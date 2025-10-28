@@ -13,7 +13,7 @@ public class Wrist extends SubsystemBase {
   private final WristIOTalonFX io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
-  private final String key = "RealOutputs/Wrist";
+  private final String key = "Wrist";
   private static Wrist instance;
 
   SysIdRoutine sysId;
@@ -26,7 +26,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public Wrist() {
-    io = new WristIOTalonFX(1, "rio");
+    io = new WristIOTalonFX();
     sysId =
         new SysIdRoutine(
             new Config(
@@ -34,36 +34,35 @@ public class Wrist extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+            new Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
-    Logger.recordOutput(key + "/Target Angle", io.getTargetDegrees());
+    Logger.recordOutput(key + "/TargetAngle", io.getTargetDegrees());
   }
 
-  public void runCharacterization(double voltage) {
-    io.runCharacterization(voltage);
+  public void runVoltage(double voltage) {
+    io.runVoltage(voltage);
   }
 
-  public void goToAngleClosedLoop(double angle) {
-    io.goToAngleClosedLoop(angle);
+  public void goToAngleClosedLoop(double angleRots) {
+    io.goToAngleClosedLoop(angleRots);
   }
 
-  public void tareAngle(double angle) {
-    io.tareAngle(angle);
+  public void tareAngle(double angleRots) {
+    io.tareAngle(angleRots);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0))
-        .withTimeout(1.0)
-        .andThen(sysId.quasistatic(direction));
+    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 }

@@ -15,7 +15,7 @@ public interface WristIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(WristIOInputs inputs) {}
 
-  public default void runCharacterization(double voltage) {}
+  public default void runVoltage(double voltage) {}
 
   public default void goToAngleClosedLoop(double angle) {}
 
