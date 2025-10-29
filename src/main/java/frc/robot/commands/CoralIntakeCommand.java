@@ -15,8 +15,8 @@ public class CoralIntakeCommand extends Command {
    * Two styles of intaking: Intake straight and intake wide
    * At Coral source, intake hotdog ALWAYS
    * when intaking on ground, keep two choices:
-   * 1. Intake straight
-   * 2. Intake wide
+   * 1. Intake straight (hotdog)
+   * 2. Intake wide (burger)
    *
    * Different shift modes for the two choices
    */
@@ -143,6 +143,16 @@ public class CoralIntakeCommand extends Command {
 
   public void manualOuttake() {
     this.velocity = IntakeConstants.CoralIntake.outtakeVelocity;
+  }
+
+  // Coral Hotdog -> Intake straight, so we have the coral in this case when sensor 2 and 4 are triggered
+  public boolean hasCoralHotDog() {
+    return CoralIntake.getInstance().getSensor2() && CoralIntake.getInstance().getSensor4();
+  }
+
+  // Coral Burger -> Intake wide, so we have the coral when sensors 1, 2, 3 triggered.
+  public boolean hasCoralBurger() {
+    return CoralIntake.getInstance().getSensor1() && CoralIntake.getInstance().getSensor2() && CoralIntake.getInstance().getSensor3();
   }
 
   @Override

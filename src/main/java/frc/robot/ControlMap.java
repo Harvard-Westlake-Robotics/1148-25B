@@ -259,8 +259,8 @@ public class ControlMap {
     // Algae intake
     operator
         .leftBumper()
-        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
-    // .onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()));
+        .whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()))
+    .onFalse(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.stop()).andThen(new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL))));
     // Algae outtake
     operator
         .leftTrigger()
@@ -307,11 +307,11 @@ public class ControlMap {
     driver
         .L2()
         .whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualIntake()))
-        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()).andThen(new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL))));
     driver
         .R2()
         .whileTrue(new InstantCommand(() -> RobotContainer.coralIntakeCommand.manualOuttake()))
-        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()));
+        .onFalse(new InstantCommand(() -> RobotContainer.coralIntakeCommand.stopIntake()).andThen(new InstantCommand(() -> RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL))));
     // Go to hang position with BOTH arm and pivot
     driver
         .L1()
