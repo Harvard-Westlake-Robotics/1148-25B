@@ -16,13 +16,13 @@ public interface PivotIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(PivotIOInputs inputs) {}
 
-  public default void runCharacterization(double voltage) {}
+  public default void runVoltage(double voltage) {}
 
-  public default void goToAngleClosedLoop(double angle) {}
+  public default void goToAngleClosedLoop(double pivotAngleRots) {}
 
-  public default void tareAngle(double angle) {}
+  public default void tareAngle(double pivotAngleRots) {}
 
-  public default double getTargetDegrees() {
+  public default double getPivotTargetDegrees() {
     return 0.0;
   }
 }

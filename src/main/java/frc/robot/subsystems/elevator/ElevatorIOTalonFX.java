@@ -97,11 +97,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorMotor1.setControl(
         elevatorController
             .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
-            .withFeedForward(Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngle()))));
+            .withFeedForward(
+                Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
     elevatorMotor2.setControl(
         elevatorController
             .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
-            .withFeedForward(Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngle()))));
+            .withFeedForward(
+                Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
   }
 
   @Override

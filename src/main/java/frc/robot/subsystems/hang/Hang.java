@@ -15,7 +15,7 @@ public class Hang extends SubsystemBase {
   private final HangIO io;
   private final HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
 
-  private final String key = "RealOutputs/Hang";
+  private final String key = "Hang";
   private static Hang instance = null;
   SysIdRoutine sysId;
 
@@ -50,6 +50,7 @@ public class Hang extends SubsystemBase {
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);

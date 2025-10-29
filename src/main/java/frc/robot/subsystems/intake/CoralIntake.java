@@ -56,6 +56,7 @@ public class CoralIntake extends SubsystemBase {
             new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     io2.updateInputs(inputs2);
