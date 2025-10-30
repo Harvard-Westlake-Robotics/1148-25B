@@ -22,7 +22,7 @@ public class Pivot extends SubsystemBase {
   private final EncoderIOInputsAutoLogged encoderInputs = new EncoderIOInputsAutoLogged();
 
   private final WristConstants constants;
-  private final String key = "RealOutputs/Pivot";
+  private final String key = "Pivot";
   private static Pivot instance;
 
   SysIdRoutine sysId;

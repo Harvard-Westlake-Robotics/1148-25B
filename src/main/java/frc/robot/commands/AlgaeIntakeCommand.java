@@ -24,6 +24,7 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
   public void execute() {
+    System.out.println(velocity);
     AlgaeIntake.getInstance().runVelocity(velocity);
   }
 

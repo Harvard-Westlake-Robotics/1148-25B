@@ -188,7 +188,7 @@ public class AutoScoreCommand extends Command {
     Drive.getInstance().stop();
 
     // Takes the elevatorLength from the arm command state
-    double targetHeight = ArmCommand.getState()[1];
+    double targetHeight = ArmCommand.getStateRotations()[1];
 
     if (Math.abs(targetHeight - Elevator.getInstance().getCurrentHeight()) < ARM_Y_TOLERANCE
         || Elevator.getInstance().getCurrentHeight() > targetHeight) {

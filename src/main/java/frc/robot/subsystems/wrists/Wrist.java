@@ -15,7 +15,7 @@ public class Wrist extends SubsystemBase {
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
   private final WristConstants constants;
-  private final String key = "RealOutputs/Wrist";
+  private final String key = "Wrist";
   private static Wrist instance;
 
   SysIdRoutine sysId;

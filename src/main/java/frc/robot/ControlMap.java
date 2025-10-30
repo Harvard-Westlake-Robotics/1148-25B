@@ -315,10 +315,11 @@ public class ControlMap {
     // Go to hang position with BOTH arm and pivot
     driver
         .L1()
-        .whileTrue(
+        .onTrue(
             new InstantCommand(
                 () -> {
                   RobotContainer.armCommand.setHeight(ScoringLevel.HANG);
+                  RobotContainer.hangCommand.run();
                 }));
     // Go to Ground Algae position with both arm and pivot
     driver
@@ -327,12 +328,17 @@ public class ControlMap {
             new InstantCommand(
                 () -> {
                   RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_ALGAE);
+                  RobotContainer.algaeIntakeCommand.intake();
+                }))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+                  RobotContainer.algaeIntakeCommand.stop();
                 }));
 
     driver
         .povDown()
         .whileTrue(new InstantCommand(() -> RobotContainer.armCommand.setPivotAngle(45)));
-    // TESTING COMMANDS, PLEASE REMOVE THESE BECAUSE THESE SHOULD NOT BE THE ACTUAL COMMANDS
-    driver.square().whileTrue(new InstantCommand(() -> RobotContainer.algaeIntakeCommand.intake()));
   }
 }
