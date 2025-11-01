@@ -14,9 +14,9 @@ public class ArmCommand extends Command {
   private static double elevatorLength;
   private static double wristAngle;
 
-  private static final double PIVOT_TOLERANCE = 0.0;
-  private static final double ELEVATOR_TOLERANCE = 0.0;
-  private static final double WRIST_TOLERANCE = 0.0;
+  private static final double PIVOT_TOLERANCE = 1;
+  private static final double ELEVATOR_TOLERANCE = 0.5;
+  private static final double WRIST_TOLERANCE = 1;
 
   /*
    * An enum that stores y and wrist values that are fed into our ArmKinematics
@@ -119,7 +119,7 @@ public class ArmCommand extends Command {
 
       // If the intake has nothing in it, it fully stows itself (arm down, elevator in)
       else {
-        setPivotAngle(10);
+        setPivotAngle(15);
         setElevatorLength(0);
         setWristAngle(80);
       }
@@ -131,9 +131,9 @@ public class ArmCommand extends Command {
       return;
     }
     if (level == ScoringLevel.GROUND_CORAL) {
-      setPivotAngle(0);
+      setPivotAngle(20);
       setElevatorLength(0);
-      setWristAngle(0);
+      setWristAngle(-52);
       return;
     }
     if (level == ScoringLevel.GROUND_ALGAE) {
@@ -200,7 +200,7 @@ public class ArmCommand extends Command {
     }
 
     if (level == ScoringLevel.HANG_CLIMB) {
-      setPivotAngle(30);
+      setPivotAngle(10);
       setElevatorLength(0);
       setWristAngle(-25);
       return;

@@ -25,7 +25,7 @@ public class ControlMap {
   public void configurePreset1(CommandXboxController operator, CommandPS5Controller driver) {
     // Reset gyro to 0° when both center buttons are pressed
     driver
-        .povCenter()
+        .circle()
         .onTrue(
             Commands.runOnce(
                     RobotContainer.currentMode == Mode.SIM
@@ -103,7 +103,7 @@ public class ControlMap {
     // MANUAL COMMANDS --> Operator:
     // Elevator to Neutral
     operator
-        .a()
+        .povDown()
         .whileTrue(
             new InstantCommand(
                 () -> {
@@ -115,7 +115,16 @@ public class ControlMap {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.HANG_DEPLOY);
+                  System.out.println("BUTTON PRESSED");
+                  RobotContainer.hangCommand.deploy();
+                }));
+
+    operator
+        .a()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.hangCommand.climb();
                 }));
   }
 }

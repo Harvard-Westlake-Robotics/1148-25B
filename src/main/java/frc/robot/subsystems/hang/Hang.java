@@ -20,7 +20,6 @@ public class Hang extends SubsystemBase {
   SysIdRoutine sysId;
 
   private boolean hasBar = false;
-  // TODO: Make private and encapsulate
   public Servo servo = new Servo(7);
 
   public Boolean hasBar() {

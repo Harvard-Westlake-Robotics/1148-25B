@@ -11,7 +11,6 @@ import frc.robot.subsystems.hang.Hang;
 
 public class HangCommand extends Command {
   private LinearVelocity velocity;
-  private boolean lock = false;
 
   public HangCommand() {
     addRequirements(Hang.getInstance());
@@ -26,11 +25,6 @@ public class HangCommand extends Command {
   @Override
   public void execute() {
     Hang.getInstance().runVelocityClosedLoop(velocity);
-    if (lock) {
-      if (RobotContainer.armCommand.withinTargetRange()) {
-        Hang.getInstance().servo.setAngle(100);
-      }
-    }
   }
 
   @Override
@@ -47,12 +41,8 @@ public class HangCommand extends Command {
   }
 
   public void climb() {
-    RobotContainer.armCommand.setHeight(ScoringLevel.HANG_CLIMB);
+    Hang.getInstance().servo.setAngle(0);
     this.velocity = MetersPerSecond.of(0);
-    lock = true;
-  }
-
-  public void lock() {
-    lock = true;
+    RobotContainer.armCommand.setHeight(ScoringLevel.HANG_CLIMB);
   }
 }

@@ -31,13 +31,13 @@ public class PivotConstants {
   public static GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 0.25; // 0.25 rot/s^2
-  public static final double motionMagicCruiseVelocity = 0.3; // 0.3 rot/s
-  public static final double motionMagicJerk = 1; // 1 rot/s^3
+  public static final double motionMagicAcceleration = 15; // 0.25 rot/s^2
+  public static final double motionMagicCruiseVelocity = 20; // 0.3 rot/s
+  public static final double motionMagicJerk = 1 * 112.5; // 1 rot/s^3
 
   // Physical constants
   public static final double motorRotationsPerPivotRotationRatio = 112.5;
-  public static final Angle angleOffset = Rotations.of(0.1816); // AngleOffset
+  public static final Angle angleOffset = Rotations.of(20.43); // AngleOffset
   public static final Angle pivotMinAngle = Rotations.of(0); // Resting on base
   public static final Angle pivotMaxAngle = Rotations.of(0.29);
 

@@ -81,6 +81,7 @@ public class RobotContainer {
   // Paths
   private PathPlannerPath pathfindL;
   private PathPlannerPath pathfindSource;
+  private PathPlannerPath crossLine;
 
   // Subsystems
   public final Drive drive;
@@ -161,6 +162,13 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // try {
+    //   PathPlannerPath crossLine = PathPlannerPath.fromPathFile("Push");
+    // } catch (Exception e) {
+    // }
+
+    // autoChooser.addOption("Cross the Line", AutoBuilder.followPath(crossLine));
 
     // Set up SysId routines
     autoChooser.addOption(
