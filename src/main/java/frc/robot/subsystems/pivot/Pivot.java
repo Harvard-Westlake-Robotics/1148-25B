@@ -63,6 +63,10 @@ public class Pivot extends SubsystemBase {
     return Units.degreesToRotations(inputs.pivotPositionDeg);
   }
 
+  public double getAngleDeg() {
+    return inputs.pivotPositionDeg;
+  }
+
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return run(() -> runVoltage(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));

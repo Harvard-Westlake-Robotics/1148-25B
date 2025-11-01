@@ -30,7 +30,6 @@ public class TeleopCommand extends Command {
               DriveConstants.PP_CONSTRAINTS)
           .andThen(
               () -> {
-                RobotContainer.coralIntakeCommand.manual = true;
                 RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
               });
 
@@ -51,7 +50,6 @@ public class TeleopCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.coralIntakeCommand.manual = false;
     sourceCommand.cancel();
     reefCommand.cancel();
   }
@@ -71,7 +69,6 @@ public class TeleopCommand extends Command {
                 DriveConstants.PP_CONSTRAINTS)
             .andThen(
                 () -> {
-                  RobotContainer.coralIntakeCommand.manual = true;
                   RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
                 });
   }

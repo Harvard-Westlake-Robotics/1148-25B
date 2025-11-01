@@ -153,7 +153,6 @@ public class NetworkCommunicator {
                       new InstantCommand(
                               () -> {
                                 RobotContainer.armCommand.setHeight(ScoringLevel.SOURCE_CORAL);
-                                RobotContainer.coralIntakeCommand.manual = true;
                                 RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
                               })
                           .until(() -> CoralIntake.getInstance().hasCoralHotDog()));

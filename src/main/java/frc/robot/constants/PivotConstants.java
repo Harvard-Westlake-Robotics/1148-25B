@@ -14,9 +14,7 @@ public class PivotConstants {
   public static final int motor2Id = 26;
   public static final int motor3Id = 27;
   public static final String motorCANBusName = "drive";
-  public static final InvertedValue motor1Inverted = InvertedValue.Clockwise_Positive;
-  public static final InvertedValue motor2Inverted = InvertedValue.Clockwise_Positive;
-  public static final InvertedValue motor3Inverted = InvertedValue.Clockwise_Positive;
+  public static final InvertedValue motorsInverted = InvertedValue.Clockwise_Positive;
   public static final int statorLimit = 40;
   public static final int supplyLimit = 80;
 

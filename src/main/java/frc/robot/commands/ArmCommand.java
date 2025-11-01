@@ -1,23 +1,22 @@
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.LogTable;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.WristConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
+import org.littletonrobotics.junction.Logger;
 
 public class ArmCommand extends Command {
-  public boolean outtakePosition;
   private static double pivotAngle;
   private static double elevatorLength;
   private static double wristAngle;
+
+  private static final double PIVOT_TOLERANCE = 0.0;
+  private static final double ELEVATOR_TOLERANCE = 0.0;
+  private static final double WRIST_TOLERANCE = 0.0;
 
   /*
    * An enum that stores y and wrist values that are fed into our ArmKinematics
@@ -37,7 +36,8 @@ public class ArmCommand extends Command {
     BOTTOM_REMOVE,
     NET,
     PROCESSOR,
-    HANG
+    HANG_DEPLOY,
+    HANG_CLIMB
   }
 
   // For accessing the set ScoringLevel by other commands
@@ -45,8 +45,7 @@ public class ArmCommand extends Command {
 
   public ArmCommand() {
     this.addRequirements(Elevator.getInstance(), Pivot.getInstance(), Wrist.getInstance());
-    outtakePosition = false;
-    pivotAngle = Units.degreesToRotations(90);
+    pivotAngle = Units.degreesToRotations(70);
     elevatorLength = 0;
     wristAngle = Units.degreesToRotations(0);
   }
@@ -65,54 +64,65 @@ public class ArmCommand extends Command {
   @Override
   public void end(boolean interrupted) {}
 
-    // Logs the current state of the arm command in both degrees and rotations
-    public void logState() {
-      Logger.recordOutput("RealOutputs/Arm Command State Degrees/Target Pivot Angle (degrees)", getStateDegrees()[0]);
-      Logger.recordOutput("RealOutputs/Arm Command State Degrees/Target Elevator Length (meters)", getStateDegrees()[1]);
-      Logger.recordOutput("RealOutputs/Arm Command State Degrees/Target Wrist Angle (degrees)", getStateDegrees()[2]);
-      Logger.recordOutput("RealOutputs/Arm Command State Rotations/Target Pivot Angle (rotations)", getStateRotations()[0]);
-      Logger.recordOutput("RealOutputs/Arm Command State Rotations/Target Elevator Length (meters)", getStateRotations()[1]);
-      Logger.recordOutput("RealOutputs/Arm Command State Rotations/Target Wrist Angle (rotations)", getStateRotations()[2]);
-    }
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+
+  // Logs the current state of the arm command in both degrees and rotations
+  public void logState() {
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Degrees/Target Pivot Angle (degrees)", getStateDegrees()[0]);
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Degrees/Target Elevator Length (meters)",
+        getStateDegrees()[1]);
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Degrees/Target Wrist Angle (degrees)", getStateDegrees()[2]);
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Rotations/Target Pivot Angle (rotations)",
+        getStateRotations()[0]);
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Rotations/Target Elevator Length (meters)",
+        getStateRotations()[1]);
+    Logger.recordOutput(
+        "RealOutputs/Arm Command State Rotations/Target Wrist Angle (rotations)",
+        getStateRotations()[2]);
+  }
 
   // For manual position, no arm kinematics, just straight going to position
   public void setHeight(ScoringLevel level) {
     // All of these need to be changed based on actual positions
     if (level == ScoringLevel.NEUTRAL) {
-      // Change this if you want to enable the "neutral" position that changes based on the robot's current state.
-      // I'm disabling by default just in case
-      boolean neutral = false;
-      if (neutral) {
-        // DISCLAIMER: POSITIONS NEED TO BE TUNED BUT THESE VALUES WON'T BREAK ANYTHING
-        // When intake has a coral hotdog style, the pivot and wrist are at in a general "scoring" position
-        // All that is needed is for the elevator to extend to score at any level (except maybe L4)
-        if (CoralIntake.getInstance().hasCoralHotDog()) {
-          setPivotAngle(52);
-          setWristAngle(-27);
-        }
-        // When intake has algae in it, the pivot moves to a 90 degree angle and the wrist holds the algae straight up
-        // So it's easier to go up and score on the barge later
-        // (Given energy chain broken, idk if we even want this but i'm keeping it in here anyway)
-        else if (AlgaeIntake.getInstance().hasAlgae()) {
-          setPivotAngle(90);
-          setWristAngle(-20);
-        } 
-        // When intake has coral in it burger style, the arm just goes to L1 scoring position and I don't wanna
-        // figure that out as of October 28th at 6:52 PM
-        else if (CoralIntake.getInstance().hasCoralBurger()) {
-
-        }
-
-        // If the intake has nothing in it, it fully stows itself (arm down, elevator in)
-        else {
-          setPivotAngle(0);
-          setElevatorLength(0);
-          // Making it zero degrees but idk what that is on the wrist due to offset - Yari
-          setWristAngle(0);
-        }
+      // All that is needed is for the elevator to extend to score at any level (except maybe L4)
+      // TODO:
+      if (CoralIntake.getInstance().hasCoralHotDog()) {
+        // setPivotAngle(52);
+        // setWristAngle(-27);
       }
-      // If neutral boolean is false, this does nothing so everything should be ok
-      return;
+
+      // When intake has algae in it, the pivot moves to a 90 degree angle and the wrist holds the
+      // algae straight up
+      // So it's easier to go up and score on the barge later
+      // (Given energy chain broken, idk if we even want this but i'm keeping it in here anyway)
+      // TODO
+      else if (AlgaeIntake.getInstance().hasAlgae()) {
+        setPivotAngle(90);
+        setWristAngle(-20);
+      }
+      // When intake has coral in it burger style, the arm just goes to L1 scoring position and I
+      // don't wanna
+      // figure that out as of October 28th at 6:52 PM
+      // TODO
+      else if (CoralIntake.getInstance().hasCoralBurger()) {
+
+      }
+
+      // If the intake has nothing in it, it fully stows itself (arm down, elevator in)
+      else {
+        setPivotAngle(10);
+        setElevatorLength(0);
+        setWristAngle(80);
+      }
     }
     if (level == ScoringLevel.SOURCE_CORAL) {
       setPivotAngle(0);
@@ -175,15 +185,22 @@ public class ArmCommand extends Command {
       return;
     }
     if (level == ScoringLevel.PROCESSOR) {
-      setPivotAngle(0);
+      setPivotAngle(25);
       setElevatorLength(0);
-      setWristAngle(0);
+      setWristAngle(-51);
       return;
     }
 
     // Position will be changed when we bring in encoder code
-    if (level == ScoringLevel.HANG) {
+    if (level == ScoringLevel.HANG_DEPLOY) {
       setPivotAngle(102);
+      setElevatorLength(0);
+      setWristAngle(-25);
+      return;
+    }
+
+    if (level == ScoringLevel.HANG_CLIMB) {
+      setPivotAngle(30);
       setElevatorLength(0);
       setWristAngle(-25);
       return;
@@ -204,7 +221,9 @@ public class ArmCommand extends Command {
 
   // Returns the state of the arm command in degrees
   public static double[] getStateDegrees() {
-    return new double[] {Units.rotationsToDegrees(pivotAngle), elevatorLength, Units.rotationsToDegrees(wristAngle)};
+    return new double[] {
+      Units.rotationsToDegrees(pivotAngle), elevatorLength, Units.rotationsToDegrees(wristAngle)
+    };
   }
 
   // Returns the state of the arm command in rotations
@@ -212,8 +231,10 @@ public class ArmCommand extends Command {
     return new double[] {pivotAngle, elevatorLength, wristAngle};
   }
 
-  @Override
-  public boolean isFinished() {
-    return false;
+  public boolean withinTargetRange() {
+    return Math.abs(Pivot.getInstance().getAngleDeg() - pivotAngle) <= PIVOT_TOLERANCE
+        && Math.abs(Elevator.getInstance().getCurrentHeight() - elevatorLength)
+            <= ELEVATOR_TOLERANCE
+        && Math.abs(Wrist.getInstance().getAngleDeg()) <= WRIST_TOLERANCE;
   }
 }

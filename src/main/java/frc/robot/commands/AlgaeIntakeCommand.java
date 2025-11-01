@@ -10,11 +10,9 @@ import frc.robot.subsystems.intake.AlgaeIntake;
 public class AlgaeIntakeCommand extends Command {
   // Run velocity
   private LinearVelocity velocity;
-  private boolean algaeLastStop;
 
   public AlgaeIntakeCommand() {
     addRequirements(AlgaeIntake.getInstance());
-    this.algaeLastStop = false;
   }
 
   @Override
@@ -36,12 +34,6 @@ public class AlgaeIntakeCommand extends Command {
   }
 
   public void intake() {
-    // for auto intake
-    // if (!algaeLastStop) {
-    //   this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
-    // } else {
-    //   this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
-    // }
     this.velocity = IntakeConstants.AlgaeIntake.intakeVelocity;
   }
 
@@ -53,11 +45,9 @@ public class AlgaeIntakeCommand extends Command {
     if (AlgaeIntake.getInstance().hasAlgae()) {
       this.velocity = MetersPerSecond.of(0);
       AlgaeIntake.getInstance().runVoltage(IntakeConstants.AlgaeIntake.algaeHoldVoltage);
-      algaeLastStop = true;
     } else {
       this.velocity = MetersPerSecond.of(0);
       AlgaeIntake.getInstance().runVoltage(0);
-      algaeLastStop = false;
     }
   }
 

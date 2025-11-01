@@ -37,8 +37,9 @@ public class IntakeConstants {
   public final LinearVelocity intakeVelocity;
   public final LinearVelocity outtakeVelocity;
   public final LinearVelocity shiftVelocity;
-  // Velocity of the top roller when intaking
+  // Velocity of the Algae roller when holding coral hamburger
   public final LinearVelocity hamburgerIntakeVelocity;
+  public final LinearVelocity hamburgerOuttakeVelocity;
 
   // Physical constants
   public final double rotationsPerMeterRatio;
@@ -69,6 +70,7 @@ public class IntakeConstants {
       LinearVelocity outtakeVelocity,
       LinearVelocity shiftVelocity,
       LinearVelocity hamburgerIntakeVelocity,
+      LinearVelocity hamburgerOuttakeVelocity,
       double rotationsPerMeterRatio,
       double algaeHoldVoltage) {
     this.motorId = motorId;
@@ -86,14 +88,15 @@ public class IntakeConstants {
     this.motionMagicAcceleration = motionMagicAcceleration;
     this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
     this.motionMagicJerk = motionMagicJerk;
-    sensor1ID = sensor1id;
-    sensor2ID = sensor2id;
-    sensor3ID = sensor3id;
-    sensor4ID = sensor4id;
+    this.sensor1ID = sensor1id;
+    this.sensor2ID = sensor2id;
+    this.sensor3ID = sensor3id;
+    this.sensor4ID = sensor4id;
     this.intakeVelocity = intakeVelocity;
     this.outtakeVelocity = outtakeVelocity;
     this.shiftVelocity = shiftVelocity;
     this.hamburgerIntakeVelocity = hamburgerIntakeVelocity;
+    this.hamburgerOuttakeVelocity = hamburgerOuttakeVelocity;
     this.rotationsPerMeterRatio = rotationsPerMeterRatio;
     this.algaeHoldVoltage = algaeHoldVoltage;
   }
@@ -120,10 +123,11 @@ public class IntakeConstants {
           24,
           22,
           21,
+          MetersPerSecond.of(100),
+          MetersPerSecond.of(-100),
+          MetersPerSecond.of(100),
           MetersPerSecond.of(20),
           MetersPerSecond.of(-20),
-          MetersPerSecond.of(20),
-          MetersPerSecond.of(20),
           9.52 / (4 * Math.PI),
           0);
 
@@ -148,10 +152,11 @@ public class IntakeConstants {
           -1,
           -1,
           -1,
-          LinearVelocity.ofBaseUnits(200, MetersPerSecond),
-          LinearVelocity.ofBaseUnits(-100, MetersPerSecond),
-          LinearVelocity.ofBaseUnits(0, MetersPerSecond),
-          LinearVelocity.ofBaseUnits(0, MetersPerSecond),
+          MetersPerSecond.of(1000),
+          MetersPerSecond.of(-1000),
+          MetersPerSecond.of(0),
+          MetersPerSecond.of(0),
+          MetersPerSecond.of(0),
           1.0 / 16.709,
           1.5);
 }

@@ -130,7 +130,6 @@ public class AutoScoreCommand extends Command {
     timeoutTimer.start();
 
     // Set initial positions and velocities
-    RobotContainer.coralIntakeCommand.manual = true;
     CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
     RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
@@ -210,7 +209,6 @@ public class AutoScoreCommand extends Command {
     } else {
       CoralIntake.getInstance().runVelocity(MetersPerSecond.of(4));
     }
-    RobotContainer.coralIntakeCommand.manual = false;
     // RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
     Drive.getInstance().stop();
     DriveConstants.setSdMultiplier(1);
