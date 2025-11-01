@@ -19,7 +19,7 @@ public class PivotConstants {
   public static final int supplyLimit = 80;
 
   // PID constants
-  public static double kP = 8;
+  public static double kP = 10;
   public static double kI = 0.0;
   public static double kD = 0.0;
   public static double kS = 0.0;
@@ -31,8 +31,8 @@ public class PivotConstants {
   public static GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 15; // 0.25 rot/s^2
-  public static final double motionMagicCruiseVelocity = 20; // 0.3 rot/s
+  public static final double motionMagicAcceleration = 20; // 0.25 rot/s^2
+  public static final double motionMagicCruiseVelocity = 30; // 0.3 rot/s
   public static final double motionMagicJerk = 1 * 112.5; // 1 rot/s^3
 
   // Physical constants

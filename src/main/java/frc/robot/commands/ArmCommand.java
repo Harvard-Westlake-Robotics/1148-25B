@@ -133,7 +133,7 @@ public class ArmCommand extends Command {
     if (level == ScoringLevel.GROUND_CORAL) {
       setPivotAngle(20);
       setElevatorLength(0);
-      setWristAngle(-52);
+      setWristAngle(-60);
       return;
     }
     if (level == ScoringLevel.GROUND_ALGAE) {
@@ -200,7 +200,7 @@ public class ArmCommand extends Command {
     }
 
     if (level == ScoringLevel.HANG_CLIMB) {
-      setPivotAngle(10);
+      setPivotAngle(15);
       setElevatorLength(0);
       setWristAngle(-25);
       return;

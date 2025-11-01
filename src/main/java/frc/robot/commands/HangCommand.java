@@ -41,7 +41,7 @@ public class HangCommand extends Command {
   }
 
   public void climb() {
-    Hang.getInstance().servo.setAngle(0);
+    Hang.getInstance().servo.setPosition(10);
     this.velocity = MetersPerSecond.of(0);
     RobotContainer.armCommand.setHeight(ScoringLevel.HANG_CLIMB);
   }

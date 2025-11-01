@@ -19,16 +19,7 @@ public class Hang extends SubsystemBase {
   private static Hang instance = null;
   SysIdRoutine sysId;
 
-  private boolean hasBar = false;
   public Servo servo = new Servo(7);
-
-  public Boolean hasBar() {
-    return hasBar;
-  }
-
-  public void setHasBar(Boolean hasBar) {
-    this.hasBar = hasBar;
-  }
 
   public static Hang getInstance() {
     if (instance == null) {
@@ -53,7 +44,7 @@ public class Hang extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
-    hasBar = inputs.motorAppliedVolts > 1.0 && inputs.motorVelocityMPS < 0.2;
+    Logger.recordOutput(key + "/ServoAngle", servo.getAngle());
   }
 
   public void runCharacterization(double voltage) {
