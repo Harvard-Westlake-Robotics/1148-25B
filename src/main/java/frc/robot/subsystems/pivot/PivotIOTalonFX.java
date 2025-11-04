@@ -118,6 +118,33 @@ public class PivotIOTalonFX implements PivotIO {
   }
 
   @Override
+  public void setTunableConstants(
+      double kP,
+      double kI,
+      double kD,
+      double kS,
+      double kV,
+      double kG,
+      double kA,
+      double motionMagicAcceleration,
+      double motionMagicCruiseVelocity,
+      double motionMagicJerk) {
+    pivotConfig.Slot0.kP = kP;
+    pivotConfig.Slot0.kI = kI;
+    pivotConfig.Slot0.kD = kD;
+    pivotConfig.Slot0.kS = kS;
+    pivotConfig.Slot0.kV = kV;
+    pivotConfig.Slot0.kG = kG;
+    pivotConfig.Slot0.kA = kA;
+    pivotConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration;
+    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity;
+    pivotConfig.MotionMagic.MotionMagicJerk = motionMagicJerk;
+    tryUntilOk(5, () -> pivotMotor1.getConfigurator().apply(pivotConfig, 0.25));
+    tryUntilOk(5, () -> pivotMotor2.getConfigurator().apply(pivotConfig, 0.25));
+    tryUntilOk(5, () -> pivotMotor3.getConfigurator().apply(pivotConfig, 0.25));
+  }
+
+  @Override
   public double getPivotTargetDegrees() {
     return Units.rotationsToDegrees(
         pivotController.Position / PivotConstants.motorRotationsPerPivotRotationRatio);

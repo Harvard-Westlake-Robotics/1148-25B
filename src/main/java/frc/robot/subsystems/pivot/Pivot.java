@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+import frc.robot.constants.PivotConstants;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -19,6 +21,23 @@ public class Pivot extends SubsystemBase {
   private static Pivot instance;
 
   SysIdRoutine sysId;
+
+  private final LoggedTunableNumber kP = new LoggedTunableNumber(key + "/kP", PivotConstants.kP);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber(key + "/kI", PivotConstants.kI);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber(key + "/kD", PivotConstants.kD);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber(key + "/kS", PivotConstants.kS);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber(key + "/kV", PivotConstants.kV);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber(key + "/kG", PivotConstants.kG);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber(key + "/kA", PivotConstants.kA);
+
+  private final LoggedTunableNumber motionMagicAcceleration =
+      new LoggedTunableNumber(
+          key + "/motionMagicAcceleration", PivotConstants.motionMagicAcceleration);
+  private final LoggedTunableNumber motionMagicCruiseVelocity =
+      new LoggedTunableNumber(
+          key + "/motionMagicCruiseVelocity", PivotConstants.motionMagicCruiseVelocity);
+  private final LoggedTunableNumber motionMagicJerk =
+      new LoggedTunableNumber(key + "/motionMagicJerk", PivotConstants.motionMagicJerk);
 
   public static Pivot getInstance() {
     if (instance == null) {
@@ -44,6 +63,31 @@ public class Pivot extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
     Logger.recordOutput(key + "/TargetAngle", io.getPivotTargetDegrees());
+
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () ->
+            io.setTunableConstants(
+                kP.get(),
+                kI.get(),
+                kD.get(),
+                kS.get(),
+                kV.get(),
+                kG.get(),
+                kA.get(),
+                motionMagicAcceleration.get(),
+                motionMagicCruiseVelocity.get(),
+                motionMagicJerk.get()),
+        kP,
+        kI,
+        kD,
+        kS,
+        kV,
+        kG,
+        kA,
+        motionMagicAcceleration,
+        motionMagicCruiseVelocity,
+        motionMagicJerk);
   }
 
   public void runVoltage(double voltage) {

@@ -24,6 +24,18 @@ public interface PivotIO {
 
   public default void tareAngle(double pivotAngleRots) {}
 
+  public default void setTunableConstants(
+      double kP,
+      double kI,
+      double kD,
+      double kS,
+      double kV,
+      double kG,
+      double kA,
+      double motionMagicAcceleration,
+      double motionMagicCruiseVelocity,
+      double motionMagicJerk) {}
+
   public default double getPivotTargetDegrees() {
     return 0.0;
   }
