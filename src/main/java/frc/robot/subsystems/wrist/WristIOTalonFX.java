@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -26,6 +27,7 @@ public class WristIOTalonFX implements WristIO {
   private MotionMagicVoltage wristController;
 
   private TalonFXConfiguration wristConfig;
+  private ArmFeedforward feedforward;
 
   private final StatusSignal<Angle> wristPosition;
   private final StatusSignal<AngularVelocity> wristVelocity;
@@ -60,6 +62,7 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.Feedback.SensorToMechanismRatio =
         WristConstants.motorRotationsPerWristRotationRatio;
     tryUntilOk(5, () -> wristMotor.getConfigurator().apply(wristConfig, 0.25));
+    feedforward = new ArmFeedforward(WristConstants.kS, WristConstants.kG, WristConstants.kV);
     wristMotor.setPosition(WristConstants.angleOffset);
     wristMotor.setControl(wristController);
 
@@ -87,7 +90,11 @@ public class WristIOTalonFX implements WristIO {
 
   @Override
   public void goToAngleClosedLoop(double wristAngleRots) {
-    wristMotor.setControl(wristController.withPosition(wristAngleRots));
+    wristMotor.setControl(
+        wristController
+            .withPosition(wristAngleRots)
+            .withFeedForward(
+                feedforward.calculate(wristAngleRots, wristVelocity.getValueAsDouble())));
   }
 
   @Override

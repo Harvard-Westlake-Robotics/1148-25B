@@ -114,7 +114,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     var distanceSignal = input1.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
-    if (distance != 0 && distance <= 0.02) {
+    if (distance != 0 && distance <= 0.05) {
       return true;
     } else {
       return false;
@@ -126,7 +126,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     var distanceSignal = input2.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
-    if (distance != 0 && distance <= 0.02) {
+    if (distance != 0 && distance <= 0.05) {
       return true;
     } else {
       return false;
@@ -138,7 +138,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     var distanceSignal = input3.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
-    if (distance != 0 && distance <= 0.02) {
+    if (distance != 0 && distance <= 0.05) {
       return true;
     } else {
       return false;
@@ -150,7 +150,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     var distanceSignal = input4.getDistance();
     distanceSignal.refresh();
     double distance = distanceSignal.getValueAsDouble();
-    if (distance != 0 && distance <= 0.02) {
+    if (distance != 0 && distance <= 0.05) {
       return true;
     } else {
       return false;

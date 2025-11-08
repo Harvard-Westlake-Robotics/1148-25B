@@ -39,6 +39,9 @@ public class HangIOTalonFX implements HangIO {
     hangConfig.MotorOutput.Inverted = HangConstants.motorInverted;
     hangConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    hangConfig.CurrentLimits.StatorCurrentLimit = HangConstants.kStatorLimit;
+    hangConfig.CurrentLimits.SupplyCurrentLimit = HangConstants.kSupplyLimit;
+
     hangConfig.Slot0.kP = HangConstants.kP;
     hangConfig.Slot0.kI = HangConstants.kI;
     hangConfig.Slot0.kD = HangConstants.kD;

@@ -14,7 +14,7 @@ public class ArmCommand extends Command {
   private static double elevatorLength;
   private static double wristAngle;
 
-  private static final double PIVOT_TOLERANCE = 1;
+  private static final double PIVOT_TOLERANCE = 2;
   private static final double ELEVATOR_TOLERANCE = 0.5;
   private static final double WRIST_TOLERANCE = 1;
 
@@ -71,22 +71,19 @@ public class ArmCommand extends Command {
 
   // Logs the current state of the arm command in both degrees and rotations
   public void logState() {
+    Logger.recordOutput("Arm Command State/In Target Range", withinTargetRange());
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Degrees/Target Pivot Angle (degrees)", getStateDegrees()[0]);
+        "Arm Command State/Degrees/Target Pivot Angle (degrees)", getStateDegrees()[0]);
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Degrees/Target Elevator Length (meters)",
-        getStateDegrees()[1]);
+        "Arm Command State/Degrees/Target Elevator Length (meters)", getStateDegrees()[1]);
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Degrees/Target Wrist Angle (degrees)", getStateDegrees()[2]);
+        "Arm Command State/Degrees/Target Wrist Angle (degrees)", getStateDegrees()[2]);
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Rotations/Target Pivot Angle (rotations)",
-        getStateRotations()[0]);
+        "Arm Command State/Rotations/Target Pivot Angle (rotations)", getStateRotations()[0]);
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Rotations/Target Elevator Length (meters)",
-        getStateRotations()[1]);
+        "Arm Command State/Rotations/Target Elevator Length (meters)", getStateRotations()[1]);
     Logger.recordOutput(
-        "RealOutputs/Arm Command State Rotations/Target Wrist Angle (rotations)",
-        getStateRotations()[2]);
+        "Arm Command State/Rotations/Target Wrist Angle (rotations)", getStateRotations()[2]);
   }
 
   // For manual position, no arm kinematics, just straight going to position
@@ -106,15 +103,14 @@ public class ArmCommand extends Command {
       // (Given energy chain broken, idk if we even want this but i'm keeping it in here anyway)
       // TODO
       else if (AlgaeIntake.getInstance().hasAlgae()) {
-        setPivotAngle(90);
-        setWristAngle(-20);
+        setHeight(ScoringLevel.PROCESSOR);
       }
       // When intake has coral in it burger style, the arm just goes to L1 scoring position and I
       // don't wanna
       // figure that out as of October 28th at 6:52 PM
       // TODO
       else if (CoralIntake.getInstance().hasCoralBurger()) {
-
+        setHeight(ScoringLevel.L1);
       }
 
       // If the intake has nothing in it, it fully stows itself (arm down, elevator in)
@@ -131,21 +127,21 @@ public class ArmCommand extends Command {
       return;
     }
     if (level == ScoringLevel.GROUND_CORAL) {
-      setPivotAngle(20);
+      setPivotAngle(2);
       setElevatorLength(0);
-      setWristAngle(-60);
+      setWristAngle(21);
       return;
     }
     if (level == ScoringLevel.GROUND_ALGAE) {
-      setPivotAngle(21.5);
+      setPivotAngle(18);
       setElevatorLength(0);
-      setWristAngle(-51.5);
+      setWristAngle(-30);
       return;
     }
     if (level == ScoringLevel.L1) {
-      setPivotAngle(0);
+      setPivotAngle(47);
       setElevatorLength(0);
-      setWristAngle(0);
+      setWristAngle(-10);
       return;
     }
     if (level == ScoringLevel.L2) {
@@ -154,40 +150,40 @@ public class ArmCommand extends Command {
       setWristAngle(0);
       return;
     }
-    if (level == ScoringLevel.L3) {
-      setPivotAngle(0);
-      setElevatorLength(0);
-      setWristAngle(0);
-      return;
-    }
-    if (level == ScoringLevel.L4) {
-      setPivotAngle(0);
-      setElevatorLength(0);
-      setWristAngle(0);
-      return;
-    }
-    if (level == ScoringLevel.TOP_REMOVE) {
-      setPivotAngle(0);
-      setElevatorLength(0);
-      setWristAngle(0);
-      return;
-    }
+    // if (level == ScoringLevel.L3) {
+    //   setPivotAngle(0);
+    //   setElevatorLength(0);
+    //   setWristAngle(0);
+    //   return;
+    // }
+    // if (level == ScoringLevel.L4) {
+    //   setPivotAngle(0);
+    //   setElevatorLength(0);
+    //   setWristAngle(0);
+    //   return;
+    // }
+    // if (level == ScoringLevel.TOP_REMOVE) {
+    //   setPivotAngle(0);
+    //   setElevatorLength(0);
+    //   setWristAngle(0);
+    //   return;
+    // }
     if (level == ScoringLevel.BOTTOM_REMOVE) {
       setPivotAngle(0);
       setElevatorLength(0);
       setWristAngle(0);
       return;
     }
-    if (level == ScoringLevel.NET) {
-      setPivotAngle(0);
-      setElevatorLength(0);
-      setWristAngle(0);
-      return;
-    }
+    // if (level == ScoringLevel.NET) {
+    //   setPivotAngle(0);
+    //   setElevatorLength(0);
+    //   setWristAngle(0);
+    //   return;
+    // }
     if (level == ScoringLevel.PROCESSOR) {
-      setPivotAngle(25);
+      setPivotAngle(12);
       setElevatorLength(0);
-      setWristAngle(-51);
+      setWristAngle(40);
       return;
     }
 
@@ -200,9 +196,9 @@ public class ArmCommand extends Command {
     }
 
     if (level == ScoringLevel.HANG_CLIMB) {
-      setPivotAngle(15);
-      setElevatorLength(0);
-      setWristAngle(-25);
+      setPivotAngle(14);
+      setElevatorLength(0.04);
+      setWristAngle(0);
       return;
     }
   }
@@ -236,5 +232,15 @@ public class ArmCommand extends Command {
         && Math.abs(Elevator.getInstance().getCurrentHeight() - elevatorLength)
             <= ELEVATOR_TOLERANCE
         && Math.abs(Wrist.getInstance().getAngleDeg()) <= WRIST_TOLERANCE;
+  }
+
+  public void incrementElevator() {
+    elevatorLength += 0.04;
+  }
+
+  public void reduceElevator() {
+    if (elevatorLength > 0.05) {
+      elevatorLength -= 0.04;
+    }
   }
 }

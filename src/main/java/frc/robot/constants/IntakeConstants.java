@@ -108,10 +108,10 @@ public class IntakeConstants {
           InvertedValue.Clockwise_Positive,
           80,
           40,
-          9,
+          0,
           0.0,
-          0.2,
-          0.1,
+          0.0,
+          0.0,
           0.0,
           0.0,
           0.5,
@@ -123,13 +123,13 @@ public class IntakeConstants {
           24,
           22,
           21,
-          MetersPerSecond.of(100),
-          MetersPerSecond.of(-100),
-          MetersPerSecond.of(100),
-          MetersPerSecond.of(20),
-          MetersPerSecond.of(-20),
+          MetersPerSecond.of(1000),
+          MetersPerSecond.of(-1000),
+          MetersPerSecond.of(1000),
+          MetersPerSecond.of(0),
+          MetersPerSecond.of(0),
           9.52 / (4 * Math.PI),
-          0);
+          2);
 
   public static final IntakeConstants AlgaeIntake =
       new IntakeConstants(
@@ -137,26 +137,26 @@ public class IntakeConstants {
           InvertedValue.CounterClockwise_Positive,
           120,
           50,
-          0.2,
+          0.0, // 0.25
+          0.0,
+          0.08,
+          0.0, // 0.1761
+          0.0, // 0.12875
           0.0,
           0.0,
-          0.1761,
-          0.12875,
           0.0,
-          0.0,
-          0.0,
-          100.0,
-          100.0,
+          1000.0,
+          2000.0,
           1000000.0,
           -1,
           -1,
           -1,
           -1,
-          MetersPerSecond.of(1000),
-          MetersPerSecond.of(-1000),
+          MetersPerSecond.of(2000),
+          MetersPerSecond.of(-2000),
           MetersPerSecond.of(0),
-          MetersPerSecond.of(0),
-          MetersPerSecond.of(0),
+          MetersPerSecond.of(-2000),
+          MetersPerSecond.of(2000),
           1.0 / 16.709,
-          1.5);
+          8);
 }

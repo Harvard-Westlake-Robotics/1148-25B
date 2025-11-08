@@ -54,7 +54,7 @@ public class AlgaeIntake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(key, inputs);
-    hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 0.2;
+    hasAlgae = inputs.intakeMotorAppliedVolts > 1.0 && inputs.intakeMotorVelocityMPS < 1.5;
   }
 
   public void runVoltage(double voltage) {
