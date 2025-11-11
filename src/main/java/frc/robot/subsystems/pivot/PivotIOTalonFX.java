@@ -1,5 +1,7 @@
 package frc.robot.subsystems.pivot;
 
+import static frc.robot.util.PhoenixUtil.tryUntilOk;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -128,7 +130,8 @@ public class PivotIOTalonFX implements PivotIO {
       double kA,
       double motionMagicAcceleration,
       double motionMagicCruiseVelocity,
-      double motionMagicJerk) {
+      double motionMagicJerk,
+      double pivotAngle) {
     pivotConfig.Slot0.kP = kP;
     pivotConfig.Slot0.kI = kI;
     pivotConfig.Slot0.kD = kD;
@@ -142,6 +145,15 @@ public class PivotIOTalonFX implements PivotIO {
     tryUntilOk(5, () -> pivotMotor1.getConfigurator().apply(pivotConfig, 0.25));
     tryUntilOk(5, () -> pivotMotor2.getConfigurator().apply(pivotConfig, 0.25));
     tryUntilOk(5, () -> pivotMotor3.getConfigurator().apply(pivotConfig, 0.25));
+    pivotMotor1.setControl(
+        pivotController.withPosition(
+            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
+    pivotMotor2.setControl(
+        pivotController.withPosition(
+            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
+    pivotMotor3.setControl(
+        pivotController.withPosition(
+            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
   }
 
   @Override

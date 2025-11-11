@@ -17,6 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
@@ -271,24 +272,26 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Set default commands, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driver.getLeftY(),
-            () -> -driver.getLeftX(),
-            () ->
-                driver.getRightX() < 0
-                    ? -Math.pow(Math.abs(driver.getRightX()), 1.5)
-                    : Math.pow(driver.getRightX(), 1.5)));
-    // Instantiate and set default commands
-    armCommand = new ArmCommand();
-    elevator.setDefaultCommand(armCommand);
-    coralIntakeCommand = new CoralIntakeCommand();
-    coralIntake.setDefaultCommand(coralIntakeCommand);
-    algaeIntakeCommand = new AlgaeIntakeCommand();
-    algaeIntake.setDefaultCommand(algaeIntakeCommand);
-    hangCommand = new HangCommand();
-    hang.setDefaultCommand(hangCommand);
+    if (!DriverStation.isTest()) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driver.getLeftY(),
+              () -> -driver.getLeftX(),
+              () ->
+                  driver.getRightX() < 0
+                      ? -Math.pow(Math.abs(driver.getRightX()), 1.5)
+                      : Math.pow(driver.getRightX(), 1.5)));
+      // Instantiate and set default commands
+      armCommand = new ArmCommand();
+      elevator.setDefaultCommand(armCommand);
+      coralIntakeCommand = new CoralIntakeCommand();
+      coralIntake.setDefaultCommand(coralIntakeCommand);
+      algaeIntakeCommand = new AlgaeIntakeCommand();
+      algaeIntake.setDefaultCommand(algaeIntakeCommand);
+      hangCommand = new HangCommand();
+      hang.setDefaultCommand(hangCommand);
+    }
 
     // Assign controls in ControlMap
     ControlMap.getInstance().configurePreset1(operator, driver);

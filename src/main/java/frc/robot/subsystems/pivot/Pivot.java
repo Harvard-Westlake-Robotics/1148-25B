@@ -39,6 +39,9 @@ public class Pivot extends SubsystemBase {
   private final LoggedTunableNumber motionMagicJerk =
       new LoggedTunableNumber(key + "/motionMagicJerk", PivotConstants.motionMagicJerk);
 
+  private final LoggedTunableNumber pivotAngleDeg =
+      new LoggedTunableNumber("Pivot/pivotAngleDeg", 70);
+
   public static Pivot getInstance() {
     if (instance == null) {
       instance = new Pivot();
@@ -77,7 +80,8 @@ public class Pivot extends SubsystemBase {
                 kA.get(),
                 motionMagicAcceleration.get(),
                 motionMagicCruiseVelocity.get(),
-                motionMagicJerk.get()),
+                motionMagicJerk.get(),
+                Units.degreesToRotations(pivotAngleDeg.get())),
         kP,
         kI,
         kD,
@@ -87,7 +91,8 @@ public class Pivot extends SubsystemBase {
         kA,
         motionMagicAcceleration,
         motionMagicCruiseVelocity,
-        motionMagicJerk);
+        motionMagicJerk,
+        pivotAngleDeg);
   }
 
   public void runVoltage(double voltage) {

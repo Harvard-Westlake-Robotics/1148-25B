@@ -34,7 +34,8 @@ public interface PivotIO {
       double kA,
       double motionMagicAcceleration,
       double motionMagicCruiseVelocity,
-      double motionMagicJerk) {}
+      double motionMagicJerk,
+      double pivotAngle) {}
 
   public default double getPivotTargetDegrees() {
     return 0.0;
