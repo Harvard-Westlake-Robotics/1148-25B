@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -37,6 +38,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
     elevatorConfig.MotorOutput.Inverted = ElevatorConstants.elevatorInverted;
 
+    elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
     elevatorConfig.MotionMagic.MotionMagicCruiseVelocity =
         ElevatorConstants.motionMagicCruiseVelocity;

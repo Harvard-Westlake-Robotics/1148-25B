@@ -45,29 +45,6 @@ public class ControlMap {
                 .ignoringDisable(true));
 
     // Intake and outtake (L2 and R2)
-    // driver
-    //     .R1()
-    //     .whileTrue(
-    //         new InstantCommand(() -> {
-    //             RobotContainer.coralIntakeCommand.intakeGround();
-    //             RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_CORAL);
-    //         }))
-    //     .onFalse(
-    //         new InstantCommand(() -> {
-    //             RobotContainer.coralIntakeCommand.stop();
-    //             RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
-    //         }));
-    // driver
-    //     .R2()
-    //     .whileTrue(new InstantCommand(() -> {
-    //         RobotContainer.coralIntakeCommand.manualOuttake();
-    //     }))
-    //     .onFalse(
-    //         new InstantCommand(() -> RobotContainer.coralIntakeCommand.stop())
-    //             .andThen(
-    //                 new InstantCommand(
-    //                     () -> RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL))));
-
     driver
         .L1()
         .whileTrue(
@@ -84,20 +61,46 @@ public class ControlMap {
                 }));
 
     driver
-        .L2()
+        .R2()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.armCommand.setHeight(ScoringLevel.PROCESSOR);
-                  if (RobotContainer.armCommand.withinTargetRange()) {
-                    RobotContainer.algaeIntakeCommand.outtake();
-                  }
+                  RobotContainer.armCommand.setHeight(ScoringLevel.L1);
+                  RobotContainer.algaeIntakeCommand.outtakeGround();
+                }))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+                  RobotContainer.algaeIntakeCommand.stop();
+                }));
+
+    driver
+        .R1()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.GROUND_CORAL);
+                  RobotContainer.algaeIntakeCommand.intakeGround();
                 }))
         .onFalse(
             new InstantCommand(
                 () -> {
                   RobotContainer.algaeIntakeCommand.stop();
                   RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+                }));
+
+    driver
+        .L2()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.algaeIntakeCommand.outtake();
+                }))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.algaeIntakeCommand.runVelocity(0);
                 }));
 
     // MANUAL COMMANDS --> Operator:
@@ -115,7 +118,6 @@ public class ControlMap {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  System.out.println("BUTTON PRESSED");
                   RobotContainer.hangCommand.deploy();
                 }));
 
@@ -126,5 +128,32 @@ public class ControlMap {
                 () -> {
                   RobotContainer.hangCommand.climb();
                 }));
+
+    operator
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setPivotAngle(75);
+                }));
+
+    operator
+        .leftTrigger()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.PROCESSOR);
+                }))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
+                }));
+    operator
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> RobotContainer.armCommand.incrementElevator()));
+    operator
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> RobotContainer.armCommand.reduceElevator()));
   }
 }

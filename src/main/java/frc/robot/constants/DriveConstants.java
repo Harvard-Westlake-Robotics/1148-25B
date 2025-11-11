@@ -62,10 +62,10 @@ public class DriveConstants {
       StaticFeedforwardSignValue.UseClosedLoopSign;
 
   // Swerve Drive PID Values
-  public static final double kDriveP = 0.032762;
+  public static final double kDriveP = 0.14764;
   public static final double kDriveI = 0;
   public static final double kDriveD = 0;
-  public static final double kDriveS = 0.047782;
+  public static final double kDriveS = 0.0047782;
   public static final double kDriveV = 0.10756;
   public static final double kDriveA = 0.023363;
 
@@ -107,13 +107,11 @@ public class DriveConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  // TODO: Sysid this
   public static final Current kSlipCurrent = Amps.of(130.0);
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  // TODO: Sysid this
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(7.50);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(75);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot

@@ -15,11 +15,11 @@ public class PivotConstants {
   public static final int motor3Id = 27;
   public static final String motorCANBusName = "drive";
   public static final InvertedValue motorsInverted = InvertedValue.Clockwise_Positive;
-  public static final int statorLimit = 40;
+  public static final int statorLimit = 120;
   public static final int supplyLimit = 80;
 
   // PID constants
-  public static double kP = 10;
+  public static double kP = 12;
   public static double kI = 0.0;
   public static double kD = 0.0;
   public static double kS = 0.0;
@@ -27,12 +27,12 @@ public class PivotConstants {
   public static double kA = 0.0;
   // Determine kG by gradually increasing phoenix tuner voltage until the Pivot can hold itself up
   // (velocity is 0), then divide the voltage by the cosine of the absolute angle to get kG
-  public static double kG = 0;
+  public static double kG = 1.5;
   public static GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 20; // 0.25 rot/s^2
-  public static final double motionMagicCruiseVelocity = 30; // 0.3 rot/s
+  public static final double motionMagicAcceleration = 60; // 0.25 rot/s^2
+  public static final double motionMagicCruiseVelocity = 100; // 0.3 rot/s
   public static final double motionMagicJerk = 1 * 112.5; // 1 rot/s^3
 
   // Physical constants

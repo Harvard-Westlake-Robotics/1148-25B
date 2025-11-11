@@ -9,6 +9,8 @@ public class HangConstants {
   // Motor constants
   public static final int motorId = 20;
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
+  public static final double kSupplyLimit = 40;
+  public static final double kStatorLimit = 60;
 
   // PID constants
   public static final double kP = 30;

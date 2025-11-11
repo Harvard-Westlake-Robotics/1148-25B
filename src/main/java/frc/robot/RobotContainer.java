@@ -20,15 +20,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.ArmCommand;
+import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.HangCommand;
@@ -79,9 +79,7 @@ public class RobotContainer {
   }
 
   // Paths
-  private PathPlannerPath pathfindL;
-  private PathPlannerPath pathfindSource;
-  private PathPlannerPath crossLine;
+  private PathPlannerPath L1;
 
   // Subsystems
   public final Drive drive;
@@ -104,7 +102,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardChooser<Command> preAutoChooser;
 
   public static SwerveDriveSimulation driveSimulation = null;
 
@@ -162,13 +159,6 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // try {
-    //   PathPlannerPath crossLine = PathPlannerPath.fromPathFile("Push");
-    // } catch (Exception e) {
-    // }
-
-    // autoChooser.addOption("Cross the Line", AutoBuilder.followPath(crossLine));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -257,13 +247,20 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     try {
-      pathfindL = PathPlannerPath.fromPathFile("Push");
+      L1 = PathPlannerPath.fromPathFile("ToL1");
     } catch (Exception e) {
     }
-    preAutoChooser = new LoggedDashboardChooser<>("Pre Auto Choices", new SendableChooser<>());
-    preAutoChooser.addDefaultOption("None", Commands.none());
-    preAutoChooser.addOption("Push", AutoBuilder.followPath(pathfindL));
-    SmartDashboard.putData("Pre Auto Chooser", preAutoChooser.getSendableChooser());
+    autoChooser.addOption(
+        "Single L1",
+        new ParallelCommandGroup(
+                AutoBuilder.followPath(L1).withTimeout(5),
+                new InstantCommand(() -> algaeIntakeCommand.runVelocity(-500)))
+            .andThen(
+                new InstantCommand(
+                    () -> {
+                      armCommand.setHeight(ScoringLevel.L1);
+                      algaeIntakeCommand.outtakeGround();
+                    })));
   }
 
   /**
@@ -276,7 +273,13 @@ public class RobotContainer {
     // Set default commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
+            drive,
+            () -> -driver.getLeftY(),
+            () -> -driver.getLeftX(),
+            () ->
+                driver.getRightX() < 0
+                    ? -Math.pow(Math.abs(driver.getRightX()), 1.5)
+                    : Math.pow(driver.getRightX(), 1.5)));
     // Instantiate and set default commands
     armCommand = new ArmCommand();
     elevator.setDefaultCommand(armCommand);

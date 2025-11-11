@@ -12,21 +12,21 @@ public class WristConstants {
   public static final int motorId = 16;
   public static final String motorCANBusName = "rio";
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
-  public static final int statorLimit = 40;
-  public static final int supplyLimit = 80;
+  public static final int statorLimit = 120;
+  public static final int supplyLimit = 60;
 
   // PID constants
-  public static final double kP = 25;
+  public static final double kP = 8;
   public static final double kI = 0.0;
-  public static final double kD = 0.5;
-  public static final double kS = 0.0;
+  public static final double kD = 0.0;
+  public static final double kS = 0.4;
   public static final double kV = 0.0;
   public static final double kA = 0.0;
-  public static final double kG = 0.0;
+  public static final double kG = 0.2;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 0.25;
-  public static final double motionMagicCruiseVelocity = 0.3;
+  public static final double motionMagicAcceleration = 4;
+  public static final double motionMagicCruiseVelocity = 2;
   public static final double motionMagicJerk = 1;
 
   // Physical constants

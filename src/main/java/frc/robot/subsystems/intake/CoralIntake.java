@@ -71,7 +71,7 @@ public class CoralIntake extends SubsystemBase {
     } else {
       hasCoralHotdog = false;
     }
-    if (getSensor1() && getSensor2() && getSensor3()) {
+    if (getSensor1() || getSensor3() || getSensor2()) {
       hasCoralBurger = true;
     } else {
       hasCoralBurger = false;
@@ -79,19 +79,19 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public void runCharacterization(double voltage) {
-    io.runVoltage(voltage);
-    io2.runVoltage(-voltage);
+    // io.runVoltage(voltage);
+    // io2.runVoltage(-voltage);
   }
 
   public void runVelocity(LinearVelocity velocity) {
-    io.runVelocity(velocity);
-    io2.runVelocity(velocity.times(-1));
+    // io.runVelocity(velocity);
+    // io2.runVelocity(velocity.times(-1));
   }
 
   // Runs motors in the same direction
   public void runVelocityShift(LinearVelocity velocity) {
-    io.runVelocity(velocity);
-    io2.runVelocity(velocity);
+    // io.runVelocity(velocity);
+    // io2.runVelocity(velocity);
   }
 
   // Shifts the motors by setting them to spin in the same direction
@@ -99,11 +99,11 @@ public class CoralIntake extends SubsystemBase {
   // might not work yet because we're unsure how the shifting will actually need
   // to work
   public void shift(boolean direction, LinearVelocity velocity) {
-    if (direction) {
-      runVelocityShift(velocity);
-    } else {
-      runVelocityShift(velocity.times(-1));
-    }
+    // if (direction) {
+    //   runVelocityShift(velocity);
+    // } else {
+    //   runVelocityShift(velocity.times(-1));
+    // }
   }
 
   public Boolean getSensor1() {
@@ -132,5 +132,9 @@ public class CoralIntake extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+  }
+
+  public void yeah() {
+    System.out.println("yeah");
   }
 }

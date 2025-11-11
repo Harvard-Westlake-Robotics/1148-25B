@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 
 public class CoralIntakeCommand extends Command {
@@ -51,37 +50,12 @@ public class CoralIntakeCommand extends Command {
     }
   }
 
-  public void intakeGround() {
-    // Intake hamburger --> shift when sensors 1 and 3 are triggered BUT NOT WHEN
-    // BOTH
-    // Sensor 2 should be trigerred if sensors 1 and 3 are both triggered
-    AlgaeIntake.getInstance().runVelocity(IntakeConstants.CoralIntake.hamburgerIntakeVelocity);
-    if ((CoralIntake.getInstance().getSensor1() || CoralIntake.getInstance().getSensor3())
-        && CoralIntake.getInstance().getSensor2()) {
-      // We're good, keep intaking
-      velocity = IntakeConstants.CoralIntake.intakeVelocity;
-    } else {
-      // Bad things, gotta shift depending on situation
-      if (CoralIntake.getInstance().getSensor1()) {
-        CoralIntake.getInstance().shift(true, IntakeConstants.CoralIntake.shiftVelocity);
-      } else if (CoralIntake.getInstance().getSensor3()) {
-        // Shift left
-        CoralIntake.getInstance().shift(false, IntakeConstants.CoralIntake.shiftVelocity);
-      }
-    }
-  }
-
   public void outtakeReef() {
     velocity = IntakeConstants.CoralIntake.outtakeVelocity;
   }
 
-  public void outtakeGround() {
-    velocity = IntakeConstants.CoralIntake.hamburgerOuttakeVelocity;
-  }
-
   public void stop() {
     this.velocity = LinearVelocity.ofBaseUnits(0, MetersPerSecond);
-    AlgaeIntake.getInstance().runVelocity(LinearVelocity.ofBaseUnits(0, MetersPerSecond));
   }
 
   public void manualIntake() {

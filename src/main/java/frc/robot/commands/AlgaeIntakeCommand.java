@@ -6,6 +6,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.intake.AlgaeIntake;
+import frc.robot.subsystems.intake.CoralIntake;
+import org.littletonrobotics.junction.Logger;
 
 public class AlgaeIntakeCommand extends Command {
   // Run velocity
@@ -22,6 +24,7 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
   public void execute() {
+    Logger.recordOutput("Algae Command State/Velocity", velocity);
     AlgaeIntake.getInstance().runVelocity(velocity);
   }
 
@@ -41,13 +44,21 @@ public class AlgaeIntakeCommand extends Command {
     this.velocity = IntakeConstants.AlgaeIntake.outtakeVelocity;
   }
 
+  public void intakeGround() {
+    this.velocity = IntakeConstants.AlgaeIntake.hamburgerIntakeVelocity;
+  }
+
+  public void outtakeGround() {
+    this.velocity = IntakeConstants.AlgaeIntake.hamburgerOuttakeVelocity;
+  }
+
   public void stop() {
     if (AlgaeIntake.getInstance().hasAlgae()) {
-      this.velocity = MetersPerSecond.of(0);
-      AlgaeIntake.getInstance().runVoltage(IntakeConstants.AlgaeIntake.algaeHoldVoltage);
+      this.velocity = MetersPerSecond.of(500);
+    } else if (CoralIntake.getInstance().hasCoralBurger()) {
+      this.velocity = MetersPerSecond.of(-500);
     } else {
       this.velocity = MetersPerSecond.of(0);
-      AlgaeIntake.getInstance().runVoltage(0);
     }
   }
 

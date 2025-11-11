@@ -8,6 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.constants.HangConstants;
 import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.intake.CoralIntake;
 
 public class HangCommand extends Command {
   private LinearVelocity velocity;
@@ -36,6 +37,7 @@ public class HangCommand extends Command {
   }
 
   public void deploy() {
+    CoralIntake.getInstance().yeah();
     RobotContainer.armCommand.setHeight(ScoringLevel.HANG_DEPLOY);
     this.velocity = HangConstants.hangVelocity;
   }
