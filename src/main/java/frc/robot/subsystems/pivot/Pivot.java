@@ -96,15 +96,15 @@ public class Pivot extends SubsystemBase {
   }
 
   public void runVoltage(double voltage) {
-    io.runVoltage(voltage);
+    // io.runVoltage(voltage);
   }
 
   public void goToAngleClosedLoop(double angleRots) {
-    io.goToAngleClosedLoop(angleRots);
+    // io.goToAngleClosedLoop(angleRots);
   }
 
   public void tareAngle(double angleRots) {
-    io.tareAngle(angleRots);
+    // io.tareAngle(angleRots);
   }
 
   @AutoLogOutput

@@ -272,16 +272,16 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Set default commands, normal field-relative drive
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driver.getLeftY(),
+            () -> -driver.getLeftX(),
+            () ->
+                driver.getRightX() < 0
+                    ? -Math.pow(Math.abs(driver.getRightX()), 1.5)
+                    : Math.pow(driver.getRightX(), 1.5)));
     if (!DriverStation.isTest()) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driver.getLeftY(),
-              () -> -driver.getLeftX(),
-              () ->
-                  driver.getRightX() < 0
-                      ? -Math.pow(Math.abs(driver.getRightX()), 1.5)
-                      : Math.pow(driver.getRightX(), 1.5)));
       // Instantiate and set default commands
       armCommand = new ArmCommand();
       elevator.setDefaultCommand(armCommand);

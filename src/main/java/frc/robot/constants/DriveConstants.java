@@ -119,7 +119,7 @@ public class DriveConstants {
 
   public static final double kDriveGearRatio = 5.68;
   public static final double kSteerGearRatio = 12.1;
-  public static final Distance kWheelRadius = Inches.of(2.15);
+  public static final Distance kWheelRadius = Inches.of(1.933);
 
   public static final boolean kInvertLeftSide = false;
   public static final boolean kInvertRightSide = true;
