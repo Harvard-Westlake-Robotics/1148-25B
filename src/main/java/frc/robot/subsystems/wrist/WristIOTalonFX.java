@@ -45,6 +45,10 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.MotorOutput.Inverted = WristConstants.motorInverted;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    wristConfig.Feedback.RotorToSensorRatio = 1.0;
+    wristConfig.Feedback.SensorToMechanismRatio =
+        WristConstants.motorRotationsPerWristRotationRatio;
+
     wristConfig.Slot0.kP = WristConstants.kP;
     wristConfig.Slot0.kI = WristConstants.kI;
     wristConfig.Slot0.kD = WristConstants.kD;

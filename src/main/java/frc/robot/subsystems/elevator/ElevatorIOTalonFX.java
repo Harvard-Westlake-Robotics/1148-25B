@@ -44,6 +44,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         ElevatorConstants.motionMagicCruiseVelocity;
     elevatorConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
 
+    elevatorConfig.Feedback.RotorToSensorRatio = 1.0;
+    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatorConstants.rotationsPerMeterRatio;
+
     elevatorConfig.Slot0.kP = ElevatorConstants.kP;
     elevatorConfig.Slot0.kI = ElevatorConstants.kI;
     elevatorConfig.Slot0.kD = ElevatorConstants.kD;
@@ -80,10 +83,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.elevatorConnected = motorConnectedDebouncer.calculate(elevatorMotor1.isConnected());
-    inputs.elevatorPositionMeters =
-        motorPosition.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
-    inputs.elevatorVelocityMPS =
-        motorVelocity.getValueAsDouble() / ElevatorConstants.rotationsPerMeterRatio;
+    inputs.elevatorPositionMeters = motorPosition.getValueAsDouble();
+    inputs.elevatorVelocityMPS = motorVelocity.getValueAsDouble();
     inputs.elevatorAppliedVolts = motorAppliedVolts.getValueAsDouble();
     inputs.elevatorCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -98,20 +99,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void goToHeightClosedLoop(double height) {
     elevatorMotor1.setControl(
         elevatorController
-            .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
+            .withPosition(height)
             .withFeedForward(
                 Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
     elevatorMotor2.setControl(
         elevatorController
-            .withPosition(height * ElevatorConstants.rotationsPerMeterRatio)
+            .withPosition(height)
             .withFeedForward(
                 Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
   }
 
   @Override
   public void tareHeight(double height) {
-    elevatorMotor1.setPosition(height * ElevatorConstants.rotationsPerMeterRatio);
-    elevatorMotor2.setPosition(height * ElevatorConstants.rotationsPerMeterRatio);
+    elevatorMotor1.setPosition(height);
+    elevatorMotor2.setPosition(height);
   }
 
   @Override

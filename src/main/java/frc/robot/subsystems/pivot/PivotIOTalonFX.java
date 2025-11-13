@@ -48,6 +48,10 @@ public class PivotIOTalonFX implements PivotIO {
     pivotConfig.MotorOutput.Inverted = PivotConstants.motorsInverted;
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    pivotConfig.Feedback.RotorToSensorRatio = 1.0;
+    pivotConfig.Feedback.SensorToMechanismRatio =
+        PivotConstants.motorRotationsPerPivotRotationRatio;
+
     pivotConfig.Slot0.kP = PivotConstants.kP;
     pivotConfig.Slot0.kI = PivotConstants.kI;
     pivotConfig.Slot0.kD = PivotConstants.kD;
@@ -85,12 +89,8 @@ public class PivotIOTalonFX implements PivotIO {
     inputs.pivotMotor1Connected = motorsConnectedDebouncer.calculate(pivotMotor1.isConnected());
     inputs.pivotMotor2Connected = motorsConnectedDebouncer.calculate(pivotMotor2.isConnected());
     inputs.pivotMotor3Connected = motorsConnectedDebouncer.calculate(pivotMotor3.isConnected());
-    inputs.pivotPositionDeg =
-        Units.rotationsToDegrees(
-            pivotPosition.getValueAsDouble() / PivotConstants.motorRotationsPerPivotRotationRatio);
-    inputs.pivotVelocityDPS =
-        Units.rotationsToDegrees(
-            motorVelocity.getValueAsDouble() / PivotConstants.motorRotationsPerPivotRotationRatio);
+    inputs.pivotPositionDeg = Units.rotationsToDegrees(pivotPosition.getValueAsDouble());
+    inputs.pivotVelocityDPS = Units.rotationsToDegrees(motorVelocity.getValueAsDouble());
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
     inputs.pivotCurrentAmps = motorCurrent.getValueAsDouble();
   }
@@ -104,19 +104,16 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    pivotMotor1.setControl(
-        pivotController.withPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio));
-    pivotMotor2.setControl(
-        pivotController.withPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio));
-    pivotMotor3.setControl(
-        pivotController.withPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio));
+    pivotMotor1.setControl(pivotController.withPosition(angle));
+    pivotMotor2.setControl(pivotController.withPosition(angle));
+    pivotMotor3.setControl(pivotController.withPosition(angle));
   }
 
   @Override
   public void tareAngle(double angle) {
-    pivotMotor1.setPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio);
-    pivotMotor2.setPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio);
-    pivotMotor3.setPosition(angle * PivotConstants.motorRotationsPerPivotRotationRatio);
+    pivotMotor1.setPosition(angle);
+    pivotMotor2.setPosition(angle);
+    pivotMotor3.setPosition(angle);
   }
 
   @Override
@@ -145,20 +142,13 @@ public class PivotIOTalonFX implements PivotIO {
     tryUntilOk(5, () -> pivotMotor1.getConfigurator().apply(pivotConfig, 0.25));
     tryUntilOk(5, () -> pivotMotor2.getConfigurator().apply(pivotConfig, 0.25));
     tryUntilOk(5, () -> pivotMotor3.getConfigurator().apply(pivotConfig, 0.25));
-    pivotMotor1.setControl(
-        pivotController.withPosition(
-            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
-    pivotMotor2.setControl(
-        pivotController.withPosition(
-            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
-    pivotMotor3.setControl(
-        pivotController.withPosition(
-            pivotAngle * PivotConstants.motorRotationsPerPivotRotationRatio));
+    pivotMotor1.setControl(pivotController.withPosition(pivotAngle));
+    pivotMotor2.setControl(pivotController.withPosition(pivotAngle));
+    pivotMotor3.setControl(pivotController.withPosition(pivotAngle));
   }
 
   @Override
   public double getPivotTargetDegrees() {
-    return Units.rotationsToDegrees(
-        pivotController.Position / PivotConstants.motorRotationsPerPivotRotationRatio);
+    return Units.rotationsToDegrees(pivotController.Position);
   }
 }
