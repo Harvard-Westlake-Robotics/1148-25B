@@ -43,7 +43,7 @@ public class PivotConstants {
 
   // Pivot encoder constants
   public static final int pivotEncoderId = 30;
-  public static final String pivotEncoderCANBusName = "drive";
+  public static final String pivotEncoderCANBusName = "rio";
   public static final double pivotEncoderRotationsPerPivotRotationRatio = 1.0;
   public static final double pivotEncoderOffset = 0.403;
   public static final SensorDirectionValue pivotEncoderSensorDirection =

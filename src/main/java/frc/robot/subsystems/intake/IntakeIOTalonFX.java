@@ -1,7 +1,9 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -93,8 +95,8 @@ public class IntakeIOTalonFX implements IntakeIO {
         motorPosition.getValueAsDouble() / constants.rotationsPerMeterRatio;
     inputs.intakeMotorVelocityMPS =
         motorVelocity.getValueAsDouble() / constants.rotationsPerMeterRatio;
-    inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.intakeMotorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValue().in(Volts);
+    inputs.intakeMotorCurrentAmps = motorCurrent.getValue().in(Amps);
   }
 
   @Override

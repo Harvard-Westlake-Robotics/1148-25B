@@ -227,7 +227,7 @@ public class Drive extends SubsystemBase {
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("RealOutputs/Drive/Gyro", gyroInputs);
     for (var module : modules) {
-      module.periodic();
+      module.periodic();  // Calls the periodic method of each module - the modules' periodic methods are not truly periodic otherwise
     }
     odometryLock.unlock();
     for (LimeLightCam limelight : limelights) {
@@ -297,44 +297,19 @@ public class Drive extends SubsystemBase {
         Logger.recordOutput("RealOutputs/Drive/apriltagResultD", result_d.pose);
       }
 
-      if (result_a != null && shouldAcceptPose(result_a) && limeLightsActive) {
-        addVisionMeasurement(
-            result_a.pose,
-            result_a.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_a),
-                DriveConstants.xyStdDev(result_a),
-                DriveConstants.rStdDev(result_a)));
-      }
+      AprilTagResult[] results =
+          new AprilTagResult[] {result_a, result_b, result_c, result_d};
 
-      if (result_b != null && shouldAcceptPose(result_b) && limeLightsActive) {
-        addVisionMeasurement(
-            result_b.pose,
-            result_b.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_b),
-                DriveConstants.xyStdDev(result_b),
-                DriveConstants.rStdDev(result_b)));
-      }
-
-      if (result_c != null && shouldAcceptPose(result_c) && limeLightsActive) {
-        addVisionMeasurement(
-            result_c.pose,
-            result_c.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_c),
-                DriveConstants.xyStdDev(result_c),
-                DriveConstants.rStdDev(result_c)));
-      }
-
-      if (result_d != null && shouldAcceptPose(result_d) && limeLightsActive) {
-        addVisionMeasurement(
-            result_d.pose,
-            result_d.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_d),
-                DriveConstants.xyStdDev(result_d),
-                DriveConstants.rStdDev(result_d)));
+      for (AprilTagResult result : results) {
+        if (result != null && shouldAcceptPose(result) && limeLightsActive) {
+          addVisionMeasurement(
+              result.pose,
+              result.time,
+              VecBuilder.fill(
+                  DriveConstants.xyStdDev(result),
+                  DriveConstants.xyStdDev(result),
+                  DriveConstants.rStdDev(result)));
+        }
       }
 
       // Update gyro alert

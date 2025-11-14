@@ -1,12 +1,19 @@
 package frc.robot.subsystems.pivot;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
@@ -22,21 +29,26 @@ public class PivotIOTalonFX implements PivotIO {
   private TalonFX pivotMotor2;
   private TalonFX pivotMotor3;
   private MotionMagicVoltage pivotController;
-
   private TalonFXConfiguration pivotConfig;
 
-  private final StatusSignal<Angle> pivotPosition;
-  private final StatusSignal<AngularVelocity> motorVelocity;
+  private final CANcoder cancoder;
+  private CANcoderConfiguration encoderConfig;
+
+  private final StatusSignal<Angle> pivotPosition; 
+  private final StatusSignal<AngularVelocity> pivotVelocity;
   private final StatusSignal<Voltage> pivotAppliedVolts;
   private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
   private final Debouncer motorsConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5);
 
   public PivotIOTalonFX() {
     pivotMotor1 = new TalonFX(PivotConstants.motor1Id, "drive");
     pivotMotor2 = new TalonFX(PivotConstants.motor2Id, "drive");
     pivotMotor3 = new TalonFX(PivotConstants.motor3Id, "drive");
+
+    cancoder = new CANcoder(PivotConstants.pivotEncoderId, PivotConstants.pivotEncoderCANBusName);
 
     pivotMotor1.setPosition(PivotConstants.angleOffset);
     pivotMotor2.setPosition(PivotConstants.angleOffset);
@@ -47,10 +59,6 @@ public class PivotIOTalonFX implements PivotIO {
     pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.Inverted = PivotConstants.motorsInverted;
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    pivotConfig.Feedback.RotorToSensorRatio = 1.0;
-    pivotConfig.Feedback.SensorToMechanismRatio =
-        PivotConstants.motorRotationsPerPivotRotationRatio;
 
     pivotConfig.Slot0.kP = PivotConstants.kP;
     pivotConfig.Slot0.kI = PivotConstants.kI;
@@ -67,6 +75,15 @@ public class PivotIOTalonFX implements PivotIO {
     this.pivotConfig.MotionMagic.MotionMagicCruiseVelocity =
         PivotConstants.motionMagicCruiseVelocity;
     this.pivotConfig.MotionMagic.MotionMagicJerk = PivotConstants.motionMagicJerk;
+
+    pivotConfig.Feedback.FeedbackRemoteSensorID = PivotConstants.pivotEncoderId;
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    pivotConfig.Feedback.SensorToMechanismRatio =
+        PivotConstants.pivotEncoderRotationsPerPivotRotationRatio;
+    pivotConfig.Feedback.RotorToSensorRatio =
+        PivotConstants.motorRotationsPerPivotRotationRatio
+            / PivotConstants.pivotEncoderRotationsPerPivotRotationRatio;
+
     this.pivotMotor1.getConfigurator().apply(this.pivotConfig);
     pivotMotor1.setControl(pivotController);
 
@@ -76,23 +93,30 @@ public class PivotIOTalonFX implements PivotIO {
     this.pivotMotor3.getConfigurator().apply(this.pivotConfig);
     pivotMotor3.setControl(pivotController);
 
+    encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.SensorDirection = PivotConstants.pivotEncoderSensorDirection;
+    encoderConfig.MagnetSensor.MagnetOffset = PivotConstants.pivotEncoderOffset;
+    tryUntilOk(5, () -> cancoder.getConfigurator().apply(encoderConfig, 0.25));
+
     pivotPosition = pivotMotor1.getPosition();
-    motorVelocity = pivotMotor1.getVelocity();
+    pivotVelocity = pivotMotor1.getVelocity();
     pivotAppliedVolts = pivotMotor1.getMotorVoltage();
     motorCurrent = pivotMotor1.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(PivotIOInputs inputs) {
-    StatusSignal.refreshAll(pivotPosition, motorVelocity, pivotAppliedVolts, motorCurrent);
+    StatusSignal.refreshAll(pivotPosition, pivotVelocity, pivotAppliedVolts, motorCurrent);
 
     inputs.pivotMotor1Connected = motorsConnectedDebouncer.calculate(pivotMotor1.isConnected());
     inputs.pivotMotor2Connected = motorsConnectedDebouncer.calculate(pivotMotor2.isConnected());
     inputs.pivotMotor3Connected = motorsConnectedDebouncer.calculate(pivotMotor3.isConnected());
-    inputs.pivotPositionDeg = Units.rotationsToDegrees(pivotPosition.getValueAsDouble());
-    inputs.pivotVelocityDPS = Units.rotationsToDegrees(motorVelocity.getValueAsDouble());
-    inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
-    inputs.pivotCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.pivotEncoderConnected = encoderConnectedDebouncer.calculate(cancoder.isConnected());
+
+    inputs.pivotPositionDeg = pivotPosition.getValue().in(Degrees);
+    inputs.pivotVelocityDPS = pivotVelocity.getValue().in(DegreesPerSecond);
+    inputs.pivotAppliedVolts = pivotAppliedVolts.getValue().in(Volts);
+    inputs.pivotCurrentAmps = motorCurrent.getValue().in(Amps);
   }
 
   @Override
