@@ -25,7 +25,7 @@ public interface ElevatorIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
-  public default void runVoltage(Voltage   voltage) {}
+  public default void runVoltage(Voltage voltage) {}
 
   public default void goToHeightClosedLoop(Distance height) {}
 

@@ -1,9 +1,15 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
+import static edu.wpi.first.units.Units.VoltsPerMeterPerSecondSquared;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -27,7 +33,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX elevatorMotor2;
   private final MotionMagicVoltage elevatorController;
 
+  // Actually in meters
   private final StatusSignal<Angle> elevatorPosition;
+  // Actually in m/s
   private final StatusSignal<AngularVelocity> elevatorVelocity;
   private final StatusSignal<Voltage> motorAppliedVoltage;
   private final StatusSignal<Current> motorCurrent;
@@ -45,10 +53,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorConfig.MotorOutput.Inverted = ElevatorConstants.elevatorInverted;
 
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration;
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.motionMagicAcceleration.in(MetersPerSecondPerSecond);
     elevatorConfig.MotionMagic.MotionMagicCruiseVelocity =
-        ElevatorConstants.motionMagicCruiseVelocity;
-    elevatorConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk;
+        ElevatorConstants.motionMagicCruiseVelocity.in(MetersPerSecond);
+    elevatorConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.motionMagicJerk.in(MetersPerSecondPerSecond.per(Second));
 
     elevatorConfig.Feedback.RotorToSensorRatio = 1.0;
     elevatorConfig.Feedback.SensorToMechanismRatio = ElevatorConstants.rotationsPerMeterRatio;
@@ -56,21 +64,21 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorConfig.Slot0.kP = ElevatorConstants.kP;
     elevatorConfig.Slot0.kI = ElevatorConstants.kI;
     elevatorConfig.Slot0.kD = ElevatorConstants.kD;
-    elevatorConfig.Slot0.kS = ElevatorConstants.kS;
-    elevatorConfig.Slot0.kV = ElevatorConstants.kV;
-    elevatorConfig.Slot0.kG = ElevatorConstants.kG;
-    elevatorConfig.Slot0.kA = ElevatorConstants.kA;
+    elevatorConfig.Slot0.kS = ElevatorConstants.kS.in(Volts);
+    elevatorConfig.Slot0.kV = ElevatorConstants.kV.in(VoltsPerMeterPerSecond);
+    elevatorConfig.Slot0.kG = ElevatorConstants.kG.in(Volts);
+    elevatorConfig.Slot0.kA = ElevatorConstants.kA.in(VoltsPerMeterPerSecondSquared);
 
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    elevatorConfig.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit;
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit.in(Amps);
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit;
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyLimit.in(Amps);
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        ElevatorConstants.elevatorForwardSoftLimitRotations;
+        ElevatorConstants.elevatorForwardSoftLimit.in(Meters);
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        ElevatorConstants.elevatorReverseSoftLimitRotations;
+        ElevatorConstants.elevatorReverseSoftLimit.in(Meters);
 
     elevatorMotor1.getConfigurator().apply(elevatorConfig);
     elevatorMotor1.setControl(elevatorController);
@@ -89,7 +97,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     StatusSignal.refreshAll(elevatorPosition, elevatorVelocity, motorAppliedVoltage, motorCurrent);
 
     inputs.elevatorConnected = motorConnectedDebouncer.calculate(elevatorMotor1.isConnected());
-    // Phoenix6 requires motor posiitons to be in angle units, so must be interpreted as meters here
+    // Phoenix6 requires motor positions/velocities to be in angle units, so they must be cast to distance units here
     inputs.elevatorHeight = Meters.of(elevatorPosition.getValue().in(Rotations));
     inputs.elevatorVelocity = MetersPerSecond.of(elevatorVelocity.getValue().in(RotationsPerSecond));
     inputs.elevatorAppliedVoltage = motorAppliedVoltage.getValue();
