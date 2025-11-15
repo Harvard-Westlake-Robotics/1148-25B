@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
@@ -18,7 +19,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -116,12 +116,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorController
             .withPosition(height.in(Meters))
             .withFeedForward(
-                Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
+                Math.cos(Pivot.getInstance().getAngle().in(Radians))));
     elevatorMotor2.setControl(
         elevatorController
             .withPosition(height.in(Meters))
             .withFeedForward(
-                Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
+                Math.cos(Pivot.getInstance().getAngle().in(Radians))));
   }
 
   @Override
