@@ -1,7 +1,10 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,7 +39,7 @@ public class Elevator extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+            new Mechanism((voltage) -> runVoltage(voltage), null, this));
   }
 
   @Override
@@ -47,32 +50,32 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput(key + "/CurrentHeight", getCurrentHeight());
     Logger.recordOutput(key + "/Sensor", dio.get());
 
-    if (dio.get() && inputs.elevatorPositionMeters >= 0.05) {
-      io.tareHeight(0);
+    if (dio.get() && inputs.elevatorHeight.gte(Meters.of(0.05))) {
+      io.tareHeight(Meters.of(0));
     }
   }
 
-  public void runCharacterization(double voltage) {
+  public void runVoltage(Voltage voltage) {
     io.runVoltage(voltage);
   }
 
-  public void goToHeightClosedLoop(double height) {
+  public void goToHeightClosedLoop(Distance height) {
     io.goToHeightClosedLoop(height);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0))
+    return run(() -> runVoltage(Volts.of(0.0)))
         .withTimeout(1.0)
         .andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runVoltage(Volts.of(0.0))).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  public double getCurrentHeight() {
-    return inputs.elevatorPositionMeters;
+  public Distance getCurrentHeight() {
+    return inputs.elevatorHeight;
   }
 }

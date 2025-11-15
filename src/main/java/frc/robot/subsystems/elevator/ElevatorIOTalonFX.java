@@ -1,5 +1,10 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -11,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.pivot.Pivot;
@@ -21,9 +27,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX elevatorMotor2;
   private final MotionMagicVoltage elevatorController;
 
-  private final StatusSignal<Angle> motorPosition;
-  private final StatusSignal<AngularVelocity> motorVelocity;
-  private final StatusSignal<Voltage> motorAppliedVolts;
+  private final StatusSignal<Angle> elevatorPosition;
+  private final StatusSignal<AngularVelocity> elevatorVelocity;
+  private final StatusSignal<Voltage> motorAppliedVoltage;
   private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
@@ -72,51 +78,52 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorMotor2.getConfigurator().apply(elevatorConfig);
     elevatorMotor2.setControl(elevatorController);
 
-    motorPosition = elevatorMotor1.getPosition();
-    motorVelocity = elevatorMotor1.getVelocity();
-    motorAppliedVolts = elevatorMotor1.getMotorVoltage();
+    elevatorPosition = elevatorMotor1.getPosition();
+    elevatorVelocity = elevatorMotor1.getVelocity();
+    motorAppliedVoltage = elevatorMotor1.getMotorVoltage();
     motorCurrent = elevatorMotor1.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
+    StatusSignal.refreshAll(elevatorPosition, elevatorVelocity, motorAppliedVoltage, motorCurrent);
 
     inputs.elevatorConnected = motorConnectedDebouncer.calculate(elevatorMotor1.isConnected());
-    inputs.elevatorPositionMeters = motorPosition.getValueAsDouble();
-    inputs.elevatorVelocityMPS = motorVelocity.getValueAsDouble();
-    inputs.elevatorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.elevatorCurrentAmps = motorCurrent.getValueAsDouble();
+    // Phoenix6 requires motor posiitons to be in angle units, so must be interpreted as meters here
+    inputs.elevatorHeight = Meters.of(elevatorPosition.getValue().in(Rotations));
+    inputs.elevatorVelocity = MetersPerSecond.of(elevatorVelocity.getValue().in(RotationsPerSecond));
+    inputs.elevatorAppliedVoltage = motorAppliedVoltage.getValue();
+    inputs.elevatorCurrent = motorCurrent.getValue();
   }
 
   @Override
-  public void runVoltage(double voltage) {
+  public void runVoltage(Voltage voltage) {
     elevatorMotor1.setControl(new VoltageOut(voltage));
     elevatorMotor2.setControl(new VoltageOut(voltage));
   }
 
   @Override
-  public void goToHeightClosedLoop(double height) {
+  public void goToHeightClosedLoop(Distance height) {
     elevatorMotor1.setControl(
         elevatorController
-            .withPosition(height)
+            .withPosition(height.in(Meters))
             .withFeedForward(
                 Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
     elevatorMotor2.setControl(
         elevatorController
-            .withPosition(height)
+            .withPosition(height.in(Meters))
             .withFeedForward(
                 Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
   }
 
   @Override
-  public void tareHeight(double height) {
-    elevatorMotor1.setPosition(height);
-    elevatorMotor2.setPosition(height);
+  public void tareHeight(Distance height) {
+    elevatorMotor1.setPosition(height.in(Meters));
+    elevatorMotor2.setPosition(height.in(Meters));
   }
 
   @Override
-  public double getTarget() {
-    return elevatorController.Position;
+  public Distance getTarget() {
+    return Meters.of(elevatorController.Position);
   }
 }
