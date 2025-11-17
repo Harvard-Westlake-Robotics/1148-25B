@@ -4,6 +4,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,9 +19,9 @@ import frc.robot.constants.PivotConstants;
 
 public class PivotIOTalonFX implements PivotIO {
   // Motors and pivot controllers
-  private TalonFX pivotMotor1;
-  private TalonFX pivotMotor2;
-  private TalonFX pivotMotor3;
+  private TalonFX masterMotor;
+  private TalonFX followerMotor1;
+  private TalonFX followerMotor2;
   private MotionMagicVoltage pivotController;
 
   private TalonFXConfiguration pivotConfig;
@@ -34,13 +35,13 @@ public class PivotIOTalonFX implements PivotIO {
   private final Debouncer motorsConnectedDebouncer = new Debouncer(0.5);
 
   public PivotIOTalonFX() {
-    pivotMotor1 = new TalonFX(PivotConstants.motor1Id, "drive");
-    pivotMotor2 = new TalonFX(PivotConstants.motor2Id, "drive");
-    pivotMotor3 = new TalonFX(PivotConstants.motor3Id, "drive");
+    masterMotor = new TalonFX(PivotConstants.motor1Id, "drive");
+    followerMotor1 = new TalonFX(PivotConstants.motor2Id, "drive");
+    followerMotor2 = new TalonFX(PivotConstants.motor3Id, "drive");
 
-    pivotMotor1.setPosition(PivotConstants.angleOffset);
-    pivotMotor2.setPosition(PivotConstants.angleOffset);
-    pivotMotor3.setPosition(PivotConstants.angleOffset);
+    masterMotor.setPosition(PivotConstants.angleOffset);
+    followerMotor1.setPosition(PivotConstants.angleOffset);
+    followerMotor2.setPosition(PivotConstants.angleOffset);
 
     this.pivotController =
         new MotionMagicVoltage(0).withEnableFOC(true).withPosition(PivotConstants.angleOffset);
@@ -67,28 +68,28 @@ public class PivotIOTalonFX implements PivotIO {
     this.pivotConfig.MotionMagic.MotionMagicCruiseVelocity =
         PivotConstants.motionMagicCruiseVelocity;
     this.pivotConfig.MotionMagic.MotionMagicJerk = PivotConstants.motionMagicJerk;
-    this.pivotMotor1.getConfigurator().apply(this.pivotConfig);
-    pivotMotor1.setControl(pivotController);
+    this.masterMotor.getConfigurator().apply(this.pivotConfig);
+    masterMotor.setControl(pivotController);
 
-    this.pivotMotor2.getConfigurator().apply(this.pivotConfig);
-    pivotMotor2.setControl(pivotController);
+    this.followerMotor1.getConfigurator().apply(this.pivotConfig);
+    followerMotor1.setControl(new Follower(PivotConstants.motor1Id, false));
 
-    this.pivotMotor3.getConfigurator().apply(this.pivotConfig);
-    pivotMotor3.setControl(pivotController);
+    this.followerMotor2.getConfigurator().apply(this.pivotConfig);
+    followerMotor2.setControl( new Follower(PivotConstants.motor1Id, false));
 
-    pivotPosition = pivotMotor1.getPosition();
-    motorVelocity = pivotMotor1.getVelocity();
-    pivotAppliedVolts = pivotMotor1.getMotorVoltage();
-    motorCurrent = pivotMotor1.getStatorCurrent();
+    pivotPosition = masterMotor.getPosition();
+    motorVelocity = masterMotor.getVelocity();
+    pivotAppliedVolts = masterMotor.getMotorVoltage();
+    motorCurrent = masterMotor.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(PivotIOInputs inputs) {
     StatusSignal.refreshAll(pivotPosition, motorVelocity, pivotAppliedVolts, motorCurrent);
 
-    inputs.pivotMotor1Connected = motorsConnectedDebouncer.calculate(pivotMotor1.isConnected());
-    inputs.pivotMotor2Connected = motorsConnectedDebouncer.calculate(pivotMotor2.isConnected());
-    inputs.pivotMotor3Connected = motorsConnectedDebouncer.calculate(pivotMotor3.isConnected());
+    inputs.pivotMotor1Connected = motorsConnectedDebouncer.calculate(masterMotor.isConnected());
+    inputs.pivotMotor2Connected = motorsConnectedDebouncer.calculate(followerMotor1.isConnected());
+    inputs.pivotMotor3Connected = motorsConnectedDebouncer.calculate(followerMotor2.isConnected());
     inputs.pivotPositionDeg = Units.rotationsToDegrees(pivotPosition.getValueAsDouble());
     inputs.pivotVelocityDPS = Units.rotationsToDegrees(motorVelocity.getValueAsDouble());
     inputs.pivotAppliedVolts = pivotAppliedVolts.getValueAsDouble();
@@ -97,23 +98,19 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void runVoltage(double voltage) {
-    pivotMotor1.setControl(new VoltageOut(voltage));
-    pivotMotor2.setControl(new VoltageOut(voltage));
-    pivotMotor3.setControl(new VoltageOut(voltage));
+    masterMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
   public void goToAngleClosedLoop(double angle) {
-    pivotMotor1.setControl(pivotController.withPosition(angle));
-    pivotMotor2.setControl(pivotController.withPosition(angle));
-    pivotMotor3.setControl(pivotController.withPosition(angle));
+    masterMotor.setControl(pivotController.withPosition(angle));
   }
 
   @Override
   public void tareAngle(double angle) {
-    pivotMotor1.setPosition(angle);
-    pivotMotor2.setPosition(angle);
-    pivotMotor3.setPosition(angle);
+    masterMotor.setPosition(angle);
+    followerMotor1.setPosition(angle);
+    followerMotor2.setPosition(angle);
   }
 
   @Override
@@ -139,12 +136,10 @@ public class PivotIOTalonFX implements PivotIO {
     pivotConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration;
     pivotConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity;
     pivotConfig.MotionMagic.MotionMagicJerk = motionMagicJerk;
-    tryUntilOk(5, () -> pivotMotor1.getConfigurator().apply(pivotConfig, 0.25));
-    tryUntilOk(5, () -> pivotMotor2.getConfigurator().apply(pivotConfig, 0.25));
-    tryUntilOk(5, () -> pivotMotor3.getConfigurator().apply(pivotConfig, 0.25));
-    pivotMotor1.setControl(pivotController.withPosition(pivotAngle));
-    pivotMotor2.setControl(pivotController.withPosition(pivotAngle));
-    pivotMotor3.setControl(pivotController.withPosition(pivotAngle));
+    tryUntilOk(5, () -> masterMotor.getConfigurator().apply(pivotConfig, 0.25));
+    tryUntilOk(5, () -> followerMotor1.getConfigurator().apply(pivotConfig, 0.25));
+    tryUntilOk(5, () -> followerMotor2.getConfigurator().apply(pivotConfig, 0.25));
+    masterMotor.setControl(pivotController.withPosition(pivotAngle));
   }
 
   @Override

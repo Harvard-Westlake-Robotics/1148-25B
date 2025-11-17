@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -17,8 +18,8 @@ import frc.robot.subsystems.pivot.Pivot;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   // Motors and elevator controllers
-  private final TalonFX elevatorMotor1;
-  private final TalonFX elevatorMotor2;
+  private final TalonFX masterMotor;
+  private final TalonFX followerMotor;
   private final MotionMagicVoltage elevatorController;
 
   private final StatusSignal<Angle> motorPosition;
@@ -30,10 +31,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
   public ElevatorIOTalonFX() {
-    elevatorMotor1 = new TalonFX(ElevatorConstants.elevator1ID);
-    elevatorMotor2 = new TalonFX(ElevatorConstants.elevator2ID);
-    elevatorMotor1.setPosition(0);
-    elevatorMotor2.setPosition(0);
+    masterMotor = new TalonFX(ElevatorConstants.elevator1ID);
+    followerMotor = new TalonFX(ElevatorConstants.elevator2ID);
+    masterMotor.setPosition(0);
+    followerMotor.setPosition(0);
     elevatorController = new MotionMagicVoltage(0).withEnableFOC(true).withSlot(0);
     TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
     elevatorConfig.MotorOutput.Inverted = ElevatorConstants.elevatorInverted;
@@ -66,23 +67,23 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         ElevatorConstants.elevatorReverseSoftLimitRotations;
 
-    elevatorMotor1.getConfigurator().apply(elevatorConfig);
-    elevatorMotor1.setControl(elevatorController);
+    masterMotor.getConfigurator().apply(elevatorConfig);
+    masterMotor.setControl(elevatorController);
 
-    elevatorMotor2.getConfigurator().apply(elevatorConfig);
-    elevatorMotor2.setControl(elevatorController);
+    followerMotor.getConfigurator().apply(elevatorConfig);
+    followerMotor.setControl(new Follower(ElevatorConstants.elevator1ID, false));
 
-    motorPosition = elevatorMotor1.getPosition();
-    motorVelocity = elevatorMotor1.getVelocity();
-    motorAppliedVolts = elevatorMotor1.getMotorVoltage();
-    motorCurrent = elevatorMotor1.getStatorCurrent();
+    motorPosition = masterMotor.getPosition();
+    motorVelocity = masterMotor.getVelocity();
+    motorAppliedVolts = masterMotor.getMotorVoltage();
+    motorCurrent = masterMotor.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
-    inputs.elevatorConnected = motorConnectedDebouncer.calculate(elevatorMotor1.isConnected());
+    inputs.elevatorConnected = motorConnectedDebouncer.calculate(masterMotor.isConnected());
     inputs.elevatorPositionMeters = motorPosition.getValueAsDouble();
     inputs.elevatorVelocityMPS = motorVelocity.getValueAsDouble();
     inputs.elevatorAppliedVolts = motorAppliedVolts.getValueAsDouble();
@@ -91,18 +92,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void runVoltage(double voltage) {
-    elevatorMotor1.setControl(new VoltageOut(voltage));
-    elevatorMotor2.setControl(new VoltageOut(voltage));
+    masterMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
   public void goToHeightClosedLoop(double height) {
-    elevatorMotor1.setControl(
-        elevatorController
-            .withPosition(height)
-            .withFeedForward(
-                Math.cos(Units.rotationsToRadians(Pivot.getInstance().getAngleRots()))));
-    elevatorMotor2.setControl(
+    masterMotor.setControl(
         elevatorController
             .withPosition(height)
             .withFeedForward(
@@ -111,8 +106,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void tareHeight(double height) {
-    elevatorMotor1.setPosition(height);
-    elevatorMotor2.setPosition(height);
+    masterMotor.setPosition(height);
+    followerMotor.setPosition(height);
   }
 
   @Override
@@ -120,3 +115,4 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     return elevatorController.Position;
   }
 }
+
