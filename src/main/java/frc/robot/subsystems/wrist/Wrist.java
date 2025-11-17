@@ -15,7 +15,7 @@ public class Wrist extends SubsystemBase {
   private final WristIOTalonFX io;
   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
-  private final String key = "Wrist";
+  private final String key = "Subsystems/Wrist";
   private static Wrist instance;
 
   SysIdRoutine sysId;

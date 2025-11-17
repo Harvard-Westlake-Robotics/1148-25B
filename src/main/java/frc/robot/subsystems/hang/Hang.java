@@ -15,7 +15,7 @@ public class Hang extends SubsystemBase {
   private final HangIO io;
   private final HangIOInputsAutoLogged inputs = new HangIOInputsAutoLogged();
 
-  private final String key = "Hang";
+  private final String key = "Subsystems/Hang";
   private static Hang instance = null;
   SysIdRoutine sysId;
 

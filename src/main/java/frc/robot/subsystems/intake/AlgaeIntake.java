@@ -16,7 +16,7 @@ public class AlgaeIntake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
   private IntakeConstants constants;
-  private final String key = "AlgaeIntake";
+  private final String key = "Subsystems/AlgaeIntake";
   private static AlgaeIntake instance;
 
   SysIdRoutine sysId;

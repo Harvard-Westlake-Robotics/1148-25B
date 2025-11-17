@@ -18,7 +18,7 @@ public class CoralIntake extends SubsystemBase {
   private final IntakeIOInputsAutoLogged inputs2 = new IntakeIOInputsAutoLogged();
 
   private final IntakeConstants constants;
-  private final String key = "CoralIntake";
+  private final String key = "Subsystems/CoralIntake";
   private static CoralIntake instance;
 
   SysIdRoutine sysId;

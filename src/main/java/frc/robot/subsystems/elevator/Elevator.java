@@ -16,7 +16,7 @@ public class Elevator extends SubsystemBase {
 
   private DigitalInput dio = new DigitalInput(9);
 
-  private final String key = "Elevator";
+  private final String key = "Subsystems/Elevator";
   private static Elevator instance = null;
   SysIdRoutine sysId;
 

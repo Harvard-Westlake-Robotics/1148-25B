@@ -7,6 +7,7 @@ import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.wrist.Wrist;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmCommand extends Command {
@@ -71,7 +72,6 @@ public class ArmCommand extends Command {
 
   // Logs the current state of the arm command in both degrees and rotations
   public void logState() {
-    Logger.recordOutput("Arm Command State/In Target Range", withinTargetRange());
     Logger.recordOutput(
         "Arm Command State/Degrees/Target Pivot Angle (degrees)", getStateDegrees()[0]);
     Logger.recordOutput(
@@ -216,6 +216,7 @@ public class ArmCommand extends Command {
   }
 
   // Returns the state of the arm command in degrees
+  @AutoLogOutput(key = "Arm Command State/Degrees/Target State")
   public static double[] getStateDegrees() {
     return new double[] {
       Units.rotationsToDegrees(pivotAngle), elevatorLength, Units.rotationsToDegrees(wristAngle)
@@ -223,10 +224,12 @@ public class ArmCommand extends Command {
   }
 
   // Returns the state of the arm command in rotations
+  @AutoLogOutput(key = "Arm Command State/Rotations/Target State")
   public static double[] getStateRotations() {
     return new double[] {pivotAngle, elevatorLength, wristAngle};
   }
 
+  @AutoLogOutput(key = "Arm Command State/Within Target Range")
   public boolean withinTargetRange() {
     return Math.abs(Pivot.getInstance().getAngleDeg() - pivotAngle) <= PIVOT_TOLERANCE
         && Math.abs(Elevator.getInstance().getCurrentHeight() - elevatorLength)

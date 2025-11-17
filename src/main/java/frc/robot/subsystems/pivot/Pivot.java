@@ -17,7 +17,7 @@ public class Pivot extends SubsystemBase {
   private final PivotIOTalonFX io;
   private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
 
-  private final String key = "Pivot";
+  private final String key = "Subsystems/Pivot";
   private static Pivot instance;
 
   SysIdRoutine sysId;
@@ -40,7 +40,7 @@ public class Pivot extends SubsystemBase {
       new LoggedTunableNumber(key + "/motionMagicJerk", PivotConstants.motionMagicJerk);
 
   private final LoggedTunableNumber pivotAngleDeg =
-      new LoggedTunableNumber("Pivot/pivotAngleDeg", 70);
+      new LoggedTunableNumber(key + "/pivotAngleDeg", 70);
 
   public static Pivot getInstance() {
     if (instance == null) {

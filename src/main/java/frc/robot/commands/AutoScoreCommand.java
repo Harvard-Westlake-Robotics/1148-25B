@@ -111,7 +111,7 @@ public class AutoScoreCommand extends Command {
                   ? path.getGoalEndState().rotation()
                   : path.flipPath().getGoalEndState().rotation());
 
-      Logger.recordOutput("RealOutputs/PIDEndPose", endPose);
+      Logger.recordOutput("PIDEndPose", endPose);
     } else {
       this.endPose = null;
     }
@@ -162,9 +162,9 @@ public class AutoScoreCommand extends Command {
 
     if (distanceToTarget > POSITION_TOLERANCE
         || rotationError > Math.toRadians(ROTATION_TOLERANCE)) {
-      Logger.recordOutput("RealOutputs/x_error", xController.getPositionError());
-      Logger.recordOutput("RealOutputs/y_error", yController.getPositionError());
-      Logger.recordOutput("RealOutputs/theta_error", thetaController.getPositionError());
+      Logger.recordOutput("x_error", xController.getPositionError());
+      Logger.recordOutput("y_error", yController.getPositionError());
+      Logger.recordOutput("theta_error", thetaController.getPositionError());
       // Move to target position
       ChassisSpeeds speeds =
           new ChassisSpeeds(
