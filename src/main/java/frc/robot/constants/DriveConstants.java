@@ -37,7 +37,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Camera.BaseCam.AprilTagResult;
 import frc.robot.subsystems.drive.Drive;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -81,11 +80,6 @@ public class DriveConstants {
   public static double PP_TRANSLATION_P = 4.45;
   public static double PP_TRANSLATION_I = 0.00;
   public static double PP_TRANSLATION_D = 0.0;
-
-  // Limelight Standard Deviation Coefficients
-
-  public static double xyStdDevCoeff = 6.85;
-  public static double rStdDevCoeff = 6.85;
 
   // ================================= Hardware Tuning =================================
 
@@ -184,18 +178,6 @@ public class DriveConstants {
           Math.max(
               Math.hypot(kBackLeftXPos.baseUnitMagnitude(), kBackLeftYPos.baseUnitMagnitude()),
               Math.hypot(kBackRightXPos.baseUnitMagnitude(), kBackRightYPos.baseUnitMagnitude())));
-
-  // ================================= Limelight Standard Dev =================================
-
-  private static double sdMultiplier = 1;
-
-  public static double getSdMultiplier() {
-    return sdMultiplier;
-  }
-
-  public static void setSdMultiplier(double multiplier) {
-    sdMultiplier = multiplier;
-  }
 
   // ================================= END OF TUNER CONSTANTS =================================
 
@@ -402,20 +384,4 @@ public class DriveConstants {
           MetersPerSecondPerSecond.of(5.5),
           DegreesPerSecond.of(1020),
           DegreesPerSecondPerSecond.of(2400));
-
-  public static double xyStdDev(AprilTagResult result) {
-    return xyStdDevCoeff
-        * Math.max(Math.pow(result.distToTag, 2.0), 0.5)
-        / result.tagCount
-        * Math.sqrt(result.ambiguity)
-        * sdMultiplier;
-  }
-
-  public static double rStdDev(AprilTagResult result) {
-    return rStdDevCoeff
-        * Math.max(Math.pow(result.distToTag, 2.0), 0.5)
-        / result.tagCount
-        * Math.sqrt(result.ambiguity)
-        * sdMultiplier;
-  }
 }
