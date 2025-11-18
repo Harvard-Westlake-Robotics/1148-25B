@@ -19,7 +19,7 @@ public class PivotConstants {
   public static final int supplyLimit = 80;
 
   // PID constants
-  public static double kP = 12;
+  public static double kP = 100; //old: 12
   public static double kI = 0.0;
   public static double kD = 0.0;
   public static double kS = 0.0;
@@ -27,13 +27,13 @@ public class PivotConstants {
   public static double kA = 0.0;
   // Determine kG by gradually increasing phoenix tuner voltage until the Pivot can hold itself up
   // (velocity is 0), then divide the voltage by the cosine of the absolute angle to get kG
-  public static double kG = 1.5;
+  public static double kG = 0;
   public static GravityTypeValue gravityType = GravityTypeValue.Arm_Cosine;
 
   // Motion magic constants
-  public static final double motionMagicAcceleration = 60; // 0.25 rot/s^2
-  public static final double motionMagicCruiseVelocity = 100; // 0.3 rot/s
-  public static final double motionMagicJerk = 1 * 112.5; // 1 rot/s^3
+  public static final double motionMagicAcceleration = 0.3; // 0.25 rot/s^2
+  public static final double motionMagicCruiseVelocity = 0.5; // 0.3 rot/s
+  public static final double motionMagicJerk = 1; // 1 rot/s^3
 
   // Physical constants
   public static final double motorRotationsPerPivotRotationRatio = 112.5;
@@ -43,7 +43,7 @@ public class PivotConstants {
 
   // Pivot encoder constants
   public static final int pivotEncoderId = 30;
-  public static final String pivotEncoderCANBusName = "rio";
+  public static final String pivotEncoderCANBusName = "drive";
   public static final double pivotEncoderRotationsPerPivotRotationRatio = 1.0;
   public static final double pivotEncoderOffset = 0.403;
   public static final SensorDirectionValue pivotEncoderSensorDirection =

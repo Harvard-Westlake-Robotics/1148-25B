@@ -31,10 +31,10 @@ public class PivotIOTalonFX implements PivotIO {
   private MotionMagicVoltage pivotController;
   private TalonFXConfiguration pivotConfig;
 
-  private final CANcoder cancoder;
+  private CANcoder cancoder;
   private CANcoderConfiguration encoderConfig;
 
-  private final StatusSignal<Angle> pivotPosition; 
+  private final StatusSignal<Angle> pivotPosition;
   private final StatusSignal<AngularVelocity> pivotVelocity;
   private final StatusSignal<Voltage> pivotAppliedVolts;
   private final StatusSignal<Current> motorCurrent;
@@ -50,15 +50,15 @@ public class PivotIOTalonFX implements PivotIO {
 
     cancoder = new CANcoder(PivotConstants.pivotEncoderId, PivotConstants.pivotEncoderCANBusName);
 
-    pivotMotor1.setPosition(PivotConstants.angleOffset);
-    pivotMotor2.setPosition(PivotConstants.angleOffset);
-    pivotMotor3.setPosition(PivotConstants.angleOffset);
-
-    this.pivotController =
-        new MotionMagicVoltage(0).withEnableFOC(true).withPosition(PivotConstants.angleOffset);
+    this.pivotController = new MotionMagicVoltage(0).withEnableFOC(true);
     pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.Inverted = PivotConstants.motorsInverted;
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.SensorDirection = PivotConstants.pivotEncoderSensorDirection;
+    encoderConfig.MagnetSensor.MagnetOffset = PivotConstants.pivotEncoderOffset;
+    tryUntilOk(5, () -> cancoder.getConfigurator().apply(encoderConfig, 0.25));
 
     pivotConfig.Slot0.kP = PivotConstants.kP;
     pivotConfig.Slot0.kI = PivotConstants.kI;
@@ -92,11 +92,6 @@ public class PivotIOTalonFX implements PivotIO {
 
     this.pivotMotor3.getConfigurator().apply(this.pivotConfig);
     pivotMotor3.setControl(pivotController);
-
-    encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.SensorDirection = PivotConstants.pivotEncoderSensorDirection;
-    encoderConfig.MagnetSensor.MagnetOffset = PivotConstants.pivotEncoderOffset;
-    tryUntilOk(5, () -> cancoder.getConfigurator().apply(encoderConfig, 0.25));
 
     pivotPosition = pivotMotor1.getPosition();
     pivotVelocity = pivotMotor1.getVelocity();

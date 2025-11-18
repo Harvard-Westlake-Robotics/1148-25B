@@ -58,7 +58,8 @@ public class Module {
             AlertType.kError);
   }
 
-  // Note: This does not override WPILib's periodic method, meaning it does not call by itself. It is called by Drive.java's periodic.
+  // Note: This does not override WPILib's periodic method, meaning it does not call by itself. It
+  // is called by Drive.java's periodic.
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);

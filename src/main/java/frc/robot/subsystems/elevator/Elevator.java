@@ -57,7 +57,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void goToHeightClosedLoop(double height) {
-    io.goToHeightClosedLoop(height);
+    // io.goToHeightClosedLoop(height);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

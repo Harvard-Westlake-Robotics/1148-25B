@@ -227,7 +227,8 @@ public class Drive extends SubsystemBase {
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("RealOutputs/Drive/Gyro", gyroInputs);
     for (var module : modules) {
-      module.periodic();  // Calls the periodic method of each module - the modules' periodic methods are not truly periodic otherwise
+      module.periodic(); // Calls the periodic method of each module - the modules' periodic methods
+      // are not truly periodic otherwise
     }
     odometryLock.unlock();
     for (LimeLightCam limelight : limelights) {
@@ -297,8 +298,7 @@ public class Drive extends SubsystemBase {
         Logger.recordOutput("RealOutputs/Drive/apriltagResultD", result_d.pose);
       }
 
-      AprilTagResult[] results =
-          new AprilTagResult[] {result_a, result_b, result_c, result_d};
+      AprilTagResult[] results = new AprilTagResult[] {result_a, result_b, result_c, result_d};
 
       for (AprilTagResult result : results) {
         if (result != null && shouldAcceptPose(result) && limeLightsActive) {
