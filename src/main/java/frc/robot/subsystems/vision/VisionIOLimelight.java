@@ -1,5 +1,3 @@
 package frc.robot.subsystems.vision;
 
-public class VisionIOLimelight implements VisionIO {
-    
-}
+public class VisionIOLimelight implements VisionIO {}

@@ -128,9 +128,12 @@
 //   }
 
 //   /**
-//    * Takes the latest estimate from the limelight and returns it as an AprilTagResult. If the robot
-//    * is disabled, it uses MegaTag1 for more accurate stationary readings. If the robot is enabled,
-//    * it uses MegaTag2 for auto-filtered readings while moving. Variance is also logged for potential
+//    * Takes the latest estimate from the limelight and returns it as an AprilTagResult. If the
+// robot
+//    * is disabled, it uses MegaTag1 for more accurate stationary readings. If the robot is
+// enabled,
+//    * it uses MegaTag2 for auto-filtered readings while moving. Variance is also logged for
+// potential
 //    * tuning of LimeLight constants
 //    */
 //   public Optional<AprilTagResult> getEstimate() {
@@ -216,11 +219,13 @@
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT1/XVarience", X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN);
 //     Logger.recordOutput(
-//         "RealOutputs/" + name + "/MT1/XStdDev", Math.sqrt(X_MT1_VARIENCE_MAX - X_MT1_VARIENCE_MIN));
+//         "RealOutputs/" + name + "/MT1/XStdDev", Math.sqrt(X_MT1_VARIENCE_MAX -
+// X_MT1_VARIENCE_MIN));
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT1/YVarience", Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN);
 //     Logger.recordOutput(
-//         "RealOutputs/" + name + "/MT1/YStdDev", Math.sqrt(Y_MT1_VARIENCE_MAX - Y_MT1_VARIENCE_MIN));
+//         "RealOutputs/" + name + "/MT1/YStdDev", Math.sqrt(Y_MT1_VARIENCE_MAX -
+// Y_MT1_VARIENCE_MIN));
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT1/AngleVarience", T_MT1_VARIENCE_MAX - T_MT1_VARIENCE_MIN);
 //     Logger.recordOutput(
@@ -259,11 +264,13 @@
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT2/XVarience", X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN);
 //     Logger.recordOutput(
-//         "RealOutputs/" + name + "/MT2/XStdDev", Math.sqrt(X_MT2_VARIENCE_MAX - X_MT2_VARIENCE_MIN));
+//         "RealOutputs/" + name + "/MT2/XStdDev", Math.sqrt(X_MT2_VARIENCE_MAX -
+// X_MT2_VARIENCE_MIN));
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT2/YVarience", Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN);
 //     Logger.recordOutput(
-//         "RealOutputs/" + name + "/MT2/YStdDev", Math.sqrt(Y_MT2_VARIENCE_MAX - Y_MT2_VARIENCE_MIN));
+//         "RealOutputs/" + name + "/MT2/YStdDev", Math.sqrt(Y_MT2_VARIENCE_MAX -
+// Y_MT2_VARIENCE_MIN));
 //     Logger.recordOutput(
 //         "RealOutputs/" + name + "/MT2/AngleVarience", T_MT2_VARIENCE_MAX - T_MT2_VARIENCE_MIN);
 //     Logger.recordOutput(

@@ -46,6 +46,7 @@ import frc.robot.subsystems.hang.Hang;
 import frc.robot.subsystems.intake.AlgaeIntake;
 import frc.robot.subsystems.intake.CoralIntake;
 import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.wrist.Wrist;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -90,6 +91,7 @@ public class RobotContainer {
   private final CoralIntake coralIntake;
   private final AlgaeIntake algaeIntake;
   private final Hang hang;
+  private final Vision vision;
 
   // Commands
   public static ArmCommand armCommand;
@@ -157,6 +159,8 @@ public class RobotContainer {
     this.coralIntake = CoralIntake.getInstance();
     this.algaeIntake = AlgaeIntake.getInstance();
     this.hang = Hang.getInstance();
+    // FIXME: this probably won't work with simulation, since limelights use networktables, but idk how to simulate limelights
+    this.vision = Vision.getInstance();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
