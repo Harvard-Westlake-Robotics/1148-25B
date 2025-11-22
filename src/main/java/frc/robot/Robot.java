@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.drive.NetworkCommunicator;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
@@ -129,18 +128,14 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {
-    robotContainer.vi.setSdMultiplier(1);
-  }
+  public void disabledInit() {}
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {
-    VisionsetSdMultiplier(1);
-  }
+  public void disabledExit() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

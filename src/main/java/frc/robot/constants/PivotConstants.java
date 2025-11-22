@@ -36,7 +36,7 @@ public class PivotConstants {
   public static final double motionMagicJerk = 1 * 112.5; // 1 rot/s^3
 
   // Physical constants
-  public static final double motorRotationsPerPivotRotationRatio = 112.5;
+  public static final double motorRotationsPerPivotRotationRatio = 112.5; // boyans amc 10a score
   public static final Angle angleOffset = Rotations.of(20.43); // AngleOffset
   public static final Angle pivotMinAngle = Rotations.of(0); // Resting on base
   public static final Angle pivotMaxAngle = Rotations.of(0.29);

@@ -44,11 +44,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Camera.BaseCam.AprilTagResult;
-import frc.robot.Camera.LimeLightCam;
 import frc.robot.RobotContainer;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.vision.CameraIO.TimestampedPose;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -110,22 +111,14 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private final LimeLightCam limelight_a = new LimeLightCam("limelight-a", false);
-  private final LimeLightCam limelight_b = new LimeLightCam("limelight-b", false);
-  private final LimeLightCam limelight_c = new LimeLightCam("limelight-c", false);
-  private final LimeLightCam limelight_d = new LimeLightCam("limelight-d", false);
+  @AutoLogOutput private boolean visionActive = true;
 
-  private final LimeLightCam[] limelights =
-      new LimeLightCam[] {limelight_a, limelight_b, limelight_c, limelight_d};
-
-  private boolean limeLightsActive = true;
-
-  public boolean isLimeLightsActive() {
-    return limeLightsActive;
+  public boolean isVisionActive() {
+    return visionActive;
   }
 
-  public void setLimeLightsActive(boolean limeLightsActive) {
-    this.limeLightsActive = limeLightsActive;
+  public void setVisionActive(boolean visionActive) {
+    this.visionActive = visionActive;
   }
 
   static final Lock odometryLock = new ReentrantLock();
@@ -148,6 +141,12 @@ public class Drive extends SubsystemBase {
 
   // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
+
+  private double sdMultiplier = 1.0;
+
+  public void setSdMultiplier(double sdMultiplier) {
+    this.sdMultiplier = sdMultiplier;
+  }
 
   private final Consumer<Pose2d> resetSimulationPoseCallback;
 
@@ -230,14 +229,15 @@ public class Drive extends SubsystemBase {
       module.periodic();
     }
     odometryLock.unlock();
-    for (LimeLightCam limelight : limelights) {
-      limelight.SetRobotOrientation(getPose().getRotation());
-    }
+    Vision.getInstance().setRobotOrientation(getPose().getRotation());
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
       for (var module : modules) {
         module.stop();
       }
+      Vision.getInstance().setUseMegaTag2(false);
+    } else {
+      Vision.getInstance().setUseMegaTag2(true);
     }
 
     // Log empty setpoint states when disabled
@@ -280,61 +280,18 @@ public class Drive extends SubsystemBase {
       Logger.recordOutput("Odometry/Velocity/LinearVelocity", getLinearVelocity());
       Logger.recordOutput("Odometry/Velocity/AngularVelocity", getAngularVelocity());
 
-      AprilTagResult result_a = limelight_a.getEstimate().orElse(null);
-      if (result_a != null) {
-        Logger.recordOutput("RealOutputs/Drive/apriltagResultA", result_a.pose);
-      }
-      AprilTagResult result_b = limelight_b.getEstimate().orElse(null);
-      if (result_b != null) {
-        Logger.recordOutput("RealOutputs/Drive/apriltagResultB", result_b.pose);
-      }
-      AprilTagResult result_c = limelight_c.getEstimate().orElse(null);
-      if (result_c != null) {
-        Logger.recordOutput("RealOutputs/Drive/apriltagResultC", result_c.pose);
-      }
-      AprilTagResult result_d = limelight_d.getEstimate().orElse(null);
-      if (result_d != null) {
-        Logger.recordOutput("RealOutputs/Drive/apriltagResultD", result_d.pose);
-      }
+      TimestampedPose[] timestampedPoses = Vision.getInstance().getTimestampedPoses();
 
-      if (result_a != null && shouldAcceptPose(result_a) && limeLightsActive) {
-        addVisionMeasurement(
-            result_a.pose,
-            result_a.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_a),
-                DriveConstants.xyStdDev(result_a),
-                DriveConstants.rStdDev(result_a)));
-      }
-
-      if (result_b != null && shouldAcceptPose(result_b) && limeLightsActive) {
-        addVisionMeasurement(
-            result_b.pose,
-            result_b.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_b),
-                DriveConstants.xyStdDev(result_b),
-                DriveConstants.rStdDev(result_b)));
-      }
-
-      if (result_c != null && shouldAcceptPose(result_c) && limeLightsActive) {
-        addVisionMeasurement(
-            result_c.pose,
-            result_c.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_c),
-                DriveConstants.xyStdDev(result_c),
-                DriveConstants.rStdDev(result_c)));
-      }
-
-      if (result_d != null && shouldAcceptPose(result_d) && limeLightsActive) {
-        addVisionMeasurement(
-            result_d.pose,
-            result_d.time,
-            VecBuilder.fill(
-                DriveConstants.xyStdDev(result_d),
-                DriveConstants.xyStdDev(result_d),
-                DriveConstants.rStdDev(result_d)));
+      for (TimestampedPose pose : timestampedPoses) {
+        if (pose != null && shouldAcceptPose(pose.pose) && visionActive) {
+          addVisionMeasurement(
+              pose.pose,
+              pose.timestamp,
+              VecBuilder.fill(
+                  sdMultiplier * VisionConstants.xyStdDev,
+                  sdMultiplier * VisionConstants.xyStdDev,
+                  sdMultiplier * VisionConstants.rStdDev));
+        }
       }
 
       // Update gyro alert
@@ -521,10 +478,10 @@ public class Drive extends SubsystemBase {
   /**
    * Determines if a vision pose should be accepted based on various criteria.
    *
-   * @param latestResult The AprilTag detection result
+   * @param pose The vision pose
    * @return True if the pose should be accepted, false otherwise
    */
-  public boolean shouldAcceptPose(AprilTagResult latestResult) {
+  public boolean shouldAcceptPose(Pose2d pose) {
     // Always accept poses when disabled
     if (DriverStation.isDisabled()) {
       return true;
@@ -536,7 +493,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Reject if outside field bounds
-    if (isOutsideFieldBounds(latestResult.pose)) {
+    if (isOutsideFieldBounds(pose)) {
       return false;
     }
 

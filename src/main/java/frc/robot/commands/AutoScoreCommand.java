@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmCommand.ScoringLevel;
-import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.CoralIntake;
@@ -123,7 +122,7 @@ public class AutoScoreCommand extends Command {
     xController.reset(Drive.getInstance().getPose().getX());
     yController.reset(Drive.getInstance().getPose().getY());
     thetaController.reset(Drive.getInstance().getPose().getRotation().getRadians());
-    VisionConstants.setSdMultiplier(5.0);
+    Drive.getInstance().setSdMultiplier(5.0);
     // Reset command state
     tickCounter = 0;
     timeoutTimer.reset();
@@ -211,7 +210,7 @@ public class AutoScoreCommand extends Command {
     }
     // RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
     Drive.getInstance().stop();
-    VisionConstants.setSdMultiplier(1);
+    Drive.getInstance().setSdMultiplier(1);
 
     if (timeoutTimer.get() > COMMAND_TIMEOUT) {
       System.err.println("AutoScoreCommand ended due to timeout");
