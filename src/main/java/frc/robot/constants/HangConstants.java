@@ -1,16 +1,19 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 public class HangConstants {
   // Motor constants
   public static final int motorId = 20;
   public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
-  public static final double kSupplyLimit = 40;
-  public static final double kStatorLimit = 60;
+  public static final Current statorLimit = Amps.of(60);
+  public static final Current supplyLimit = Amps.of(40);
 
   // PID constants
   public static final double kP = 30;

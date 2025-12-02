@@ -1,6 +1,9 @@
 package frc.robot.subsystems.hang;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -21,7 +24,9 @@ public class HangIOTalonFX implements HangIO {
   private final TalonFX hangMotor;
   private final MotionMagicVelocityVoltage hangController;
 
+  // Actually in meters
   private final StatusSignal<Angle> motorPosition;
+  // Actually in m/s
   private final StatusSignal<AngularVelocity> motorVelocity;
   private final StatusSignal<Voltage> motorAppliedVolts;
   private final StatusSignal<Current> motorCurrent;
@@ -39,8 +44,8 @@ public class HangIOTalonFX implements HangIO {
     hangConfig.MotorOutput.Inverted = HangConstants.motorInverted;
     hangConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hangConfig.CurrentLimits.StatorCurrentLimit = HangConstants.kStatorLimit;
-    hangConfig.CurrentLimits.SupplyCurrentLimit = HangConstants.kSupplyLimit;
+    hangConfig.CurrentLimits.StatorCurrentLimit = HangConstants.statorLimit.in(Amps);
+    hangConfig.CurrentLimits.SupplyCurrentLimit = HangConstants.supplyLimit.in(Amps);
 
     hangConfig.Slot0.kP = HangConstants.kP;
     hangConfig.Slot0.kI = HangConstants.kI;
@@ -65,16 +70,16 @@ public class HangIOTalonFX implements HangIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.motorConnected = motorConnectedDebouncer.calculate(hangMotor.isConnected());
-    inputs.motorPositionMeters =
-        motorPosition.getValueAsDouble() / HangConstants.rotationsPerMeterRatio;
-    inputs.motorVelocityMPS =
-        motorVelocity.getValueAsDouble() / HangConstants.rotationsPerMeterRatio;
-    inputs.motorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.motorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.motorPosition =
+        Meters.of(motorPosition.getValue().in(Rotations) / HangConstants.rotationsPerMeterRatio);
+    inputs.motorVelocity =
+        MetersPerSecond.of(motorVelocity.getValue().in(RotationsPerSecond) / HangConstants.rotationsPerMeterRatio);
+    inputs.motorAppliedVoltage = motorAppliedVolts.getValue();
+    inputs.motorCurrent = motorCurrent.getValue();
   }
 
   @Override
-  public void runVoltage(double voltage) {
+  public void runVoltage(Voltage voltage) {
     hangMotor.setControl(new VoltageOut(voltage));
   }
 

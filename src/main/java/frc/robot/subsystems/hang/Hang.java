@@ -3,6 +3,7 @@ package frc.robot.subsystems.hang;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,7 +38,7 @@ public class Hang extends SubsystemBase {
                 null,
                 null,
                 (state) -> Logger.recordOutput(key + "/SysIdState", state.toString())),
-            new Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+            new Mechanism((voltage) -> runVoltage(voltage), null, this));
   }
 
   @Override
@@ -47,7 +48,7 @@ public class Hang extends SubsystemBase {
     Logger.recordOutput(key + "/ServoAngle", servo.getAngle());
   }
 
-  public void runCharacterization(double voltage) {
+  public void runVoltage(Voltage voltage) {
     io.runVoltage(voltage);
   }
 
@@ -57,13 +58,13 @@ public class Hang extends SubsystemBase {
 
   /** Returns a command to run a quasistatic test in the specified direction. */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0))
+    return run(() -> runVoltage(Volts.of(0.0)))
         .withTimeout(1.0)
         .andThen(sysId.quasistatic(direction));
   }
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() -> runVoltage(Volts.of(0.0))).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 }

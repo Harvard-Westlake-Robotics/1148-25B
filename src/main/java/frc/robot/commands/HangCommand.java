@@ -37,6 +37,7 @@ public class HangCommand extends Command {
   }
 
   public void deploy() {
+    // Yeahs
     CoralIntake.getInstance().yeah();
     RobotContainer.armCommand.setHeight(ScoringLevel.HANG_DEPLOY);
     this.velocity = HangConstants.hangVelocity;
