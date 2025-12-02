@@ -1,16 +1,26 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+
+import edu.wpi.first.units.LinearAccelerationUnit;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeConstants {
   // Motor constants
   public final int motorId;
   public final InvertedValue motorInverted;
-  public final int statorLimit;
-  public final int supplyLimit;
+  public final Current statorLimit;
+  public final Current supplyLimit;
 
   // PID constants
   public double kP;
@@ -23,9 +33,9 @@ public class IntakeConstants {
   public double positionkD;
 
   // Motion magic constants
-  public final double motionMagicAcceleration;
-  public final double motionMagicCruiseVelocity;
-  public final double motionMagicJerk;
+  public final LinearAcceleration motionMagicAcceleration;
+  public final LinearVelocity motionMagicCruiseVelocity;
+  public final Velocity<LinearAccelerationUnit> motionMagicJerk;
 
   // Sensor constants
   public int sensor1ID;
@@ -44,13 +54,13 @@ public class IntakeConstants {
   // Physical constants
   public final double rotationsPerMeterRatio;
 
-  public final double algaeHoldVoltage;
+  public final Voltage algaeHoldVoltage;
 
   public IntakeConstants(
       int motorId,
       InvertedValue motorInverted,
-      int statorLimit,
-      int supplyLimit,
+      Current statorLimit,
+      Current supplyLimit,
       double kP,
       double kI,
       double kD,
@@ -59,9 +69,9 @@ public class IntakeConstants {
       double kA,
       double positionkP,
       double positionkD,
-      double motionMagicAcceleration,
-      double motionMagicCruiseVelocity,
-      double motionMagicJerk,
+      LinearAcceleration motionMagicAcceleration,
+      LinearVelocity motionMagicCruiseVelocity,
+      Velocity<LinearAccelerationUnit> motionMagicJerk,
       int sensor1id,
       int sensor2id,
       int sensor3id,
@@ -72,7 +82,7 @@ public class IntakeConstants {
       LinearVelocity hamburgerIntakeVelocity,
       LinearVelocity hamburgerOuttakeVelocity,
       double rotationsPerMeterRatio,
-      double algaeHoldVoltage) {
+      Voltage algaeHoldVoltage) {
     this.motorId = motorId;
     this.motorInverted = motorInverted;
     this.statorLimit = statorLimit;
@@ -101,13 +111,12 @@ public class IntakeConstants {
     this.algaeHoldVoltage = algaeHoldVoltage;
   }
 
-  // TODO: ID These
   public static final IntakeConstants CoralIntake =
       new IntakeConstants(
           9,
           InvertedValue.Clockwise_Positive,
-          80,
-          40,
+          Amps.of(80),
+          Amps.of(40),
           0,
           0.0,
           0.0,
@@ -116,9 +125,9 @@ public class IntakeConstants {
           0.0,
           0.5,
           0.0,
-          99999.0,
-          99999.0,
-          99999.0,
+          MetersPerSecondPerSecond.of(99999.0),
+          MetersPerSecond.of(99999.0),
+          MetersPerSecondPerSecond.per(Second).of(99999.0),
           23,
           24,
           22,
@@ -129,14 +138,14 @@ public class IntakeConstants {
           MetersPerSecond.of(0),
           MetersPerSecond.of(0),
           9.52 / (4 * Math.PI),
-          2);
+          Volts.of(2));
 
   public static final IntakeConstants AlgaeIntake =
       new IntakeConstants(
           31,
           InvertedValue.CounterClockwise_Positive,
-          120,
-          50,
+          Amps.of(120),
+          Amps.of(50),
           0.0, // 0.25
           0.0,
           0.08,
@@ -145,9 +154,9 @@ public class IntakeConstants {
           0.0,
           0.0,
           0.0,
-          1000.0,
-          2000.0,
-          1000000.0,
+          MetersPerSecondPerSecond.of(1000.0),
+          MetersPerSecond.of(2000.0),
+          MetersPerSecondPerSecond.per(Second).of(1000000.0),
           -1,
           -1,
           -1,
@@ -158,5 +167,5 @@ public class IntakeConstants {
           MetersPerSecond.of(-2000),
           MetersPerSecond.of(2000),
           1.0 / 16.709,
-          8);
+          Volts.of(8));
 }

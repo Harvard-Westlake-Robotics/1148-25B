@@ -47,7 +47,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     intakeConfig.MotorOutput.Inverted = constants.motorInverted;
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    intakeConfig.MotionMagic.MotionMagicAcceleration = constants.motionMagicAcceleration;
+    intakeConfig.MotionMagic.MotionMagicAcceleration = constants.motionMagicAcceleration.in(null);
     intakeConfig.MotionMagic.MotionMagicCruiseVelocity = constants.motionMagicCruiseVelocity;
 
     intakeConfig.Slot0.kP = constants.kP;
@@ -89,12 +89,12 @@ public class IntakeIOTalonFX implements IntakeIO {
     StatusSignal.refreshAll(motorPosition, motorVelocity, motorAppliedVolts, motorCurrent);
 
     inputs.intakeMotorConnected = motorConnectedDebouncer.calculate(intakeMotor.isConnected());
-    inputs.intakeMotorPositionMeters =
+    inputs.intakeMotorPosition =
         motorPosition.getValueAsDouble() / constants.rotationsPerMeterRatio;
-    inputs.intakeMotorVelocityMPS =
+    inputs.intakeMotorVelocity =
         motorVelocity.getValueAsDouble() / constants.rotationsPerMeterRatio;
-    inputs.intakeMotorAppliedVolts = motorAppliedVolts.getValueAsDouble();
-    inputs.intakeMotorCurrentAmps = motorCurrent.getValueAsDouble();
+    inputs.intakeMotorAppliedVoltage = motorAppliedVolts.getValueAsDouble();
+    inputs.intakeMotorCurrent = motorCurrent.getValueAsDouble();
   }
 
   @Override
