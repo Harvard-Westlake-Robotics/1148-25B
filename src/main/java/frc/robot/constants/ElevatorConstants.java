@@ -5,22 +5,15 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
-import static edu.wpi.first.units.Units.VoltsPerMeterPerSecondSquared;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.units.LinearAccelerationUnit;
-import edu.wpi.first.units.LinearVelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
 
 public class ElevatorConstants {
   // Motor constants
@@ -34,10 +27,10 @@ public class ElevatorConstants {
   public static double kP = 1.5;
   public static double kI = 0.0;
   public static double kD = 0.3;
-  public static Voltage kS = Volts.of(0.0);
-  public static Per<VoltageUnit, LinearVelocityUnit> kV = VoltsPerMeterPerSecond.ofNative(0.0);
-  public static Voltage kG = Volts.of(0.0);
-  public static Per<VoltageUnit, LinearAccelerationUnit> kA = VoltsPerMeterPerSecondSquared.ofNative(0.0);
+  public static double kS = 0.0;
+  public static double kV = 0.0;
+  public static double kG = 0.0;
+  public static double kA = 0.0;
 
   // Motion magic constants
   public static final LinearAcceleration motionMagicAcceleration = MetersPerSecondPerSecond.of(2.5);

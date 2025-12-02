@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -16,13 +15,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.PivotConstants;
@@ -66,9 +62,9 @@ public class PivotIOTalonFX implements PivotIO {
     pivotConfig.Slot0.kP = PivotConstants.kP;
     pivotConfig.Slot0.kI = PivotConstants.kI;
     pivotConfig.Slot0.kD = PivotConstants.kD;
-    pivotConfig.Slot0.kS = PivotConstants.kS.in(Volts);
-    pivotConfig.Slot0.kV = PivotConstants.kV.in(Volts.per(RotationsPerSecond));
-    pivotConfig.Slot0.kA = PivotConstants.kA.in(Volts.per(RotationsPerSecondPerSecond));
+    pivotConfig.Slot0.kS = PivotConstants.kS;
+    pivotConfig.Slot0.kV = PivotConstants.kV;
+    pivotConfig.Slot0.kA = PivotConstants.kA;
     pivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     pivotConfig.CurrentLimits.StatorCurrentLimit = PivotConstants.statorLimit.in(Amps);
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -133,10 +129,10 @@ public class PivotIOTalonFX implements PivotIO {
       double kP,
       double kI,
       double kD,
-      Voltage kS,
-      Per<VoltageUnit, AngularVelocityUnit> kV,
-      Voltage kG,
-      Per<VoltageUnit, AngularAccelerationUnit> kA,
+      double kS,
+      double kV,
+      double kG,
+      double kA,
       AngularAcceleration motionMagicAcceleration,
       AngularVelocity motionMagicCruiseVelocity,
       Velocity<AngularAccelerationUnit> motionMagicJerk,
@@ -144,10 +140,10 @@ public class PivotIOTalonFX implements PivotIO {
     pivotConfig.Slot0.kP = kP;
     pivotConfig.Slot0.kI = kI;
     pivotConfig.Slot0.kD = kD;
-    pivotConfig.Slot0.kS = kS.in(Volts);
-    pivotConfig.Slot0.kV = kV.in(Volts.per(RotationsPerSecond));
-    pivotConfig.Slot0.kG = kG.in(Volts);
-    pivotConfig.Slot0.kA = kA.in(Volts.per(RotationsPerSecondPerSecond));
+    pivotConfig.Slot0.kS = kS;
+    pivotConfig.Slot0.kV = kV;
+    pivotConfig.Slot0.kG = kG;
+    pivotConfig.Slot0.kA = kA;
     pivotConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration.in(RotationsPerSecondPerSecond);
     pivotConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity.in(RotationsPerSecond);
     pivotConfig.MotionMagic.MotionMagicJerk = motionMagicJerk.in(RotationsPerSecondPerSecond.per(Second));

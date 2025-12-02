@@ -9,13 +9,10 @@ import static edu.wpi.first.units.Units.Volts;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 
@@ -45,10 +42,10 @@ public interface PivotIO {
       double kP,
       double kI,
       double kD,
-      Voltage kS,
-      Per<VoltageUnit, AngularVelocityUnit> kV,
-      Voltage kG,
-      Per<VoltageUnit, AngularAccelerationUnit> kA,
+      double kS,
+      double kV,
+      double kG,
+      double kA,
       AngularAcceleration motionMagicAcceleration,
       AngularVelocity motionMagicCruiseVelocity,
       Velocity<AngularAccelerationUnit> motionMagicJerk,

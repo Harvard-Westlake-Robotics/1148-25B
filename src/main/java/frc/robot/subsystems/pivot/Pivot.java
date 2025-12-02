@@ -30,10 +30,10 @@ public class Pivot extends SubsystemBase {
   private final LoggedTunableNumber kP = new LoggedTunableNumber(key + "/kP", PivotConstants.kP);
   private final LoggedTunableNumber kI = new LoggedTunableNumber(key + "/kI", PivotConstants.kI);
   private final LoggedTunableNumber kD = new LoggedTunableNumber(key + "/kD", PivotConstants.kD);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber(key + "/kS", PivotConstants.kS.in(Volts));
-  private final LoggedTunableNumber kV = new LoggedTunableNumber(key + "/kV", PivotConstants.kV.in(Volts.per(RotationsPerSecond)));
-  private final LoggedTunableNumber kG = new LoggedTunableNumber(key + "/kG", PivotConstants.kG.in(Volts));
-  private final LoggedTunableNumber kA = new LoggedTunableNumber(key + "/kA", PivotConstants.kA.in(Volts.per(RotationsPerSecondPerSecond)));
+  private final LoggedTunableNumber kS = new LoggedTunableNumber(key + "/kS", PivotConstants.kS);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber(key + "/kV", PivotConstants.kV);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber(key + "/kG", PivotConstants.kG);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber(key + "/kA", PivotConstants.kA);
 
   private final LoggedTunableNumber motionMagicAcceleration =
       new LoggedTunableNumber(
@@ -79,10 +79,10 @@ public class Pivot extends SubsystemBase {
                 kP.get(),
                 kI.get(),
                 kD.get(),
-                Volts.of(kS.get()),
-                Volts.per(RotationsPerSecond).ofNative(kV.get()),
-                Volts.of(kG.get()),
-                Volts.per(RotationsPerSecondPerSecond).ofNative(kA.get()),
+                kS.get(),
+                kV.get(),
+                kG.get(),
+                kA.get(),
                 RotationsPerSecondPerSecond.of(motionMagicAcceleration.get()),
                 RotationsPerSecond.of(motionMagicCruiseVelocity.get()),
                 RotationsPerSecondPerSecond.per(Second).of(motionMagicJerk.get()),

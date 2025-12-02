@@ -1,9 +1,11 @@
 package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -12,14 +14,13 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.WristConstants;
+import frc.robot.subsystems.pivot.Pivot;
 
 public class WristIOTalonFX implements WristIO {
   // Motors and wrist controllers
@@ -27,11 +28,10 @@ public class WristIOTalonFX implements WristIO {
   private MotionMagicVoltage wristController;
 
   private TalonFXConfiguration wristConfig;
-  private ArmFeedforward feedforward;
 
   private final StatusSignal<Angle> wristPosition;
   private final StatusSignal<AngularVelocity> wristVelocity;
-  private final StatusSignal<Voltage> motorAppliedVolts;
+  private final StatusSignal<Voltage> motorAppliedVoltage;
   private final StatusSignal<Current> motorCurrent;
 
   // Connection debouncers
@@ -55,59 +55,60 @@ public class WristIOTalonFX implements WristIO {
     wristConfig.Slot0.kS = WristConstants.kS;
     wristConfig.Slot0.kV = WristConstants.kV;
     wristConfig.Slot0.kA = WristConstants.kA;
+
     wristConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    wristConfig.CurrentLimits.StatorCurrentLimit = WristConstants.statorLimit;
+    wristConfig.CurrentLimits.StatorCurrentLimit = WristConstants.statorLimit.in(Amps);
     wristConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    wristConfig.CurrentLimits.SupplyCurrentLimit = WristConstants.supplyLimit;
-    wristConfig.MotionMagic.MotionMagicAcceleration = WristConstants.motionMagicAcceleration;
-    wristConfig.MotionMagic.MotionMagicCruiseVelocity = WristConstants.motionMagicCruiseVelocity;
-    wristConfig.MotionMagic.MotionMagicJerk = WristConstants.motionMagicJerk;
+    wristConfig.CurrentLimits.SupplyCurrentLimit = WristConstants.supplyLimit.in(Amps);
+    wristConfig.MotionMagic.MotionMagicAcceleration = WristConstants.motionMagicAcceleration.in(RotationsPerSecondPerSecond);
+    wristConfig.MotionMagic.MotionMagicCruiseVelocity = WristConstants.motionMagicCruiseVelocity.in(RotationsPerSecond);
+    wristConfig.MotionMagic.MotionMagicJerk = WristConstants.motionMagicJerk.in(RotationsPerSecondPerSecond.per(Second));
 
     wristConfig.Feedback.SensorToMechanismRatio =
         WristConstants.motorRotationsPerWristRotationRatio;
     tryUntilOk(5, () -> wristMotor.getConfigurator().apply(wristConfig, 0.25));
-    feedforward = new ArmFeedforward(WristConstants.kS, WristConstants.kG, WristConstants.kV);
     wristMotor.setPosition(WristConstants.angleOffset);
     wristMotor.setControl(wristController);
 
     wristPosition = wristMotor.getPosition();
     wristVelocity = wristMotor.getVelocity();
-    motorAppliedVolts = wristMotor.getMotorVoltage();
+    motorAppliedVoltage = wristMotor.getMotorVoltage();
     motorCurrent = wristMotor.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(WristIOInputs inputs) {
-    StatusSignal.refreshAll(wristPosition, wristVelocity, motorAppliedVolts, motorCurrent);
+    StatusSignal.refreshAll(wristPosition, wristVelocity, motorAppliedVoltage, motorCurrent);
 
     inputs.wristMotorConnected = motorConnectedDebouncer.calculate(wristMotor.isConnected());
-    inputs.wristPositionDeg = wristPosition.getValue().in(Degrees);
-    inputs.wristVelocityDPS = wristVelocity.getValue().in(DegreesPerSecond);
-    inputs.wristAppliedVolts = motorAppliedVolts.getValue().in(Volts);
-    inputs.wristCurrentAmps = motorCurrent.getValue().in(Amps);
+    inputs.wristAngle = wristPosition.getValue();
+    inputs.wristVelocity = wristVelocity.getValue();
+    inputs.wristAppliedVoltage = motorAppliedVoltage.getValue();
+    inputs.wristCurrent = motorCurrent.getValue();
   }
 
   @Override
-  public void runVoltage(double voltage) {
+  public void runVoltage(Voltage voltage) {
     wristMotor.setControl(new VoltageOut(voltage));
   }
 
   @Override
-  public void goToAngleClosedLoop(double wristAngleRots) {
+  public void goToAngleClosedLoop(Angle wristAngle) {
     wristMotor.setControl(
         wristController
-            .withPosition(wristAngleRots)
+            .withPosition(wristAngle)
             .withFeedForward(
-                feedforward.calculate(wristAngleRots, wristVelocity.getValueAsDouble())));
+              Math.cos(Pivot.getInstance().getAngle().in(Radians) + wristPosition.getValue().in(Radians)) *  WristConstants.kG
+            ));
   }
 
   @Override
-  public void tareAngle(double wristAngleRots) {
-    wristMotor.setPosition(wristAngleRots);
+  public void tareAngle(Angle wristAngle) {
+    wristMotor.setPosition(wristAngle);
   }
 
   @Override
-  public double getTargetDegrees() {
-    return Units.rotationsToDegrees(wristController.Position);
+  public Angle getTarget() {
+    return Rotations.of(wristController.Position);
   }
 }

@@ -8,9 +8,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
-import static edu.wpi.first.units.Units.VoltsPerMeterPerSecondSquared;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -64,10 +61,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorConfig.Slot0.kP = ElevatorConstants.kP;
     elevatorConfig.Slot0.kI = ElevatorConstants.kI;
     elevatorConfig.Slot0.kD = ElevatorConstants.kD;
-    elevatorConfig.Slot0.kS = ElevatorConstants.kS.in(Volts);
-    elevatorConfig.Slot0.kV = ElevatorConstants.kV.in(VoltsPerMeterPerSecond);
-    elevatorConfig.Slot0.kG = ElevatorConstants.kG.in(Volts);
-    elevatorConfig.Slot0.kA = ElevatorConstants.kA.in(VoltsPerMeterPerSecondSquared);
+    elevatorConfig.Slot0.kS = ElevatorConstants.kS;
+    elevatorConfig.Slot0.kV = ElevatorConstants.kV;
+    elevatorConfig.Slot0.kA = ElevatorConstants.kA;
 
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     elevatorConfig.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorLimit.in(Amps);
@@ -116,12 +112,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorController
             .withPosition(height.in(Meters))
             .withFeedForward(
-                Math.cos(Pivot.getInstance().getAngle().in(Radians))));
+              // Sin instead of cos, since the elevator uses the full kG when the pivot is vertical and gravity pulls down on the elevator the most (sin(90°) = 1), and uses no kG when the pivot is horizontal and gravity doesn't pull on the elevator (sin(0°) = 0)
+                Math.sin(Pivot.getInstance().getAngle().in(Radians) * ElevatorConstants.kG)));
     elevatorMotor2.setControl(
         elevatorController
             .withPosition(height.in(Meters))
             .withFeedForward(
-                Math.cos(Pivot.getInstance().getAngle().in(Radians))));
+                Math.sin(Pivot.getInstance().getAngle().in(Radians) * ElevatorConstants.kG)));
   }
 
   @Override
