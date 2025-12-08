@@ -22,17 +22,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.ArmCommand;
-import frc.robot.commands.ArmCommand.ScoringLevel;
-import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.HangCommand;
 import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -41,12 +34,6 @@ import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
 import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.hang.Hang;
-import frc.robot.subsystems.intake.AlgaeIntake;
-import frc.robot.subsystems.intake.CoralIntake;
-import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.subsystems.wrist.Wrist;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -84,18 +71,8 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
-  private final Pivot pivot;
-  private final Wrist wrist;
-  private final Elevator elevator;
-  private final CoralIntake coralIntake;
-  private final AlgaeIntake algaeIntake;
-  private final Hang hang;
 
   // Commands
-  public static ArmCommand armCommand;
-  public static AlgaeIntakeCommand algaeIntakeCommand;
-  public static CoralIntakeCommand coralIntakeCommand;
-  public static HangCommand hangCommand;
 
   // Controllers
   public final CommandXboxController operator = new CommandXboxController(1);
@@ -151,12 +128,6 @@ public class RobotContainer {
     }
 
     // Instantiate subsystems
-    this.pivot = Pivot.getInstance();
-    this.wrist = Wrist.getInstance();
-    this.elevator = Elevator.getInstance();
-    this.coralIntake = CoralIntake.getInstance();
-    this.algaeIntake = AlgaeIntake.getInstance();
-    this.hang = Hang.getInstance();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -177,91 +148,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysID (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption(
-        "Elevator SysId (Quasistatic Forward)",
-        elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Elevator SysId (Quasistatic Reverse)",
-        elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Elevator SysId (Dynamic Forward)", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Elevator SysId (Dynamic Reverse)", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    autoChooser.addOption(
-        "Hang SysId (Quasistatic Forward)", hang.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Hang SysId (Quasistatic Reverse)", hang.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Hang SysId (Dynamic Forward)", hang.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Hang SysId (Dynamic Reverse)", hang.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    autoChooser.addOption(
-        "CoralIntake SysId (Quasistatic Forward)",
-        coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "CoralIntake SysId (Quasistatic Reverse)",
-        coralIntake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "CoralIntake SysId (Dynamic Forward)",
-        coralIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "CoralIntake SysId (Dynamic Reverse)",
-        coralIntake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    autoChooser.addOption(
-        "AlgaeIntake SysId (Quasistatic Forward)",
-        algaeIntake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "AlgaeIntake SysId (Quasistatic Reverse)",
-        algaeIntake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "AlgaeIntake SysId (Dynamic Forward)",
-        algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "AlgaeIntake SysId (Dynamic Reverse)",
-        algaeIntake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    autoChooser.addOption(
-        "Pivot SysID (Quasistatic Forward)",
-        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Pivot SysID (Quasistatic Reverse)",
-        pivot.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Pivot SysID (Dynamic Forward)", pivot.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Pivot SysID (Dynamic Reverse)", pivot.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    autoChooser.addOption(
-        "Wrist SysId (Quasistatic Forward)",
-        wrist.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Wrist SysId (Quasistatic Reverse)",
-        wrist.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Wrist SysId (Dynamic Forward)", wrist.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Wrist SysId (Dynamic Reverse)", wrist.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
     // Configure the button bindings
     configureButtonBindings();
     try {
       L1 = PathPlannerPath.fromPathFile("ToL1");
     } catch (Exception e) {
     }
-    autoChooser.addOption(
-        "Single L1",
-        new ParallelCommandGroup(
-                AutoBuilder.followPath(L1).withTimeout(5),
-                new InstantCommand(() -> algaeIntakeCommand.runVelocity(-500)))
-            .andThen(
-                new InstantCommand(
-                    () -> {
-                      armCommand.setHeight(ScoringLevel.L1);
-                      algaeIntakeCommand.outtakeGround();
-                    })));
   }
 
   /**
@@ -283,14 +175,7 @@ public class RobotContainer {
                     : Math.pow(driver.getRightX(), 1.5)));
     if (!DriverStation.isTest()) {
       // Instantiate and set default commands
-      armCommand = new ArmCommand();
-      elevator.setDefaultCommand(armCommand);
-      coralIntakeCommand = new CoralIntakeCommand();
-      coralIntake.setDefaultCommand(coralIntakeCommand);
-      algaeIntakeCommand = new AlgaeIntakeCommand();
-      algaeIntake.setDefaultCommand(algaeIntakeCommand);
-      hangCommand = new HangCommand();
-      hang.setDefaultCommand(hangCommand);
+
     }
 
     // Assign controls in ControlMap

@@ -13,11 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
-import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intake.CoralIntake;
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -44,7 +40,6 @@ public class AutoScoreCommand extends Command {
   private static final double MAX_ANGULAR_VELOCITY = 2.0;
   private static final double MAX_ANGULAR_ACCELERATION = 2.75;
 
-  private final ScoringLevel level;
   private final ProfiledPIDController xController;
   private final ProfiledPIDController yController;
   private final ProfiledPIDController thetaController;
@@ -58,12 +53,8 @@ public class AutoScoreCommand extends Command {
    * @param level The scoring level to move to
    * @param path The path to follow to the scoring position
    */
-  public AutoScoreCommand(ScoringLevel level, PathPlannerPath path) {
-    this.addRequirements(
-        CoralIntake.getInstance(),
-        Elevator.getInstance(),
-        path == null ? Drive.getInstance() : null);
-    this.level = level;
+  public AutoScoreCommand(PathPlannerPath path) {
+    this.addRequirements(path == null ? Drive.getInstance() : null);
     this.timeoutTimer = new Timer();
 
     // Initialize controllers with constants
@@ -86,10 +77,6 @@ public class AutoScoreCommand extends Command {
 
     // Safely get end pose from path
     if (path != null) {
-      // Cancel any existing intake command
-      if (CoralIntake.getInstance().getCurrentCommand() != null) {
-        CoralIntake.getInstance().getCurrentCommand().cancel();
-      }
       if (Drive.getInstance().getCurrentCommand() != null) {
         Drive.getInstance().getCurrentCommand().cancel();
       }
@@ -127,10 +114,6 @@ public class AutoScoreCommand extends Command {
     tickCounter = 0;
     timeoutTimer.reset();
     timeoutTimer.start();
-
-    // Set initial positions and velocities
-    CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
-    RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
   }
 
   @Override
@@ -184,31 +167,10 @@ public class AutoScoreCommand extends Command {
   /** Handles the scoring logic once in position */
   private void handleScoring() {
     Drive.getInstance().stop();
-
-    // Takes the elevatorLength from the arm command state
-    double targetHeight = ArmCommand.getStateRotations()[1];
-
-    if (Math.abs(targetHeight - Elevator.getInstance().getCurrentHeight()) < ARM_Y_TOLERANCE
-        || Elevator.getInstance().getCurrentHeight() > targetHeight) {
-      if (tickCounter >= SCORING_DELAY_TICKS) {
-        CoralIntake.getInstance().runVelocity(MetersPerSecond.of(SCORING_VELOCITY));
-      } else {
-        tickCounter++;
-      }
-    } else {
-      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
-    }
   }
 
   @Override
   public void end(boolean interrupted) {
-    // Reset robot state
-    if (CoralIntake.getInstance().hasCoralHotDog() || CoralIntake.getInstance().hasCoralBurger()) {
-      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(0));
-    } else {
-      CoralIntake.getInstance().runVelocity(MetersPerSecond.of(4));
-    }
-    // RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
     Drive.getInstance().stop();
     Drive.getInstance().setSdMultiplier(1);
 
@@ -219,8 +181,6 @@ public class AutoScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return (!CoralIntake.getInstance().hasCoralHotDog()
-            && !CoralIntake.getInstance().hasCoralBurger())
-        || timeoutTimer.get() > COMMAND_TIMEOUT;
+    return timeoutTimer.get() > COMMAND_TIMEOUT;
   }
 }

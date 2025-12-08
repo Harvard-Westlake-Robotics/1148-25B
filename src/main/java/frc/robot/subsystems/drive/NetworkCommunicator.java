@@ -1,7 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -9,12 +7,9 @@ import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.RobotContainer;
-import frc.robot.commands.ArmCommand.ScoringLevel;
 import frc.robot.commands.AutoScoreCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.constants.DriveConstants;
-import frc.robot.subsystems.intake.CoralIntake;
 import java.util.HashMap;
 
 public class NetworkCommunicator {
@@ -109,18 +104,6 @@ public class NetworkCommunicator {
     return paths.get("" + (char) (getTeleopBranch() + 'A'));
   }
 
-  public ScoringLevel getSelectedHeight() {
-    if (teleopSubHeight.get() == 1) {
-      return ScoringLevel.L1;
-    } else if (teleopSubHeight.get() == 2) {
-      return ScoringLevel.L2;
-    } else if (teleopSubHeight.get() == 3) {
-      return ScoringLevel.L3;
-    } else if (teleopSubHeight.get() == 4) {
-      return ScoringLevel.L4;
-    } else return ScoringLevel.NEUTRAL;
-  }
-
   public TeleopCommand getTeleopCommand() {
     if (teleopCommand == null) {
       teleopCommand = new TeleopCommand();
@@ -134,40 +117,18 @@ public class NetworkCommunicator {
     if (autoCommands.length == 0) {
       return new PathPlannerAuto(Commands.none());
     } else {
-      Command auto =
-          new InstantCommand(
-              () -> {
-                RobotContainer.armCommand.setHeight(ScoringLevel.NEUTRAL);
-              });
+      Command auto = new InstantCommand(() -> {});
       // Command scheduler- adds each selected auto station to the auton
       for (int i = 0; i < autoCommands.length; i++) {
         // If selected command is a source command
         if (autoCommands[i].charAt(0) == 'S') {
           auto =
               auto.andThen(
-                      // Go to selected source
-                      AutoBuilder.pathfindThenFollowPath(
-                          paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS))
-                  // Source Intake
-                  .andThen(
-                      new InstantCommand(
-                              () -> {
-                                RobotContainer.armCommand.setHeight(ScoringLevel.SOURCE_CORAL);
-                                RobotContainer.coralIntakeCommand.velocity = MetersPerSecond.of(6);
-                              })
-                          .until(() -> CoralIntake.getInstance().hasCoralHotDog()));
+                  // Go to selected source
+                  AutoBuilder.pathfindThenFollowPath(
+                      paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS));
           // If selected command is a reef command
         } else {
-          ScoringLevel level = ScoringLevel.NEUTRAL;
-          if (autoCommands[i].charAt(2) == '1') {
-            level = ScoringLevel.L1;
-          } else if (autoCommands[i].charAt(2) == '2') {
-            level = ScoringLevel.L2;
-          } else if (autoCommands[i].charAt(2) == '3') {
-            level = ScoringLevel.L3;
-          } else if (autoCommands[i].charAt(2) == '4') {
-            level = ScoringLevel.L4;
-          }
           auto =
               auto.andThen(
                       AutoBuilder.pathfindThenFollowPath(
@@ -176,8 +137,7 @@ public class NetworkCommunicator {
                   .andThen(new Command() {}.withTimeout(0.1))
                   .andThen(
                       // Run AutoScore Command
-                      new AutoScoreCommand(
-                          level, paths.get("" + (char) (autoCommands[i].charAt(0)))));
+                      new AutoScoreCommand(paths.get("" + (char) (autoCommands[i].charAt(0)))));
         }
       }
       return auto;
