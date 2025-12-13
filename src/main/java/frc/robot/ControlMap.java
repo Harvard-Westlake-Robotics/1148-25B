@@ -2,11 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.RobotContainer.Mode;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.NetworkCommunicator;
 
 public class ControlMap {
   private static ControlMap instance;
@@ -41,5 +43,30 @@ public class ControlMap {
                                         new Rotation2d())),
                     Drive.getInstance())
                 .ignoringDisable(true));
+
+    driver
+        .L2()
+        .whileTrue(
+            new Command() {
+              @Override
+              public void initialize() {
+                // this.addRequirements(
+                // CoralIntake.getInstance(), Drive.getInstance(), Elevator.getInstance());
+                if (Drive.getInstance().getCurrentCommand() != null) {
+                  Drive.getInstance().getCurrentCommand().cancel();
+                }
+                NetworkCommunicator.getInstance().getTeleopCommand().updateCommands();
+                NetworkCommunicator.getInstance().getTeleopCommand().schedule();
+              }
+
+              @Override
+              public void end(boolean interrupted) {
+                NetworkCommunicator.getInstance().getTeleopCommand().cancel();
+                Drive.getInstance().stop();
+                if (Drive.getInstance().getCurrentCommand() != null) {
+                  Drive.getInstance().getCurrentCommand().cancel();
+                }
+              }
+            });
   }
 }

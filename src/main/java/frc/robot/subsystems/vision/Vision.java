@@ -51,7 +51,7 @@ public class Vision extends SubsystemBase {
     }
   }
 
-  @AutoLogOutput
+  @AutoLogOutput(key = "Vision/TimestampedPoses")
   public TimestampedPose[] getTimestampedPoses() {
     TimestampedPose[] poses = new TimestampedPose[cameras.length];
     for (int i = 0; i < cameras.length; i++) {

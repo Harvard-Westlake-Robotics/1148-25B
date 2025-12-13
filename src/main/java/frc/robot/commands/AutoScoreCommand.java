@@ -44,7 +44,6 @@ public class AutoScoreCommand extends Command {
   private final ProfiledPIDController yController;
   private final ProfiledPIDController thetaController;
   private final Pose2d endPose;
-  private int tickCounter = 0;
   private final Timer timeoutTimer;
 
   /**
@@ -111,7 +110,6 @@ public class AutoScoreCommand extends Command {
     thetaController.reset(Drive.getInstance().getPose().getRotation().getRadians());
     Drive.getInstance().setSdMultiplier(5.0);
     // Reset command state
-    tickCounter = 0;
     timeoutTimer.reset();
     timeoutTimer.start();
   }

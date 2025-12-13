@@ -24,6 +24,7 @@ public class CameraIOLimelight implements CameraIO {
 
   public CameraIOLimelight(String name) {
     this.name = name;
+    currentPose = new PoseEstimate();
   }
 
   @Override
@@ -33,9 +34,14 @@ public class CameraIOLimelight implements CameraIO {
     } else {
       currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
     }
+    if (currentPose == null) {
+      return;
+    }
     inputs.tagCount = currentPose.tagCount;
-    inputs.ambiguity = currentPose.rawFiducials[0].ambiguity;
-    inputs.distToCamera = Meters.of(currentPose.rawFiducials[0].distToCamera);
+    if (currentPose.tagCount != 0) {
+      inputs.ambiguity = currentPose.rawFiducials[0].ambiguity;
+      inputs.distToCamera = Meters.of(currentPose.rawFiducials[0].distToCamera);
+    }
     inputs.estimatedPose = currentPose.pose;
   }
 
@@ -57,6 +63,9 @@ public class CameraIOLimelight implements CameraIO {
   }
 
   private boolean shouldAcceptPose(PoseEstimate pose) {
+    if (pose == null) {
+      return false;
+    }
     if (pose.tagCount == 0) {
       return false;
     }

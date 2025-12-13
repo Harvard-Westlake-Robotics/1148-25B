@@ -47,13 +47,14 @@ public class DriveConstants {
   // the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
 
-  // ================================= PID Tuning =================================
+  // ================================= PID Tuning
+  // =================================
 
   // Swerve Steer PID Values
   // TODO: Tune drive/steer PIDSVA constants
   public static final double kSteerP = 65;
   public static final double kSteerI = 0;
-  public static final double kSteerD = 0;
+  public static final double kSteerD = 0.5;
   public static final double kSteerS = 0;
   public static final double kSteerV = 0;
   public static final double kSteerA = 0;
@@ -61,12 +62,12 @@ public class DriveConstants {
       StaticFeedforwardSignValue.UseClosedLoopSign;
 
   // Swerve Drive PID Values
-  public static final double kDriveP = 0.14764;
+  public static final double kDriveP = 0.03152 * (180 / Math.PI) * 2 * 0.0254;
   public static final double kDriveI = 0;
   public static final double kDriveD = 0;
-  public static final double kDriveS = 0.0047782;
-  public static final double kDriveV = 0.10756;
-  public static final double kDriveA = 0.023363;
+  public static final double kDriveS = 0.28949;
+  public static final double kDriveV = 0.11353 * (180 / Math.PI) * 2 * 0.0254;
+  public static final double kDriveA = 0.083369 * (180 / Math.PI) * 2 * 0.0254;
 
   // The closed-loop output type to use for the motors;
   // This affects PID/FF gains
@@ -81,7 +82,8 @@ public class DriveConstants {
   public static double PP_TRANSLATION_I = 0.00;
   public static double PP_TRANSLATION_D = 0.0;
 
-  // ================================= Hardware Tuning =================================
+  // ================================= Hardware Tuning
+  // =================================
 
   public static final double ROBOT_MASS_KG = 54.088;
   public static final double ROBOT_MOI = 6.883;
@@ -105,20 +107,20 @@ public class DriveConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(75);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(7.50);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
   public static final double kCoupleRatio = 5.4;
 
-  public static final double kDriveGearRatio = 5.68;
-  public static final double kSteerGearRatio = 12.1;
-  public static final Distance kWheelRadius = Inches.of(1.933);
+  public static final double kDriveGearRatio = 5.89;
+  public static final double kSteerGearRatio = 12.1 / 1;
+  public static final Distance kWheelRadius = Inches.of(2.15);
 
   public static final boolean kInvertLeftSide = false;
   public static final boolean kInvertRightSide = true;
 
-  public static final int kPigeonId = 28;
+  public static final int kPigeonId = 21;
 
   // Simulated moment of inertia for the steer and drive motors;
   public static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
@@ -128,47 +130,48 @@ public class DriveConstants {
   public static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
   // Front Left
-  public static final int kFrontLeftDriveMotorId = 1;
-  public static final int kFrontLeftSteerMotorId = 2;
-  public static final int kFrontLeftEncoderId = 11;
-  public static final Angle kFrontLeftEncoderOffset = Rotations.of(0.010742);
-  public static final boolean kFrontLeftSteerMotorInverted = true;
-  public static final boolean kFrontLeftEncoderInverted = false;
-  public static final Distance kFrontLeftXPos = Inches.of(11.5);
-  public static final Distance kFrontLeftYPos = Inches.of(11.5);
+  private static final int kFrontLeftDriveMotorId = 2;
+  private static final int kFrontLeftSteerMotorId = 1;
+  private static final int kFrontLeftEncoderId = 9;
+  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.388671875);
+  private static final boolean kFrontLeftSteerMotorInverted = true;
+  private static final boolean kFrontLeftEncoderInverted = false;
+
+  private static final Distance kFrontLeftXPos = Inches.of(13.5);
+  private static final Distance kFrontLeftYPos = Inches.of(13.5);
 
   // Front Right
-  public static final int kFrontRightDriveMotorId = 3;
-  public static final int kFrontRightSteerMotorId = 4;
-  public static final int kFrontRightEncoderId = 12;
-  public static final Angle kFrontRightEncoderOffset = Rotations.of(-0.452881);
-  public static final boolean kFrontRightSteerMotorInverted = true;
-  public static final boolean kFrontRightEncoderInverted = false;
+  private static final int kFrontRightDriveMotorId = 4;
+  private static final int kFrontRightSteerMotorId = 3;
+  private static final int kFrontRightEncoderId = 10;
+  private static final Angle kFrontRightEncoderOffset = Rotations.of(0.142822265625 - 0.5);
+  private static final boolean kFrontRightSteerMotorInverted = true;
+  private static final boolean kFrontRightEncoderInverted = false;
 
-  public static final Distance kFrontRightXPos = Inches.of(11.5);
-  public static final Distance kFrontRightYPos = Inches.of(-11.5);
+  private static final Distance kFrontRightXPos = Inches.of(13.5);
+  private static final Distance kFrontRightYPos = Inches.of(-13.5);
 
   // Back Left
-  public static final int kBackLeftDriveMotorId = 5;
-  public static final int kBackLeftSteerMotorId = 6;
-  public static final int kBackLeftEncoderId = 13;
-  public static final Angle kBackLeftEncoderOffset = Rotations.of(-0.299316 + 0.5);
-  public static final boolean kBackLeftSteerMotorInverted = true;
-  public static final boolean kBackLeftEncoderInverted = false;
+  private static final int kBackLeftDriveMotorId = 6;
+  private static final int kBackLeftSteerMotorId = 5;
+  private static final int kBackLeftEncoderId = 11;
+  private static final Angle kBackLeftEncoderOffset = Rotations.of(0.3701171875 - 0.5);
+  private static final boolean kBackLeftSteerMotorInverted = true;
+  private static final boolean kBackLeftEncoderInverted = false;
 
-  public static final Distance kBackLeftXPos = Inches.of(-11.5);
-  public static final Distance kBackLeftYPos = Inches.of(11.5);
+  private static final Distance kBackLeftXPos = Inches.of(-13.5);
+  private static final Distance kBackLeftYPos = Inches.of(13.5);
 
   // Back Right
-  public static final int kBackRightDriveMotorId = 7;
-  public static final int kBackRightSteerMotorId = 8;
-  public static final int kBackRightEncoderId = 14;
-  public static final Angle kBackRightEncoderOffset = Rotations.of(0.139404 + 0.5);
-  public static final boolean kBackRightSteerMotorInverted = true;
-  public static final boolean kBackRightEncoderInverted = false;
+  private static final int kBackRightDriveMotorId = 8;
+  private static final int kBackRightSteerMotorId = 7;
+  private static final int kBackRightEncoderId = 12;
+  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.48486328125 - 0.5);
+  private static final boolean kBackRightSteerMotorInverted = true;
+  private static final boolean kBackRightEncoderInverted = false;
 
-  public static final Distance kBackRightXPos = Inches.of(-11.5);
-  public static final Distance kBackRightYPos = Inches.of(-11.5);
+  private static final Distance kBackRightXPos = Inches.of(-13.5);
+  private static final Distance kBackRightYPos = Inches.of(-13.5);
 
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
@@ -179,9 +182,11 @@ public class DriveConstants {
               Math.hypot(kBackLeftXPos.baseUnitMagnitude(), kBackLeftYPos.baseUnitMagnitude()),
               Math.hypot(kBackRightXPos.baseUnitMagnitude(), kBackRightYPos.baseUnitMagnitude())));
 
-  // ================================= END OF TUNER CONSTANTS =================================
+  // ================================= END OF TUNER CONSTANTS
+  // =================================
 
-  // ================================= Robot Software Configs =================================
+  // ================================= Robot Software Configs
+  // =================================
 
   public static final Slot0Configs steerGains =
       new Slot0Configs()
@@ -242,7 +247,8 @@ public class DriveConstants {
           .withPigeon2Id(kPigeonId)
           .withPigeon2Configs(pigeonConfigs);
 
-  // ================================= Module Configurations =================================
+  // ================================= Module Configurations
+  // =================================
 
   public static final SwerveModuleConstantsFactory<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -327,7 +333,8 @@ public class DriveConstants {
                   DriveConstants.kBackRightEncoderInverted)
               .withSlipCurrent(DriveConstants.kSlipCurrent);
 
-  // ================================= PathPlanner Configs =================================
+  // ================================= PathPlanner Configs
+  // =================================
 
   public static final RobotConfig PP_CONFIG =
       new RobotConfig(
@@ -342,7 +349,8 @@ public class DriveConstants {
               1),
           Drive.getModuleTranslations());
 
-  // ================================= Simulation Configs =================================
+  // ================================= Simulation Configs
+  // =================================
 
   // Create and configure a drivetrain simulation configuration
   public static final DriveTrainSimulationConfig mapleSimConfig =
@@ -370,12 +378,14 @@ public class DriveConstants {
           // Configures the bumper size (dimensions of the robot bumper)
           .withBumperSize(Inches.of(33.6), Inches.of(33.6));
 
-  // ================================= Extra Configurations =================================
+  // ================================= Extra Configurations
+  // =================================
 
   public static final double ODOMETRY_FREQUENCY =
       new CANBus(DriveConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
 
-  // ================================= PathPlanner Constraints =================================
+  // ================================= PathPlanner Constraints
+  // =================================
 
   // TODO: Tune
   public static final PathConstraints PP_CONSTRAINTS =

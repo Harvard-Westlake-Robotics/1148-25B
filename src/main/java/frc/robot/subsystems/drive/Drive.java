@@ -142,7 +142,7 @@ public class Drive extends SubsystemBase {
   // Vision constants
   private static final double MAX_YAW_RATE_DEGREES_PER_SEC = 520.0;
 
-  private double sdMultiplier = 1.0;
+  @AutoLogOutput private double sdMultiplier = 1.0;
 
   public void setSdMultiplier(double sdMultiplier) {
     this.sdMultiplier = sdMultiplier;
@@ -213,7 +213,8 @@ public class Drive extends SubsystemBase {
     // Set simulation pose
     setPose(new Pose2d());
 
-    // Prevents double initialization since this constructor is called directly in RobotContainer
+    // Prevents double initialization since this constructor is called directly in
+    // RobotContainer
     Drive.instance = this;
 
     // Setup NetworkTables communication
@@ -284,6 +285,7 @@ public class Drive extends SubsystemBase {
 
       for (TimestampedPose pose : timestampedPoses) {
         if (pose != null && shouldAcceptPose(pose.pose) && visionActive) {
+          Logger.recordOutput("Vision/FinalPosAdded", pose.pose);
           addVisionMeasurement(
               pose.pose,
               pose.timestamp,
@@ -291,6 +293,9 @@ public class Drive extends SubsystemBase {
                   sdMultiplier * VisionConstants.xyStdDev,
                   sdMultiplier * VisionConstants.xyStdDev,
                   sdMultiplier * VisionConstants.rStdDev));
+        }
+        if (pose != null) {
+          Logger.recordOutput("Vision/shouldAcceptPose", shouldAcceptPose(pose.pose));
         }
       }
 
@@ -440,8 +445,7 @@ public class Drive extends SubsystemBase {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
@@ -483,9 +487,9 @@ public class Drive extends SubsystemBase {
    */
   public boolean shouldAcceptPose(Pose2d pose) {
     // Always accept poses when disabled
-    if (DriverStation.isDisabled()) {
-      return true;
-    }
+    // if (DriverStation.isDisabled()) {
+    // return true;
+    // }
 
     // Reject if rotating too quickly
     if (Units.radiansToDegrees(gyroInputs.yawVelocityRadPerSec) >= MAX_YAW_RATE_DEGREES_PER_SEC) {
