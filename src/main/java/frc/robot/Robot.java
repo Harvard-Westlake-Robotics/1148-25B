@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
@@ -107,6 +108,24 @@ public class Robot extends LoggedRobot {
     if (RobotContainer.currentMode == RobotContainer.Mode.SIM) {
       robotContainer.resetSimulationField();
     }
+
+    int driveMotorIds[] = {1, 2, 3, 4, 5, 6, 7, 8, 13, 14};
+    int rioMotorIds[] = {15, 16, 17, 18};
+    for (int id : driveMotorIds) {
+      RobotContainer.orchestra.addInstrument(new TalonFX(id, "drive"));
+    }
+    for (int id : rioMotorIds) {
+      RobotContainer.orchestra.addInstrument(new TalonFX(id, "rio"));
+    }
+
+    // Attempt to load the chrp
+    var status = RobotContainer.orchestra.loadMusic("E1M1.chrp");
+
+    if (!status.isOK()) {
+      // log error
+    }
+
+    RobotContainer.orchestra.play();
   }
 
   /** This function is called periodically during all modes. */

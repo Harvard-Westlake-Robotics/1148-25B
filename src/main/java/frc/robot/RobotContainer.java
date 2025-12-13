@@ -71,6 +71,7 @@ public class RobotContainer {
 
   // Subsystems
   public final Drive drive;
+  public static Orchestra orchestra = new Orchestra();
 
   // Commands
 
