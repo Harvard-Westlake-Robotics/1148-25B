@@ -13,6 +13,6 @@ public class VisionConstants {
   public static final Distance maxDistToCamera = Meters.of(6.5);
 
   public static final String[] limelightNames = {
-    "limelight-a", "limelight-b", "limelight-c", "limelight-d"
+    "limelight-left", "limelight-right", "limelight-back"
   };
 }
