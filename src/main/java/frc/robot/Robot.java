@@ -109,6 +109,9 @@ public class Robot extends LoggedRobot {
       robotContainer.resetSimulationField();
     }
 
+
+
+    // ORCHESTRA CRAP
     int driveMotorIds[] = {1, 2, 3, 4, 5, 6, 7, 8, 13, 14};
     int rioMotorIds[] = {15, 16, 17, 18};
     for (int id : driveMotorIds) {
@@ -117,15 +120,11 @@ public class Robot extends LoggedRobot {
     for (int id : rioMotorIds) {
       RobotContainer.orchestra.addInstrument(new TalonFX(id, "rio"));
     }
-
-    // Attempt to load the chrp
-    var status = RobotContainer.orchestra.loadMusic("E1M1.chrp");
-
     if (!status.isOK()) {
       // log error
     }
-
-    RobotContainer.orchestra.play();
+    SmartDashboard::PutString("DB/String 0", "Playing: ");
+    SmartDashboard::PutString("DB/String 1", "Selected: " + allSongs.at(0));
   }
 
   /** This function is called periodically during all modes. */

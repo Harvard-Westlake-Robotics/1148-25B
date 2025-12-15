@@ -68,5 +68,62 @@ public class ControlMap {
                 }
               }
             });
+
+    // ORCHESTRA CRAP II
+    operator
+        .up()
+        .OnTrue(
+            new InstantCommand(
+                () -> {
+                  if (RobotContainer.isPlaying) {
+                    if (RobotContainer.songPlaying == RobotContainer.songSelected) {
+                      SmartDashboard.PutString("DB/String 0", "Paused: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                      RobotContainer.orchestra.pause();
+                      RobotContainer.isPlaying = false;
+                    } else {
+                      RobotContainer.orchestra.stop();
+                      SmartDashboard.PutString("DB/String 0", "Playing: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                      var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      RobotContainer.songPlaying = RobotContainer.songSelected;
+                      RobotContainer.orchestra.play();
+                    }
+                  } else {
+                    if (RobotContainer.songPlaying != RobotContainer.songSelected) {
+                      var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      RobotContainer.songPlaying = RobotContainer.songSelected;
+                    }
+                    SmartDashboard.PutString("DB/String 0", "Playing: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                    RobotContainer.isPlaying = true;
+                    RobotContainer.orchestra.play();
+                  }
+                }));
+    operator
+        .down()
+        .OnTrue(
+            new InstantCommand(
+                () -> {
+                  if (RobotContainer.isPlaying) {
+                    RobotContainer.orchestra.stop();
+                    RobotContainer.isPlaying = false;
+                  }
+                  SmartDashboard.PutString("DB/String 0", "Playing: ");
+                  RobotContainer.songPlaying = -1;
+                }));
+    operator
+        .left()
+        .OnTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.songSelected = (RobotContainer.songSelected - 1 + RobotContainer.allSongs.length) % RobotContainer.allSongs.length;
+                  SmartDashboard.PutString("DB/String 1", "Selected: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                }));
+    operator
+        .right()
+        .OnTrue(
+            new InstantCommand(
+                () -> {
+                  RobotContainer.songSelected = (RobotContainer.songSelected + 1) % RobotContainer.allSongs.length;
+                  SmartDashboard.PutString("DB/String 1", "Selected: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                }));
   }
 }

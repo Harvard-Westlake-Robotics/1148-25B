@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotContainer.Mode;
 import frc.robot.commands.DriveCommands;
 import frc.robot.constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -83,6 +85,12 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   public static SwerveDriveSimulation driveSimulation = null;
+
+  // ORCHESTRA CRAP III
+  private static String[] allSongs = {"_TEST1.chrp", "_TEST2.chrp", "_TEST3.chrp", "1148MainTheme.chrp", "AtDoomsGate.chrp", "AttackOfTheKillerQueen.chrp", "BabyBlue.chrp", "BadApple.chrp", "Bonetrousle.chrp", "Caramelldansen.chrp", "CaveStory.chrp", "DaisyBell.chrp", "DancingQueen.chrp", "EverybodyWantsToRuleTheWorld.chrp", "HelloWorld.chrp", "HeyYa.chrp", "HotelCalifornia.chrp", "JustTheTwoOfUs.chrp", "M.chrp", "MonkeyIsland.chrp", "MrBlueSky.chrp", "MyHeartWillGoOn.chrp", "NoOnesAroundToHelp.chrp", "OneWingedAngel.chrp", "RunningFromEvil.chrp", "RunningFromEvilAlt.chrp", "RushE.chrp", "ScatmansWorld.chrp", "ShootingStars.chrp", "SomewhereOverTheRainbow.chrp", "StillAlive.chrp", "TakeOnMe.chrp", "TheFinalCountdown.mid.chrp", "TheWorldRevolving.chrp", "WantYouGone.chrp", "WhatAWonderfulWorld.chrp"};
+  private static int songSelected = 0;
+  private static int songPlaying = -1;
+  private static boolean isPlaying = false;
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
