@@ -110,8 +110,6 @@ public class Robot extends LoggedRobot {
       robotContainer.resetSimulationField();
     }
 
-
-
     // ORCHESTRA STUFF
     int driveMotorIds[] = {1, 2, 3, 4, 5, 6, 7, 8, 13, 14};
     int rioMotorIds[] = {15, 16, 17, 18};

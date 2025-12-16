@@ -85,13 +85,13 @@ public class ControlMap {
                     } else {
                       RobotContainer.orchestra.stop();
                       SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
-                      var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                       RobotContainer.orchestra.play();
                     }
                   } else {
                     if (RobotContainer.songPlaying != RobotContainer.songSelected) {
-                      var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                     }
                     SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
