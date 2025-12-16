@@ -20,6 +20,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DriveConstants;
@@ -111,7 +112,7 @@ public class Robot extends LoggedRobot {
 
 
 
-    // ORCHESTRA CRAP
+    // ORCHESTRA STUFF
     int driveMotorIds[] = {1, 2, 3, 4, 5, 6, 7, 8, 13, 14};
     int rioMotorIds[] = {15, 16, 17, 18};
     for (int id : driveMotorIds) {
@@ -120,11 +121,8 @@ public class Robot extends LoggedRobot {
     for (int id : rioMotorIds) {
       RobotContainer.orchestra.addInstrument(new TalonFX(id, "rio"));
     }
-    if (!status.isOK()) {
-      // log error
-    }
-    SmartDashboard::PutString("DB/String 0", "Playing: ");
-    SmartDashboard::PutString("DB/String 1", "Selected: " + allSongs.at(0));
+    SmartDashboard.putString("DB/String 0", "Playing: ");
+    SmartDashboard.putString("DB/String 1", "Selected: " + RobotContainer.allSongs[0]);
   }
 
   /** This function is called periodically during all modes. */

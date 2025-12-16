@@ -2,8 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.RobotContainer.Mode;
@@ -69,20 +71,20 @@ public class ControlMap {
               }
             });
 
-    // ORCHESTRA CRAP II
+    // ORCHESTRA STUFF II
     operator
-        .up()
-        .OnTrue(
+        .povUp()
+        .onTrue(
             new InstantCommand(
                 () -> {
                   if (RobotContainer.isPlaying) {
                     if (RobotContainer.songPlaying == RobotContainer.songSelected) {
-                      SmartDashboard.PutString("DB/String 0", "Paused: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                      SmartDashboard.putString("DB/String 0", "Paused: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.orchestra.pause();
                       RobotContainer.isPlaying = false;
                     } else {
                       RobotContainer.orchestra.stop();
-                      SmartDashboard.PutString("DB/String 0", "Playing: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                      SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                       var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                       RobotContainer.orchestra.play();
@@ -92,38 +94,38 @@ public class ControlMap {
                       var status = RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                     }
-                    SmartDashboard.PutString("DB/String 0", "Playing: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                    SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                     RobotContainer.isPlaying = true;
                     RobotContainer.orchestra.play();
                   }
                 }));
     operator
-        .down()
-        .OnTrue(
+        .povDown()
+        .onTrue(
             new InstantCommand(
                 () -> {
                   if (RobotContainer.isPlaying) {
                     RobotContainer.orchestra.stop();
                     RobotContainer.isPlaying = false;
                   }
-                  SmartDashboard.PutString("DB/String 0", "Playing: ");
+                  SmartDashboard.putString("DB/String 0", "Playing: ");
                   RobotContainer.songPlaying = -1;
                 }));
     operator
-        .left()
-        .OnTrue(
+        .povLeft()
+        .onTrue(
             new InstantCommand(
                 () -> {
                   RobotContainer.songSelected = (RobotContainer.songSelected - 1 + RobotContainer.allSongs.length) % RobotContainer.allSongs.length;
-                  SmartDashboard.PutString("DB/String 1", "Selected: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                  SmartDashboard.putString("DB/String 1", "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                 }));
     operator
-        .right()
-        .OnTrue(
+        .povRight()
+        .onTrue(
             new InstantCommand(
                 () -> {
                   RobotContainer.songSelected = (RobotContainer.songSelected + 1) % RobotContainer.allSongs.length;
-                  SmartDashboard.PutString("DB/String 1", "Selected: " + RobotContainer.allSongs.at(RobotContainer.songSelected));
+                  SmartDashboard.putString("DB/String 1", "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                 }));
   }
 }
