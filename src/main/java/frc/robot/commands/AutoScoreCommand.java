@@ -1,19 +1,16 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.NetworkCommunicator;
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -23,7 +20,7 @@ import org.littletonrobotics.junction.Logger;
 public class AutoScoreCommand extends Command {
   // Constants for position and timing
   public static double POSITION_TOLERANCE = 0.02; // meters
-  public static double ROTATION_TOLERANCE = 0.6; // degrees
+  public static double ROTATION_TOLERANCE = 1; // degrees
   private static final double ARM_Y_TOLERANCE = 0.4; // meters
   private static final double SCORING_DELAY_TICKS = 3;
   private static final double SCORING_VELOCITY = 22.0; // meters per second
@@ -33,7 +30,7 @@ public class AutoScoreCommand extends Command {
   // PID controller constants
   public static double kP = 18.7;
   public static double kD = 0.05;
-  public static double THETA_PID_P = 9.9;
+  public static double THETA_PID_P = 5.9;
   public static double THETA_PID_D = 0.1;
   private static final double MAX_VELOCITY = 2.0;
   private static final double MAX_ACCELERATION = 2.75;
@@ -53,7 +50,8 @@ public class AutoScoreCommand extends Command {
    * @param path The path to follow to the scoring position
    */
   public AutoScoreCommand(PathPlannerPath path) {
-    this.addRequirements(path == null ? Drive.getInstance() : null);
+    System.out.println(path == null);
+    this.addRequirements(Drive.getInstance());
     this.timeoutTimer = new Timer();
 
     // Initialize controllers with constants
@@ -104,6 +102,9 @@ public class AutoScoreCommand extends Command {
 
   @Override
   public void initialize() {
+    Logger.recordOutput(
+        "AutoDrive/TargetStart",
+        NetworkCommunicator.getInstance().getSelectedReefPath().getPoint(0).position);
     // Reset controllers to current position
     xController.reset(Drive.getInstance().getPose().getX());
     yController.reset(Drive.getInstance().getPose().getY());
@@ -142,21 +143,24 @@ public class AutoScoreCommand extends Command {
 
     if (distanceToTarget > POSITION_TOLERANCE
         || rotationError > Math.toRadians(ROTATION_TOLERANCE)) {
-      Logger.recordOutput("x_error", xController.getPositionError());
-      Logger.recordOutput("y_error", yController.getPositionError());
-      Logger.recordOutput("theta_error", thetaController.getPositionError());
-      // Move to target position
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(
-              MetersPerSecond.of(xController.calculate(currentPose.getX(), endPose.getX())),
-              MetersPerSecond.of(yController.calculate(currentPose.getY(), endPose.getY())),
-              RotationsPerSecond.of(
-                  thetaController.calculate(
-                      currentPose.getRotation().getRadians(), endPose.getRotation().getRadians())));
-      Drive.getInstance()
-          .runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds, Drive.getInstance().getPose().getRotation()));
+      // Logger.recordOutput("x_error", xController.getPositionError());
+      // Logger.recordOutput("y_error", yController.getPositionError());
+      // Logger.recordOutput("theta_error", thetaController.getPositionError());
+      // // Move to target position
+      // ChassisSpeeds speeds =
+      // new ChassisSpeeds(
+      // MetersPerSecond.of(xController.calculate(currentPose.getX(),
+      // endPose.getX())),
+      // MetersPerSecond.of(yController.calculate(currentPose.getY(),
+      // endPose.getY())),
+      // RotationsPerSecond.of(
+      // thetaController.calculate(
+      // currentPose.getRotation().getRadians(),
+      // endPose.getRotation().getRadians())));
+      // Drive.getInstance()
+      // .runVelocity(
+      // ChassisSpeeds.fromFieldRelativeSpeeds(
+      // speeds, Drive.getInstance().getPose().getRotation()));
     } else {
       handleScoring();
     }

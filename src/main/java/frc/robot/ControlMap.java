@@ -79,22 +79,32 @@ public class ControlMap {
                 () -> {
                   if (RobotContainer.isPlaying) {
                     if (RobotContainer.songPlaying == RobotContainer.songSelected) {
-                      SmartDashboard.putString("DB/String 0", "Paused: " + RobotContainer.allSongs[RobotContainer.songSelected]);
+                      SmartDashboard.putString(
+                          "DB/String 0",
+                          "Paused: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.orchestra.pause();
                       RobotContainer.isPlaying = false;
                     } else {
                       RobotContainer.orchestra.stop();
-                      SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
-                      RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      SmartDashboard.putString(
+                          "DB/String 0",
+                          "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
+                      var status =
+                          RobotContainer.orchestra.loadMusic(
+                              RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                       RobotContainer.orchestra.play();
                     }
                   } else {
                     if (RobotContainer.songPlaying != RobotContainer.songSelected) {
-                      RobotContainer.orchestra.loadMusic(RobotContainer.allSongs[RobotContainer.songSelected]);
+                      var status =
+                          RobotContainer.orchestra.loadMusic(
+                              RobotContainer.allSongs[RobotContainer.songSelected]);
                       RobotContainer.songPlaying = RobotContainer.songSelected;
                     }
-                    SmartDashboard.putString("DB/String 0", "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
+                    SmartDashboard.putString(
+                        "DB/String 0",
+                        "Playing: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                     RobotContainer.isPlaying = true;
                     RobotContainer.orchestra.play();
                   }
@@ -116,16 +126,23 @@ public class ControlMap {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.songSelected = (RobotContainer.songSelected - 1 + RobotContainer.allSongs.length) % RobotContainer.allSongs.length;
-                  SmartDashboard.putString("DB/String 1", "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
+                  RobotContainer.songSelected =
+                      (RobotContainer.songSelected - 1 + RobotContainer.allSongs.length)
+                          % RobotContainer.allSongs.length;
+                  SmartDashboard.putString(
+                      "DB/String 1",
+                      "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                 }));
     operator
         .povRight()
         .onTrue(
             new InstantCommand(
                 () -> {
-                  RobotContainer.songSelected = (RobotContainer.songSelected + 1) % RobotContainer.allSongs.length;
-                  SmartDashboard.putString("DB/String 1", "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
+                  RobotContainer.songSelected =
+                      (RobotContainer.songSelected + 1) % RobotContainer.allSongs.length;
+                  SmartDashboard.putString(
+                      "DB/String 1",
+                      "Selected: " + RobotContainer.allSongs[RobotContainer.songSelected]);
                 }));
   }
 }

@@ -24,8 +24,7 @@ public class NetworkCommunicator {
 
   public TeleopCommand teleopCommand;
 
-  private NetworkCommunicator() {
-  }
+  private NetworkCommunicator() {}
 
   public static NetworkCommunicator getInstance() {
     if (instance == null) {
@@ -101,6 +100,7 @@ public class NetworkCommunicator {
 
   public PathPlannerPath getSelectedReefPath() {
     // Convert from branch number to letter
+    System.out.println(paths.get("" + (char) (getTeleopBranch() + 'A')) == null);
     return paths.get("" + (char) (getTeleopBranch() + 'A'));
   }
 
@@ -117,27 +117,27 @@ public class NetworkCommunicator {
     if (autoCommands.length == 0) {
       return new PathPlannerAuto(Commands.none());
     } else {
-      Command auto = new InstantCommand(() -> {
-      });
+      Command auto = new InstantCommand(() -> {});
       // Command scheduler- adds each selected auto station to the auton
       for (int i = 0; i < autoCommands.length; i++) {
         // If selected command is a source command
         if (autoCommands[i].charAt(0) == 'S') {
-          auto = auto.andThen(
-              // Go to selected source
-              AutoBuilder.pathfindThenFollowPath(
-                  paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS));
+          auto =
+              auto.andThen(
+                  // Go to selected source
+                  AutoBuilder.pathfindThenFollowPath(
+                      paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS));
           // If selected command is a reef command
         } else {
-          auto = auto.andThen(
-              AutoBuilder.pathfindThenFollowPath(
-                  paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS))
-              // 0.1 second delay
-              .andThen(new Command() {
-              }.withTimeout(0.1))
-              .andThen(
-                  // Run AutoScore Command
-                  new AutoScoreCommand(paths.get("" + (char) (autoCommands[i].charAt(0)))));
+          auto =
+              auto.andThen(
+                      AutoBuilder.pathfindThenFollowPath(
+                          paths.get(autoCommands[i]), DriveConstants.PP_CONSTRAINTS))
+                  // 0.1 second delay
+                  .andThen(new Command() {}.withTimeout(0.1))
+                  .andThen(
+                      // Run AutoScore Command
+                      new AutoScoreCommand(paths.get("" + (char) (autoCommands[i].charAt(0)))));
         }
       }
       return auto;

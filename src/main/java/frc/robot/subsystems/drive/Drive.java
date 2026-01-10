@@ -238,7 +238,7 @@ public class Drive extends SubsystemBase {
       }
       Vision.getInstance().setUseMegaTag2(false);
     } else {
-      Vision.getInstance().setUseMegaTag2(true);
+      Vision.getInstance().setUseMegaTag2(false);
     }
 
     // Log empty setpoint states when disabled
@@ -445,7 +445,8 @@ public class Drive extends SubsystemBase {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+    poseEstimator.addVisionMeasurement(
+        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
   /** Returns the maximum linear speed in meters per sec. */

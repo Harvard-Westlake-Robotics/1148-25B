@@ -75,7 +75,7 @@ public class DriveConstants {
   public static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
 
   // PathPlanner PIDs
-  public static double PP_ROTATION_P = 5.05;
+  public static double PP_ROTATION_P = 10.05;
   public static double PP_ROTATION_I = 0.00;
   public static double PP_ROTATION_D = 0.00;
   public static double PP_TRANSLATION_P = 4.45;
@@ -107,7 +107,7 @@ public class DriveConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(7.50);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(7.5);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
@@ -390,8 +390,9 @@ public class DriveConstants {
   // TODO: Tune
   public static final PathConstraints PP_CONSTRAINTS =
       new PathConstraints(
-          MetersPerSecond.of(7.5),
-          MetersPerSecondPerSecond.of(5.5),
-          DegreesPerSecond.of(1020),
-          DegreesPerSecondPerSecond.of(2400));
+          // Using really small vvalues to debug path planning
+          MetersPerSecond.of(7.5), // 7.5
+          MetersPerSecondPerSecond.of(5.5), // 5.5
+          DegreesPerSecond.of(1020), // 1020
+          DegreesPerSecondPerSecond.of(2400)); // 2400
 }
